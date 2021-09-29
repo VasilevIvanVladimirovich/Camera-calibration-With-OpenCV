@@ -2,6 +2,12 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QDialog>
+#include <QTimer>
+
+#include<opencv2/core/core.hpp>
+#include<opencv2/highgui/highgui.hpp>
+#include<opencv2/imgproc.hpp>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -17,5 +23,19 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    cv::VideoCapture webcam;
+
+    cv::Mat matimg;
+
+    QTimer *tmrTimer;
+
+    QImage imgcam;
+
+public slots:
+    void processFrameAndUpdateGUI();
+
+private slots:
+    void on_btn_calibration_clicked();
 };
 #endif // MAINWINDOW_H
