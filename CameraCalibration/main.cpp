@@ -1,11 +1,22 @@
 #include "mainwindow.h"
 
 #include <QApplication>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
-int main(int argc, char *argv[])
+using namespace cv;
+int main()
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
-    return a.exec();
+    VideoCapture cap(0);
+        Mat edges;
+        namedWindow("webcam", 1);
+        while (true)
+        {
+            Mat frame;
+            cap >> frame;
+            imshow("webcam", frame);
+            if (waitKey(30) >= 0) break;
+        }
+        return 0;
+
 }
