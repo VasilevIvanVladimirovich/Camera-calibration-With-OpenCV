@@ -60,7 +60,7 @@
       <item>
        <widget class="QPushButton" name="btn_calibration">
         <property name="text">
-         <string>Calibration</string>
+         <string>Find coef</string>
         </property>
        </widget>
       </item>

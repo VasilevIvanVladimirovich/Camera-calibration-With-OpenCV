@@ -35,9 +35,6 @@ void MainWindow::processFrameAndUpdateGUI()
     ui->widget_camera->setPixmap(QPixmap::fromImage(imgcam));
 }
 
-
-
-
 void MainWindow::on_btn_calibration_clicked()
 {
     cv::Mat imgsave;
@@ -65,8 +62,7 @@ void MainWindow::on_btn_calibration_clicked()
     success = cv::findChessboardCorners(imgsave,cv::Size(CHECKERBOARD[0], CHECKERBOARD[1]),corner_pts);
     if(success)
     {
-        //cv::TermCriteria criteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, 0.001);
-
+        ui->debugLine->setText("Success");
         cv::drawChessboardCorners(imgsave, cv::Size(CHECKERBOARD[0], CHECKERBOARD[1]), corner_pts, success);
         objpoints.push_back(objp);
         imgpoints.push_back(corner_pts);
@@ -77,9 +73,10 @@ void MainWindow::on_btn_calibration_clicked()
         QImage imgcam((uchar*)imgsave.data,imgsave.cols,imgsave.rows,imgsave.step,QImage::Format_RGB888);
         ui->labelDebug->setPixmap(QPixmap::fromImage(imgcam));
 
-        std::cout<<cameraMatrix<<std::endl;
-
-
+        std::cout << "cameraMatrix : " << cameraMatrix << std::endl;
+        std::cout << "distCoeffs : " << distCoeffs << std::endl;
+        std::cout << "Rotation vector : " << R << std::endl;
+        std::cout << "Translation vector : " << T << std::endl;
     }else ui->debugLine->setText("Error");
 
 
