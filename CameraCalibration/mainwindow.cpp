@@ -4,6 +4,7 @@
 
 
 #define NUMBER_CAM 1
+#define FILE_RESULT_PATH "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/CameraCalibration/Save/SaveResult.YAML"
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -77,6 +78,16 @@ void MainWindow::on_btn_calibration_clicked()
         std::cout << "distCoeffs : " << distCoeffs << std::endl;
         std::cout << "Rotation vector : " << R << std::endl;
         std::cout << "Translation vector : " << T << std::endl;
+
+
+
+        //Сохранение результатов в файл
+        std::string fileResultPath = FILE_RESULT_PATH;
+        cv::FileStorage fs(fileResultPath,cv::FileStorage::WRITE);
+        fs << "cameraMatrix" << cameraMatrix
+           << "distCoeffs"   << distCoeffs;
+        fs.release();
+
     }else ui->debugLine->setText("Error");
 
 
