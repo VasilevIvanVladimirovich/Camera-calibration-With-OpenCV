@@ -5,6 +5,8 @@
 #include <QDialog>
 #include <QTimer>
 #include <QString>
+#include <QThread>
+#include <QPicture>
 
 #include<opencv2/opencv.hpp>
 #include<opencv2/core/core.hpp>
@@ -12,6 +14,8 @@
 #include<opencv2/highgui/highgui.hpp>
 #include<opencv2/imgproc.hpp>
 #include<opencv2/calib3d/calib3d.hpp>
+
+#include<WebcamProcessorThread.h>
 
 #include <stdio.h>
 
@@ -31,13 +35,9 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    cv::VideoCapture webcam;
-
-    cv::Mat matimg;
-
-    QTimer *tmrTimer;
-
     QImage imgcam;
+
+    WebcamProcessorThread *web_cam_processor = new WebcamProcessorThread;
 
 public slots:
     void processFrameAndUpdateGUI();

@@ -1,10 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-
-
 #define NUMBER_CAM 1
-#define FILE_RESULT_PATH "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/CameraCalibration/Save/SaveResult.YAML"
+#define FILE_RESULT_YAML "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/CameraCalibration/Save/SaveResult.YAML"
+#define FILE_RESILT_IMG "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/CameraCalibration/Save/Img/"
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -12,34 +11,48 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     ui->setupUi(this);
     ui->debugLine->setReadOnly(true);
 
-    webcam.open(NUMBER_CAM);
-    if(webcam.isOpened()==false)
-    {
-        ui->debugLine->setText("Error: webcam not accessed successfully");
-        return;
-    }
-    tmrTimer = new QTimer(this);
-    connect(tmrTimer, SIGNAL(timeout()),this,SLOT(processFrameAndUpdateGUI()));
-    tmrTimer->start(20);
+
+    connect(web_cam_processor,
+            SIGNAL(outDisplay(QPixmap)),
+            ui->widget_camera,
+            SLOT(setPixmap(QPixmap)));
+    web_cam_processor->start();
+
+    //webcam.open(NUMBER_CAM);
+    //if(webcam.isOpened()==false)
+    //{
+    //    ui->debugLine->setText("Error: webcam not accessed successfully");
+    //    return;
+    //}
+    //tmrTimer = new QTimer(this);
+    //connect(tmrTimer, SIGNAL(timeout()),this,SLOT(processFrameAndUpdateGUI()));
+    //tmrTimer->start(20);
 }
 
 MainWindow::~MainWindow()
 {
+    web_cam_processor->requestInterruption();
+    web_cam_processor->wait();
     delete ui;
 }
 
 void MainWindow::processFrameAndUpdateGUI()
 {
-    webcam.read(matimg);
+    //webcam.read(matimg);
 
-    QImage imgcam((uchar*)matimg.data,matimg.cols,matimg.rows,matimg.step,QImage::Format_RGB888);
-    ui->widget_camera->setPixmap(QPixmap::fromImage(imgcam));
+    //QImage imgcam((uchar*)matimg.data,matimg.cols,matimg.rows,matimg.step,QImage::Format_RGB888);
+    //ui->widget_camera->setPixmap(QPixmap::fromImage(imgcam));
 }
 
 void MainWindow::on_btn_calibration_clicked()
 {
-    cv::Mat imgsave;
-    imgsave=matimg;
+    const QPixmap *pixmp = ui->widget_camera->pixmap();
+    QImage im (pixmp->toImage());
+
+    cv::Mat imgsave(im.height(),im.width(),CV_8UC3);
+
+    QImage imgcam((uchar*)imgsave.data,imgsave.cols,imgsave.rows,imgsave.step,QImage::Format_RGB888);
+    ui->labelDebug->setPixmap(QPixmap::fromImage(imgcam));
 
 
     int CHECKERBOARD[2]{6,9}; //размер шахматной доски
@@ -61,6 +74,7 @@ void MainWindow::on_btn_calibration_clicked()
     //Поиск углов шахматной доски
     //Если на изображении найдено нужное количество углов, то успех = истина
     success = cv::findChessboardCorners(imgsave,cv::Size(CHECKERBOARD[0], CHECKERBOARD[1]),corner_pts);
+
     if(success)
     {
         ui->debugLine->setText("Success");
@@ -79,10 +93,14 @@ void MainWindow::on_btn_calibration_clicked()
         std::cout << "Rotation vector : " << R << std::endl;
         std::cout << "Translation vector : " << T << std::endl;
 
-
+        //Сохранение изображения
+        if(cv::imwrite((std::string)FILE_RESILT_IMG + "test.jpg", imgsave) == true)
+        {
+            ui->debugLine->setText("Save");
+        }
 
         //Сохранение результатов в файл
-        std::string fileResultPath = FILE_RESULT_PATH;
+        std::string fileResultPath = FILE_RESULT_YAML;
         cv::FileStorage fs(fileResultPath,cv::FileStorage::WRITE);
         fs << "cameraMatrix" << cameraMatrix
            << "distCoeffs"   << distCoeffs;
