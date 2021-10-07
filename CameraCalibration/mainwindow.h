@@ -7,6 +7,8 @@
 #include <QString>
 #include <QThread>
 #include <QPicture>
+#include <QtGui>
+#include <QFileDialog>
 
 #include<opencv2/opencv.hpp>
 #include<opencv2/core/core.hpp>
@@ -15,7 +17,8 @@
 #include<opencv2/imgproc.hpp>
 #include<opencv2/calib3d/calib3d.hpp>
 
-#include<WebcamProcessorThread.h>
+//#include<WebcamProcessorThread.h>
+#include<videoprocessor.h>
 
 #include <stdio.h>
 
@@ -37,12 +40,12 @@ private:
 
     QImage imgcam;
 
-    WebcamProcessorThread *web_cam_processor = new WebcamProcessorThread;
+    QString debugline;
 
-public slots:
-    void processFrameAndUpdateGUI();
+    VideoProcessor *processor;
 
 private slots:
     void on_btn_calibration_clicked();
+    void on_btn_input_clicked();
 };
 #endif // MAINWINDOW_H
