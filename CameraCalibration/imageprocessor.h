@@ -1,5 +1,5 @@
-#ifndef VIDEOPROCESSOR_H
-#define VIDEOPROCESSOR_H
+#ifndef IMAGEPROCESSOR_H
+#define IMAGEPROCESSOR_H
 
 #include <QObject>
 #include <QPixmap>
@@ -12,26 +12,29 @@
 #include<opencv2/imgproc.hpp>
 #include<opencv2/calib3d/calib3d.hpp>
 
-class VideoProcessor :public QObject
+#include <QThread>
+
+class ImageProcessor :public QThread
 {
 Q_OBJECT
 public:
-    VideoProcessor();
+   ImageProcessor(int num_web_cam);
+   ImageProcessor(cv::Mat img);
+
+   void stopedThread();
    cv::Mat getOutFrame();
    void setOutFrame(cv::Mat frame);
-   bool isStoped();
-   void setpause(bool pause);
+
 signals:
     void outDisplay(QPixmap pixmap);
+
 public slots:
-    void startVideo();
-    void stopVideo();
+    void run() override;
 
 private:
     bool end;
-    bool stopped;
     cv::VideoCapture web_cam;
     cv::Mat outFrame;
 };
 
-#endif // VIDEOPROCESSOR_H
+#endif // IMAGEPROCESSOR_H

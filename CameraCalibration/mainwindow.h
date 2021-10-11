@@ -18,7 +18,7 @@
 #include<opencv2/calib3d/calib3d.hpp>
 
 //#include<WebcamProcessorThread.h>
-#include<videoprocessor.h>
+#include<imageProcessor.h>
 
 #include <stdio.h>
 
@@ -42,7 +42,7 @@ private:
 
     QString debugline;
 
-    VideoProcessor *processor;
+    ImageProcessor *imgprocessor = nullptr;
 
 private slots:
     void on_btn_calibration_clicked();

@@ -11,23 +11,25 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     ui->setupUi(this);
     ui->debugLine->setReadOnly(true);
 
-    processor = new VideoProcessor();
 
-    processor->moveToThread(new QThread(this));
 
-    connect(processor->thread(),
-            SIGNAL(started()),
-            processor,
-            SLOT(startVideo()));
-    connect(processor->thread(),
-            SIGNAL(finished()),
-            processor,
-            SLOT(deleteLater()));
-    connect(processor,
-            SIGNAL(outDisplay(QPixmap)),
-            ui->widget_camera,
-            SLOT(setPixmap(QPixmap)));
-     processor->thread()->start();
+//    processor = new VideoProcessor();
+
+//    processor->moveToThread(new QThread(this));
+
+//    connect(processor->thread(),
+//            SIGNAL(started()),
+//            processor,
+//            SLOT(startVideo()));
+//    connect(processor->thread(),
+//            SIGNAL(finished()),
+//            processor,
+//            SLOT(deleteLater()));
+//    connect(processor,
+//            SIGNAL(outDisplay(QPixmap)),
+//            ui->widget_camera,
+//            SLOT(setPixmap(QPixmap)));
+//     processor->thread()->start();
 }
 
 MainWindow::~MainWindow()
@@ -37,9 +39,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_btn_calibration_clicked()
 {
-
-
-    cv::Mat imgsave = processor->getOutFrame();
+    cv::Mat imgsave = imgprocessor->getOutFrame();
 
 //        QImage imgcam((uchar*)imgsave.data,imgsave.cols,imgsave.rows,imgsave.step,QImage::Format_RGB888); //Проверка изображения
 //        ui->widget_camera->setPixmap(QPixmap::fromImage(imgcam));
@@ -101,34 +101,58 @@ void MainWindow::on_btn_calibration_clicked()
 
 }
 
-
+//кнопка переключения ввода изображения (веб камера или файл)
 void MainWindow::on_btn_input_clicked()
 {
     if(ui->radioButton_file->isChecked())
     {
-        if(!processor->isStoped())
+        if(!(imgprocessor == nullptr))
         {
-            processor->setpause(true);
+            //если в указатель указывает на что-то, то его обнуляем, что бы обновить
+            imgprocessor->stopedThread();
+            imgprocessor = nullptr;
         }
-
         QString fileName = QFileDialog::getOpenFileName(this,
                                     QString::fromUtf8("Открыть файл"),
                                     QDir::currentPath(),
                                     "Images (*.png *.xpm *.jpg);;All files (*.*)");
 
         cv::Mat mt = cv::imread(fileName.toStdString());
-        processor->setOutFrame(mt);
+
+        imgprocessor = new ImageProcessor(mt);
+        connect(imgprocessor,
+               SIGNAL(outDisplay(QPixmap)),
+               ui->widget_camera,
+               SLOT(setPixmap(QPixmap)));
+
+
         QImage imgcam((uchar*)mt.data,mt.cols,mt.rows,mt.step,QImage::Format_RGB888); //Проверка изображения
         ui->widget_camera->setPixmap(QPixmap::fromImage(imgcam));
 
     }
     if(ui->radioButton_web->isChecked())
     {
-        if(processor->isStoped())
+        if(!(imgprocessor == nullptr))
         {
-            processor->setpause(false);
+            //если в указатель указывает на что-то, то его обнуляем, что бы обновить
+            imgprocessor->stopedThread();
+            imgprocessor = nullptr;
         }
 
+        imgprocessor = new ImageProcessor(NUMBER_CAM);
+
+        connect(imgprocessor,
+                SIGNAL(outDisplay(QPixmap)),
+                ui->widget_camera,
+                SLOT(setPixmap(QPixmap)));
+
+        connect(imgprocessor,
+                SIGNAL(finished()),
+                imgprocessor,
+                SLOT(deleteLater()));
+
+
+        imgprocessor->start();
     }
 }
 
