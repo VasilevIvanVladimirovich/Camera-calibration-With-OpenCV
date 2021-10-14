@@ -20,7 +20,6 @@ public:
 
     void calibrationChessboardMethod(cv::Mat inputFrame);
 
-
 };
 
 #endif // CALIBRATIONPROCESSOR_H

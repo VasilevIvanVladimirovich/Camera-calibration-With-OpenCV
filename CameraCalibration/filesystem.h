@@ -13,6 +13,7 @@
 #include <QDir>
 #include <QPixmap>
 #include <string>
+#include <QFile>
 
 #define DIR_PATH "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/SaveResult/"
 
@@ -23,9 +24,9 @@ public:
     FileSystem();
 
     void openFileInView(QString filePath);
-    void saveResult(cv::Mat img, cv::Mat cameraMatrix,cv::Mat distCoeffs, cv::Mat R, cv::Mat T);
+    void saveResult(QPixmap qpixmap, cv::Mat cameraMatrix,cv::Mat distCoeffs, cv::Mat R, cv::Mat T);
     void saveFileInYaml(cv::Mat cameraMatrix,cv::Mat distCoeffs, cv::Mat R, cv::Mat T, QString name);
-    void saveInImg(cv::Mat img, QString name);
+    void saveInImg(QPixmap qpixmap, QString name);
 
 signals:
     void outImgDisplay(QPixmap pixmap);

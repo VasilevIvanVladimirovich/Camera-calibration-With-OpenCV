@@ -42,7 +42,13 @@ void CalibrationProcessor::calibrationChessboardMethod(cv::Mat inputFrame)
         std::cout << "Translation vector : " << T << std::endl;
 
         FileSystem fileSystem;
-        fileSystem.saveResult(inputFrame, cameraMatrix, distCoeffs, R, T);
+        QPixmap saveImg = QPixmap::fromImage(
+                                    QImage(inputFrame.data,
+                                    inputFrame.cols,
+                                    inputFrame.rows,
+                                    inputFrame.step,
+                                    QImage::Format_RGB888).rgbSwapped());
+        fileSystem.saveResult(saveImg, cameraMatrix, distCoeffs, R, T);
 
     }
 }

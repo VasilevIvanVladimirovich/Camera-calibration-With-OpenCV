@@ -49,27 +49,23 @@ void FileSystem::openFileInView(QString pathName)
                     fs.release();
         }
 
-
-
-
 }
 
-void FileSystem::saveResult(cv::Mat img, cv::Mat cameraMatrix, cv::Mat distCoeffs, cv::Mat R, cv::Mat T)
+void FileSystem::saveResult(QPixmap qpixmap, cv::Mat cameraMatrix, cv::Mat distCoeffs, cv::Mat R, cv::Mat T)
 {
     QDir dir(DIR_PATH);
     int experimentNumber;
-    if(dir.entryInfoList(QDir::Files).isEmpty())  experimentNumber = 1;
+    if(dir.isEmpty())  experimentNumber = 1;
     else{
-        QFileInfoList list = dir.entryInfoList(QDir::Files);
-        QString  name = list.back().baseName();
-        experimentNumber = name.toInt() + 1;
+        dir.count();
+        experimentNumber = dir.count()/2 + 1;
     }
 
     QString fullNameYaml = DIR_PATH + QString::number(experimentNumber) + ".YAML";
     QString fullNameJpg = DIR_PATH + QString::number(experimentNumber) + ".jpg";
 
     saveFileInYaml(cameraMatrix, distCoeffs, R, T, fullNameYaml);
-    saveInImg(img, fullNameJpg);
+    saveInImg(qpixmap, fullNameJpg);
 }
 
 void FileSystem::saveFileInYaml(cv::Mat cameraMatrix, cv::Mat distCoeffs, cv::Mat R, cv::Mat T, QString name)
@@ -83,7 +79,10 @@ void FileSystem::saveFileInYaml(cv::Mat cameraMatrix, cv::Mat distCoeffs, cv::Ma
             fs.release();
 }
 
-void FileSystem::saveInImg(cv::Mat img, QString name)
+void FileSystem::saveInImg(QPixmap qpixmap, QString name)
 {
-    cv::imwrite(name.toStdString(), img);
+    QFile file(name);
+    file.open(QIODevice::WriteOnly);
+    qpixmap.save(&file, "jpg");
+    file.close();
 }
