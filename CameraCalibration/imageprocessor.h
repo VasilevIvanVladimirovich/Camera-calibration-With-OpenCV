@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QPixmap>
 
-
 #include<opencv2/opencv.hpp>
 #include<opencv2/core/core.hpp>
 #include <opencv2/core/persistence.hpp>
@@ -16,14 +15,14 @@
 
 class ImageProcessor :public QThread
 {
-Q_OBJECT
+    Q_OBJECT
 public:
    ImageProcessor(int num_web_cam);
    ImageProcessor(cv::Mat img);
 
    void stopedThread();
-   cv::Mat getOutFrame();
    void setOutFrame(cv::Mat frame);
+   cv::Mat getOutFrame();
 
 signals:
     void outDisplay(QPixmap pixmap);
@@ -32,9 +31,9 @@ public slots:
     void run() override;
 
 private:
-    bool end;
-    cv::VideoCapture web_cam;
-    cv::Mat outFrame;
+    bool end_;
+    cv::VideoCapture web_cam_;
+    cv::Mat outFrame_;
 };
 
 #endif // IMAGEPROCESSOR_H

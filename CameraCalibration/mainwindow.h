@@ -9,16 +9,19 @@
 #include <QPicture>
 #include <QtGui>
 #include <QFileDialog>
+#include <QObject>
 
-#include<opencv2/opencv.hpp>
-#include<opencv2/core/core.hpp>
+#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
 #include <opencv2/core/persistence.hpp>
-#include<opencv2/highgui/highgui.hpp>
-#include<opencv2/imgproc.hpp>
-#include<opencv2/calib3d/calib3d.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/calib3d/calib3d.hpp>
 
-//#include<WebcamProcessorThread.h>
-#include<imageProcessor.h>
+#include "imageprocessor.h"
+#include "calibrationprocessor.h"
+#include "filesystemprocessor.h"
+#include "filesystem.h"
 
 #include <stdio.h>
 
@@ -38,14 +41,19 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    QImage imgcam;
+    QImage imgcam_;
 
-    QString debugline;
+    QString debugline_;
 
-    ImageProcessor *imgprocessor = nullptr;
+    ImageProcessor *imgprocessor_ = nullptr;
+
+    CalibrationProcessor *calibprocessor_ = nullptr;
+
+    //FileSystemProcessor fileSystem_;
+    FileSystem fileSystem_;
 
 private slots:
     void on_btn_calibration_clicked();
-    void on_btn_input_clicked();
+    void on_openFile_clicked();
 };
 #endif // MAINWINDOW_H

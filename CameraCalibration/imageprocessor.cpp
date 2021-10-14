@@ -2,7 +2,8 @@
 
 ImageProcessor::ImageProcessor(int num_web_cam)
 {
-    web_cam.open(num_web_cam);
+    web_cam_.open(num_web_cam);
+    web_cam_.set(cv::CAP_PROP_AUTOFOCUS, 0);
 }
 
 ImageProcessor::ImageProcessor(cv::Mat img)
@@ -13,36 +14,36 @@ ImageProcessor::ImageProcessor(cv::Mat img)
 
 void ImageProcessor::run()
 {
-    end = false;
-    while(web_cam.isOpened() && !end) {
-            web_cam >> outFrame;
+    end_ = false;
+    while(web_cam_.isOpened() && !end_) {
+            web_cam_ >> outFrame_;
             emit outDisplay(QPixmap::fromImage(
-                            QImage(outFrame.data,
-                                   outFrame.cols,
-                                   outFrame.rows,
-                                   outFrame.step,
+                            QImage(outFrame_.data,
+                                   outFrame_.cols,
+                                   outFrame_.rows,
+                                   outFrame_.step,
                                    QImage::Format_RGB888).rgbSwapped()));
        }
 }
 
 void ImageProcessor::setOutFrame(cv::Mat frame)
 {
-    outFrame = frame;
+    outFrame_ = frame;
 
     emit outDisplay(QPixmap::fromImage(
-                    QImage(outFrame.data,
-                           outFrame.cols,
-                           outFrame.rows,
-                           outFrame.step,
+                    QImage(outFrame_.data,
+                           outFrame_.cols,
+                           outFrame_.rows,
+                           outFrame_.step,
                            QImage::Format_RGB888).rgbSwapped()));
 }
 
 cv::Mat ImageProcessor::getOutFrame()
 {
-    return outFrame;
+    return outFrame_;
 }
 
 void ImageProcessor::stopedThread()
 {
-    end=true;
+    end_=true;
 }
