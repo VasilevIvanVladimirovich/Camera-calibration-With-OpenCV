@@ -20,7 +20,6 @@
 
 #include "imageprocessor.h"
 #include "calibrationprocessor.h"
-#include "filesystemprocessor.h"
 #include "filesystem.h"
 
 #include <stdio.h>
@@ -47,13 +46,13 @@ private:
 
     ImageProcessor *imgprocessor_ = nullptr;
 
-    CalibrationProcessor *calibprocessor_ = nullptr;
+    CalibrationProcessor calibprocessor_;
 
-    //FileSystemProcessor fileSystem_;
     FileSystem fileSystem_;
 
 private slots:
     void on_btn_calibration_clicked();
     void on_openFile_clicked();
+    void on_resetView_clicked();
 };
 #endif // MAINWINDOW_H

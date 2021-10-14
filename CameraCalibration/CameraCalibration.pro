@@ -11,7 +11,6 @@ CONFIG += c++11
 SOURCES += \
     calibrationprocessor.cpp \
     filesystem.cpp \
-    filesystemprocessor.cpp \
     imageprocessor.cpp \
     main.cpp \
     mainwindow.cpp
@@ -19,7 +18,6 @@ SOURCES += \
 HEADERS += \
     calibrationprocessor.h \
     filesystem.h \
-    filesystemprocessor.h \
     imageprocessor.h \
     mainwindow.h
 

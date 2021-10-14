@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 
     ui->setupUi(this);
     ui->debugLine->setReadOnly(true);
+    ui->textEditViewFile->setReadOnly(true);
 
     imgprocessor_ = new ImageProcessor(NUMBER_CAM);
     connect(imgprocessor_,
@@ -29,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
             SLOT(setPixmap(QPixmap)));
 
     connect(&fileSystem_,
-            SIGNAL(outTextDisplay(QPixmap)),
+            SIGNAL(outTextDisplay(QString)),
             ui->textEditViewFile,
             SLOT(setText(QString)));
 
@@ -42,14 +43,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_btn_calibration_clicked()
 {
-    calibprocessor_ = new CalibrationProcessor(imgprocessor_->getOutFrame());
-    calibprocessor_->calibrationChessboardMethod();
-
-
-//        QImage imgcam((uchar*)imgsave.data,imgsave.cols,imgsave.rows,imgsave.step,QImage::Format_RGB888); //Проверка изображения
-//        ui->widget_camera->setPixmap(QPixmap::fromImage(imgcam));
-
-
+    calibprocessor_.calibrationChessboardMethod(imgprocessor_->getOutFrame());
 }
 
 
@@ -61,6 +55,12 @@ void MainWindow::on_openFile_clicked()
                                 "Images (*.png *.jpg *.bmp *.YAML)");
 
     fileSystem_.openFileInView(pathName);
+}
 
+
+void MainWindow::on_resetView_clicked()
+{
+    ui->textEditViewFile->clear();
+    ui->viewfile->clear();
 }
 

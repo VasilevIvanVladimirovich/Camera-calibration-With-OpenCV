@@ -10,9 +10,11 @@
 
 
 #include <QObject>
+#include <QDir>
 #include <QPixmap>
+#include <string>
 
-#define DIR_PATH "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/SaveResult"
+#define DIR_PATH "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/SaveResult/"
 
 class FileSystem : public QObject
 {
@@ -21,6 +23,9 @@ public:
     FileSystem();
 
     void openFileInView(QString filePath);
+    void saveResult(cv::Mat img, cv::Mat cameraMatrix,cv::Mat distCoeffs, cv::Mat R, cv::Mat T);
+    void saveFileInYaml(cv::Mat cameraMatrix,cv::Mat distCoeffs, cv::Mat R, cv::Mat T, QString name);
+    void saveInImg(cv::Mat img, QString name);
 
 signals:
     void outImgDisplay(QPixmap pixmap);

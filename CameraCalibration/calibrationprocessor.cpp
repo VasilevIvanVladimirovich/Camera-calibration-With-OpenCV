@@ -1,11 +1,11 @@
 #include "calibrationprocessor.h"
 
-CalibrationProcessor::CalibrationProcessor(cv::Mat inputFrame)
+CalibrationProcessor::CalibrationProcessor()
 {
-    this->inputFrame_ = inputFrame;
+
 }
 
-void CalibrationProcessor::calibrationChessboardMethod()
+void CalibrationProcessor::calibrationChessboardMethod(cv::Mat inputFrame)
 {
     int CHECKERBOARD[2]{6,9}; //размер шахматной доски
 
@@ -25,38 +25,24 @@ void CalibrationProcessor::calibrationChessboardMethod()
 
     //Поиск углов шахматной доски
     //Если на изображении найдено нужное количество углов, то успех = истина
-    success = cv::findChessboardCorners(inputFrame_,cv::Size(CHECKERBOARD[0], CHECKERBOARD[1]),corner_pts);
+    success = cv::findChessboardCorners(inputFrame,cv::Size(CHECKERBOARD[0], CHECKERBOARD[1]),corner_pts);
 
     if(success)
     {
-        //ui->debugLine->setText("Success");
-        cv::drawChessboardCorners(inputFrame_, cv::Size(CHECKERBOARD[0], CHECKERBOARD[1]), corner_pts, success);
+        cv::drawChessboardCorners(inputFrame, cv::Size(CHECKERBOARD[0], CHECKERBOARD[1]), corner_pts, success);
         objpoints.push_back(objp);
         imgpoints.push_back(corner_pts);
-        cv::Mat cameraMatrix,distCoeffs,R,T;
+        cv::Mat cameraMatrix, distCoeffs, R, T;
 
-        cv::calibrateCamera(objpoints, imgpoints, cv::Size(inputFrame_.rows,inputFrame_.cols), cameraMatrix, distCoeffs, R, T);
-
-//        QImage imgcam((uchar*)imgsave.data,imgsave.cols,imgsave.rows,imgsave.step,QImage::Format_RGB888);
-//        ui->labelDebug->setPixmap(QPixmap::fromImage(imgcam));
+        cv::calibrateCamera(objpoints, imgpoints, cv::Size(inputFrame.rows, inputFrame.cols), cameraMatrix, distCoeffs, R, T);
 
         std::cout << "cameraMatrix : " << cameraMatrix << std::endl;
         std::cout << "distCoeffs : " << distCoeffs << std::endl;
         std::cout << "Rotation vector : " << R << std::endl;
         std::cout << "Translation vector : " << T << std::endl;
 
-//        //Сохранение изображения
-//        if(cv::imwrite((std::string)FILE_RESILT_IMG + "test.jpg", inputFrame) == true)
-//        {
-//            ui->debugLine->setText("Save");
-//        }
-
-//        //Сохранение результатов в файл
-//        std::string fileResultPath = FILE_RESULT_YAML;
-//        cv::FileStorage fs(fileResultPath,cv::FileStorage::WRITE);
-//        fs << "cameraMatrix" << cameraMatrix
-//           << "distCoeffs"   << distCoeffs;
-//        fs.release();
+        FileSystem fileSystem;
+        fileSystem.saveResult(inputFrame, cameraMatrix, distCoeffs, R, T);
 
     }
 }
