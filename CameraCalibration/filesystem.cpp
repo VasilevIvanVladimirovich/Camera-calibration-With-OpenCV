@@ -25,8 +25,6 @@ void FileSystem::openFileInView(QString pathName)
                     cv::FileStorage fs(fileResultPath.toStdString(),cv::FileStorage::READ);
                     fs["cameraMatrix"] >> cameraMatrix;
                     fs["distCoeffs"] >> distCoeffs;
-//                    fs["R"]  >> R;
-//                    fs["T"] >> T;
                     output += "CameraMatrix: \n";
                     output += "[";
                     for(int i=0; i<3; i++)

@@ -10,6 +10,8 @@ CONFIG += c++11
 
 SOURCES += \
     calibrationprocessor.cpp \
+    dialogdetect.cpp \
+    dialogsetimg.cpp \
     filesystem.cpp \
     imageprocessor.cpp \
     main.cpp \
@@ -17,11 +19,15 @@ SOURCES += \
 
 HEADERS += \
     calibrationprocessor.h \
+    dialogdetect.h \
+    dialogsetimg.h \
     filesystem.h \
     imageprocessor.h \
     mainwindow.h
 
 FORMS += \
+    dialogdetect.ui \
+    dialogsetimg.ui \
     mainwindow.ui
 
 INCLUDEPATH += D:\PRoG\CLib\opencv\opencv\Release\install\include

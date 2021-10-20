@@ -52,7 +52,6 @@ private:
 
 private slots:
     void on_btn_calibration_clicked();
-    void on_openFile_clicked();
-    void on_resetView_clicked();
+    void on_pushButton_2_clicked();
 };
 #endif // MAINWINDOW_H

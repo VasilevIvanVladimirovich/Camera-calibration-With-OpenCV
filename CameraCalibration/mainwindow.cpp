@@ -9,12 +9,11 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 
     ui->setupUi(this);
     ui->debugLine->setReadOnly(true);
-    ui->textEditViewFile->setReadOnly(true);
 
     imgprocessor_ = new ImageProcessor(NUMBER_CAM);
     connect(imgprocessor_,
             SIGNAL(outDisplay(QPixmap)),
-            ui->widget_camera,
+            ui->widget_img,
             SLOT(setPixmap(QPixmap)));
 
     connect(imgprocessor_,
@@ -26,12 +25,12 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 
     connect(&fileSystem_,
             SIGNAL(outImgDisplay(QPixmap)),
-            ui->viewfile,
+            ui->widget_img,
             SLOT(setPixmap(QPixmap)));
 
     connect(&fileSystem_,
             SIGNAL(outTextDisplay(QString)),
-            ui->textEditViewFile,
+            ui->widget_img,
             SLOT(setText(QString)));
 
 }
@@ -47,20 +46,22 @@ void MainWindow::on_btn_calibration_clicked()
 }
 
 
-void MainWindow::on_openFile_clicked()
+//void MainWindow::on_openFile_clicked()
+//{
+//    QString pathName = QFileDialog::getOpenFileName(this,
+//                                QString::fromUtf8("Открыть файл"),
+//                                QDir::currentPath(),
+//                                "Images (*.png *.jpg *.bmp *.YAML)");
+
+//    fileSystem_.openFileInView(pathName);
+//}
+
+
+
+
+
+void MainWindow::on_pushButton_2_clicked()
 {
-    QString pathName = QFileDialog::getOpenFileName(this,
-                                QString::fromUtf8("Открыть файл"),
-                                QDir::currentPath(),
-                                "Images (*.png *.jpg *.bmp *.YAML)");
 
-    fileSystem_.openFileInView(pathName);
-}
-
-
-void MainWindow::on_resetView_clicked()
-{
-    ui->textEditViewFile->clear();
-    ui->viewfile->clear();
 }
 
