@@ -37,6 +37,10 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
             SIGNAL(outTableItems(QTableWidgetItem*,QTableWidgetItem*)),
             this,
             SLOT(addItem(QTableWidgetItem*,QTableWidgetItem*)));
+    connect(&fileSystem_,
+            SIGNAL(outImgDisplay(QPixmap)),
+            ui->widget_img,
+            SLOT(setPixmap(QPixmap)));
 }
 
 MainWindow::~MainWindow()
@@ -81,7 +85,6 @@ void MainWindow::on_tableWidget_cellClicked(int row, int column)
 
 void MainWindow::on_btn_detect_clicked()
 {
-
     DialogDetect dialog;
     connect(&dialog,
             SIGNAL(outTargetType(QString)),
@@ -90,7 +93,7 @@ void MainWindow::on_btn_detect_clicked()
     connect(&dialog,
             SIGNAL(outTargetSize(int,int)),
             &calibprocessor_,
-            SLOT(setTargetType(int,int)));
+            SLOT(setTargetSize(int,int)));
     connect(&dialog,
             SIGNAL(outSubPixIter(int)),
             &calibprocessor_,

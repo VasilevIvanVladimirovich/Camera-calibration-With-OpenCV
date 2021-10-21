@@ -20,9 +20,8 @@ class CalibrationProcessor :public QObject
 public:
     CalibrationProcessor(QObject *parent = nullptr);
 
-    void accumulationVectorsImg(cv::Mat inputFrame);
+    void accumulationVectorsImg();
     //void calibrationChessboardMethod(cv::Mat inputFrame);
-
 
 public slots:
     void setTargetType(QString qstring);

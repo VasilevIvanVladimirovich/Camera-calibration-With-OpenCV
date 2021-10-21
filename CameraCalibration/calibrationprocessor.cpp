@@ -5,7 +5,7 @@ CalibrationProcessor::CalibrationProcessor(QObject *parent) : QObject(parent)
 
 }
 
-void CalibrationProcessor::accumulationVectorsImg(cv::Mat inputFrame)
+void CalibrationProcessor::accumulationVectorsImg()
 {
     std::vector<cv::Point3f> objp;
     for(int i{0};i<CHECKERBOARD_[1];i++)
@@ -19,11 +19,11 @@ void CalibrationProcessor::accumulationVectorsImg(cv::Mat inputFrame)
 
     //Поиск углов шахматной доски
     //Если на изображении найдено нужное количество углов, то успех = истина
-    success = cv::findChessboardCorners(inputFrame,cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]),corner_pts);
+    success = cv::findChessboardCorners(inputFrame_,cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]),corner_pts);
 
     if(success)
     {
-        cv::drawChessboardCorners(inputFrame, cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]), corner_pts, success);
+        cv::drawChessboardCorners(inputFrame_, cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]), corner_pts, success);
         objpoints_.push_back(objp);
         imgpoints_.push_back(corner_pts);
 
@@ -34,10 +34,10 @@ void CalibrationProcessor::accumulationVectorsImg(cv::Mat inputFrame)
 
         FileSystem fileSystem;
         QPixmap saveImg = QPixmap::fromImage(
-                                    QImage(inputFrame.data,
-                                    inputFrame.cols,
-                                    inputFrame.rows,
-                                    inputFrame.step,
+                                    QImage(inputFrame_.data,
+                                    inputFrame_.cols,
+                                    inputFrame_.rows,
+                                    inputFrame_.step,
                                     QImage::Format_RGB888).rgbSwapped());
         fileSystem.saveResult(saveImg, cameraMatrix_, distCoeffs_, R_, T_);
 
