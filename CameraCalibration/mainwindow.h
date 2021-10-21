@@ -21,8 +21,10 @@
 #include "imageprocessor.h"
 #include "calibrationprocessor.h"
 #include "filesystem.h"
+#include "dialogdetect.h"
 
 #include <stdio.h>
+#include <QListWidget>
 
 
 QT_BEGIN_NAMESPACE
@@ -50,8 +52,11 @@ private:
 
     FileSystem fileSystem_;
 
+public slots:
+    void addItem(QTableWidgetItem *Item1,QTableWidgetItem *Item2);
 private slots:
-    void on_btn_calibration_clicked();
-    void on_pushButton_2_clicked();
+    void on_btn_setImg_clicked();
+    void on_tableWidget_cellClicked(int row, int column);
+    void on_btn_detect_clicked();
 };
 #endif // MAINWINDOW_H

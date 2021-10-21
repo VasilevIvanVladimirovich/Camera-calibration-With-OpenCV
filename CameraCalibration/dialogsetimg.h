@@ -2,6 +2,11 @@
 #define DIALOGSETIMG_H
 
 #include <QDialog>
+#include <QFileDialog>
+
+#include "filesystem.h"
+
+
 
 namespace Ui {
 class DialogSetImg;
@@ -14,8 +19,20 @@ public:
     explicit DialogSetImg(QWidget *parent = nullptr);
     ~DialogSetImg();
 
+signals:
+    void outFolderPath(QString path);
+    void setTableItems();
+
+private slots:
+    void on_btn_findpath_clicked();
+
+    void on_buttonBox_accepted();
+
 private:
     Ui::DialogSetImg *ui;
+    FileSystem fs;
+    QString pathName;
+
 };
 
 #endif // DIALOGSETIMG_H

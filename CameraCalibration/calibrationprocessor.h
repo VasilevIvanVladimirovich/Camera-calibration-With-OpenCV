@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QPixmap>
+#include <QObject>
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
@@ -13,17 +14,29 @@
 
 #include "filesystem.h"
 
-class CalibrationProcessor
+class CalibrationProcessor :public QObject
 {
+    Q_OBJECT
 public:
-    CalibrationProcessor();
+    CalibrationProcessor(QObject *parent = nullptr);
 
     void accumulationVectorsImg(cv::Mat inputFrame);
-    void calibrationChessboardMethod(cv::Mat inputFrame);
+    //void calibrationChessboardMethod(cv::Mat inputFrame);
+
+
+public slots:
+    void setTargetType(QString qstring);
+    void setTargetSize(int row,int col);
+    void setSubPixIter(int count);
+    void setInputFrame(cv::Mat mat);
+
 private:
+    QString targetType_;
+    int subPixelIter_;
     int CHECKERBOARD_[2]; //размер шахматной доски убрать автоэкспозицию!
     std::vector<std::vector<cv::Point3f> > objpoints_; //Вектор, для хранения векторов 3d точек для каждого изображения шахматной доски
     std::vector<std::vector<cv::Point2f> > imgpoints_; //Вектор, для хранения векторов 2d точек для каждого изображения шахматной доски
+    cv::Mat inputFrame_;
     cv::Mat cameraMatrix_;
     cv::Mat distCoeffs_;
     cv::Mat R_;

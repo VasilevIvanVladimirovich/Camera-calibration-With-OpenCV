@@ -1,6 +1,6 @@
- #include "calibrationprocessor.h"
+#include "calibrationprocessor.h"
 
-CalibrationProcessor::CalibrationProcessor()
+CalibrationProcessor::CalibrationProcessor(QObject *parent) : QObject(parent)
 {
 
 }
@@ -45,8 +45,30 @@ void CalibrationProcessor::accumulationVectorsImg(cv::Mat inputFrame)
 
 }
 
-void CalibrationProcessor::calibrationChessboardMethod(cv::Mat inputFrame)
-{
-        cv::calibrateCamera(objpoints_, imgpoints_, cv::Size(inputFrame.rows, inputFrame.cols), cameraMatrix_, distCoeffs_, R_, T_);
+//void CalibrationProcessor::calibrationChessboardMethod(cv::Mat inputFrame)
+//{
+//        //cv::calibrateCamera(objpoints_, imgpoints_, cv::Size(inputFrame.rows, inputFrame.cols), cameraMatrix_, distCoeffs_, R_, T_);
 
+//}
+
+void CalibrationProcessor::setTargetType(QString qstring)
+{
+    targetType_ = qstring;
+}
+
+void CalibrationProcessor::setTargetSize(int row, int col)
+{
+    CHECKERBOARD_[0]=row;
+    CHECKERBOARD_[1]=col;
+}
+
+void CalibrationProcessor::setSubPixIter(int count)
+{
+    subPixelIter_ = count;
+    qDebug()<<count;
+}
+
+void CalibrationProcessor::setInputFrame(cv::Mat mat)
+{
+    inputFrame_=mat;
 }
