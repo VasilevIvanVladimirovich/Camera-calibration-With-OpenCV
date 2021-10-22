@@ -2,7 +2,7 @@
 #include "dialogsetimg.h"
 #include "ui_mainwindow.h"
 
-#define NUMBER_CAM 1
+#define NUMBER_CAM 0
 
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow)
@@ -32,6 +32,18 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 
 //    imgprocessor_->start();
 
+    connect(&calibprocessor_,
+            SIGNAL(sendStatusImg(QString,int)),
+            this,
+            SLOT(setStatusImg(QString,int)));
+    connect(&calibprocessor_,
+            SIGNAL(requestFromTable(int)),
+            this,
+            SLOT(answerFromTable(int)));
+    connect(this,
+            SIGNAL(sendFromTable(QString)),
+            &calibprocessor_,
+            SLOT(setInputFrame(QString)));
 
     connect(&fileSystem_,
             SIGNAL(outTableItems(QTableWidgetItem*,QTableWidgetItem*)),
@@ -48,11 +60,23 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+
 void MainWindow::addItem(QTableWidgetItem *Item1,QTableWidgetItem *Item2)
 {
     ui->tableWidget->setRowCount(ui->tableWidget->rowCount()+1);
     ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,0,Item1);
     ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,2,Item2);
+}
+
+void MainWindow::answerFromTable(int row)
+{
+    emit sendFromTable(ui->tableWidget->item(row,2)->text());
+}
+
+void MainWindow::setStatusImg(QString status, int row)
+{
+    QTableWidgetItem *st = new QTableWidgetItem(status);
+    ui->tableWidget->setItem(row,1,st);
 }
 
 //void MainWindow::on_btn_calibration_clicked()
@@ -97,9 +121,10 @@ void MainWindow::on_btn_detect_clicked()
     connect(&dialog,
             SIGNAL(outSubPixIter(int)),
             &calibprocessor_,
-            SLOT(setSubPixIter(int)));
-
+            SLOT(setSubPixIter(int)));  
+    calibprocessor_.setMaxCountInTable(ui->tableWidget->rowCount());
     dialog.setModal(true);
     dialog.exec();
+    calibprocessor_.accumulationVectorsImg();
 }
 

@@ -7,6 +7,7 @@ CalibrationProcessor::CalibrationProcessor(QObject *parent) : QObject(parent)
 
 void CalibrationProcessor::accumulationVectorsImg()
 {
+
     std::vector<cv::Point3f> objp;
     for(int i{0};i<CHECKERBOARD_[1];i++)
     {
@@ -17,32 +18,50 @@ void CalibrationProcessor::accumulationVectorsImg()
     std::vector<cv::Point2f> corner_pts; // Вектор для хранения пикселей координат углов шахматной доски
     bool success;
 
+    for(int i = 0;i<maxCountInTable_;i++)
+    {
+
+    getFrameFromTable(i);
     //Поиск углов шахматной доски
     //Если на изображении найдено нужное количество углов, то успех = истина
     success = cv::findChessboardCorners(inputFrame_,cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]),corner_pts);
 
+
     if(success)
     {
-        cv::drawChessboardCorners(inputFrame_, cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]), corner_pts, success);
-        objpoints_.push_back(objp);
-        imgpoints_.push_back(corner_pts);
+          emit sendStatusImg("Success", i);
+          cv::drawChessboardCorners(inputFrame_, cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]), corner_pts, success);
+//        objpoints_.push_back(objp);
+//        imgpoints_.push_back(corner_pts);
 
-        std::cout << "cameraMatrix : " << cameraMatrix_ << std::endl;
-        std::cout << "distCoeffs : " << distCoeffs_ << std::endl;
-        std::cout << "Rotation vector : " << R_ << std::endl;
-        std::cout << "Translation vector : " << T_ << std::endl;
+//        std::cout << "cameraMatrix : " << cameraMatrix_ << std::endl;
+//        std::cout << "distCoeffs : " << distCoeffs_ << std::endl;
+//        std::cout << "Rotation vector : " << R_ << std::endl;
+//        std::cout << "Translation vector : " << T_ << std::endl;
 
-        FileSystem fileSystem;
-        QPixmap saveImg = QPixmap::fromImage(
-                                    QImage(inputFrame_.data,
-                                    inputFrame_.cols,
-                                    inputFrame_.rows,
-                                    inputFrame_.step,
-                                    QImage::Format_RGB888).rgbSwapped());
-        fileSystem.saveResult(saveImg, cameraMatrix_, distCoeffs_, R_, T_);
+//        FileSystem fileSystem;
+//        QPixmap saveImg = QPixmap::fromImage(
+//                                    QImage(inputFrame_.data,
+//                                    inputFrame_.cols,
+//                                    inputFrame_.rows,
+//                                    inputFrame_.step,
+//                                    QImage::Format_RGB888).rgbSwapped());
+//        fileSystem.saveResult(saveImg, cameraMatrix_, distCoeffs_, R_, T_);
+
+    }else emit sendStatusImg("No find corners", i);
 
     }
 
+}
+
+bool CalibrationProcessor::getFrameFromTable(int row)
+{
+    emit requestFromTable(row);
+}
+
+void CalibrationProcessor::setMaxCountInTable(int count)
+{
+    maxCountInTable_ = count;
 }
 
 //void CalibrationProcessor::calibrationChessboardMethod(cv::Mat inputFrame)
@@ -65,10 +84,10 @@ void CalibrationProcessor::setTargetSize(int row, int col)
 void CalibrationProcessor::setSubPixIter(int count)
 {
     subPixelIter_ = count;
-    qDebug()<<count;
 }
 
-void CalibrationProcessor::setInputFrame(cv::Mat mat)
+void CalibrationProcessor::setInputFrame(QString path)
 {
-    inputFrame_=mat;
+    inputFrame_ = cv::imread(path.toStdString());
 }
+

@@ -21,15 +21,21 @@ public:
     CalibrationProcessor(QObject *parent = nullptr);
 
     void accumulationVectorsImg();
+    bool getFrameFromTable(int row);
     //void calibrationChessboardMethod(cv::Mat inputFrame);
+    void setMaxCountInTable(int count);
 
+signals:
+    void requestFromTable(int row);
+    void sendStatusImg(QString status, int row);
+    //void request
 public slots:
     void setTargetType(QString qstring);
     void setTargetSize(int row,int col);
     void setSubPixIter(int count);
-    void setInputFrame(cv::Mat mat);
-
+    void setInputFrame(QString);
 private:
+    int maxCountInTable_;
     QString targetType_;
     int subPixelIter_;
     int CHECKERBOARD_[2]; //размер шахматной доски убрать автоэкспозицию!

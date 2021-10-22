@@ -52,8 +52,12 @@ private:
 
     FileSystem fileSystem_;
 
+signals:
+    void sendFromTable(QString);
 public slots:
     void addItem(QTableWidgetItem *Item1,QTableWidgetItem *Item2);
+    void answerFromTable(int row);
+    void setStatusImg(QString status,int row);
 private slots:
     void on_btn_setImg_clicked();
     void on_tableWidget_cellClicked(int row, int column);
