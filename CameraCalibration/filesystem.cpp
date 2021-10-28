@@ -4,6 +4,11 @@ FileSystem::FileSystem()
 {
 
 }
+
+QString FileSystem::getFilePath()
+{
+    return filePath;
+}
 //Открыть файлы для просмотра и вывести
 void FileSystem::openFileInView(QString pathName)
 {
@@ -52,6 +57,15 @@ void FileSystem::openFileInView(QString pathName)
 
 }
 
+void FileSystem::openFileInView(int row)
+{
+        QString pathName;
+        pathName = TEMP_PATH + QString::number(row) + ".png";
+        QImage img(pathName);
+        emit outImgDisplay(QPixmap::fromImage(img));
+
+}
+
 void FileSystem::saveResult(QPixmap qpixmap, cv::Mat cameraMatrix, cv::Mat distCoeffs, cv::Mat R, cv::Mat T)
 {
     QDir dir(filePath);
@@ -71,6 +85,7 @@ void FileSystem::saveResult(QPixmap qpixmap, cv::Mat cameraMatrix, cv::Mat distC
 
 void FileSystem::saveFileInYaml(cv::Mat cameraMatrix, cv::Mat distCoeffs, cv::Mat R, cv::Mat T, QString name)
 {
+    name = TEMP_PATH + name + ".YAML";
     std::string fileResultPath = name.toStdString();
             cv::FileStorage fs(fileResultPath,cv::FileStorage::WRITE);
             fs << "cameraMatrix" << cameraMatrix
@@ -80,11 +95,12 @@ void FileSystem::saveFileInYaml(cv::Mat cameraMatrix, cv::Mat distCoeffs, cv::Ma
             fs.release();
 }
 
-void FileSystem::saveInImg(QPixmap qpixmap, QString name)
+void FileSystem::saveInImg(QPixmap qpixmap, QString path)
 {
-    QFile file(name);
+    //name = TEMP_PATH + name + ".png";
+    QFile file(path);
     file.open(QIODevice::WriteOnly);
-    qpixmap.save(&file, "jpg");
+    qpixmap.save(&file, "png");
     file.close();
 }
 
@@ -114,7 +130,7 @@ void FileSystem::getTableItems()
     {
         QTableWidgetItem *item = new QTableWidgetItem();
         QTableWidgetItem *item1 = new QTableWidgetItem(fileList[i].absoluteFilePath());
-        item->setCheckState(Qt::Checked);
+        item->setCheckState(Qt::Unchecked);
         emit outTableItems(item,item1);
     }
 }

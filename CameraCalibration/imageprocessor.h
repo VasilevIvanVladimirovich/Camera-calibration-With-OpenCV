@@ -13,6 +13,8 @@
 
 #include <QThread>
 
+#include "filesystem.h"
+
 class ImageProcessor :public QThread
 {
     Q_OBJECT
@@ -24,8 +26,12 @@ public:
    void setOutFrame(cv::Mat frame);
    cv::Mat getOutFrame();
 
+   void setPath(QString qstring);
+   void setCountFrame(int countFrame);
+
 signals:
     void outDisplay(QPixmap pixmap);
+    void setItem(QTableWidgetItem* item,QTableWidgetItem* item1);
 
 public slots:
     void run() override;
@@ -34,6 +40,9 @@ private:
     bool end_;
     cv::VideoCapture web_cam_;
     cv::Mat outFrame_;
+    FileSystem filesystem;
+    QString path_;
+    int countFrame_;
 };
 
 #endif // IMAGEPROCESSOR_H

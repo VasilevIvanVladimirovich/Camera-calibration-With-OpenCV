@@ -17,6 +17,8 @@
 #include <QTableWidget>
 #include <QDebug>
 
+#define TEMP_PATH "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Temp/"
+
 
 class FileSystem : public QObject
 {
@@ -25,14 +27,16 @@ public:
     FileSystem();
 
     void openFileInView(QString filePath);
+    void openFileInView(int row);
     void saveResult(QPixmap qpixmap, cv::Mat cameraMatrix,cv::Mat distCoeffs, cv::Mat R, cv::Mat T);
     void saveFileInYaml(cv::Mat cameraMatrix,cv::Mat distCoeffs, cv::Mat R, cv::Mat T, QString name);
     void saveInImg(QPixmap qpixmap, QString name);
     int  countImgInDir(QString path);
+    QString getFilePath();
 
 signals:
     void outImgDisplay(QPixmap pixmap);
-    //void outTextDisplay(QString qstring);
+    void outTextDisplay(QString qstring);
     void outTableItems(QTableWidgetItem *item1,QTableWidgetItem *item2);
 
 public slots:

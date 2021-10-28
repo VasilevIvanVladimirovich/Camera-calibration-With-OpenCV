@@ -39,6 +39,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+   QVector<QString> getVectorImgFromTable();
+
 private:
     Ui::MainWindow *ui;
 
@@ -52,15 +54,14 @@ private:
 
     FileSystem fileSystem_;
 
-signals:
-    void sendFromTable(QString);
 public slots:
+    void videoStream(int countframe);
     void addItem(QTableWidgetItem *Item1,QTableWidgetItem *Item2);
-    void answerFromTable(int row);
     void setStatusImg(QString status,int row);
 private slots:
     void on_btn_setImg_clicked();
     void on_tableWidget_cellClicked(int row, int column);
     void on_btn_detect_clicked();
+    void on_btn_stopVideo_clicked();
 };
 #endif // MAINWINDOW_H

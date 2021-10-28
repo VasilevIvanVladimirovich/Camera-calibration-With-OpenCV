@@ -7,6 +7,12 @@ CalibrationProcessor::CalibrationProcessor(QObject *parent) : QObject(parent)
 
 void CalibrationProcessor::accumulationVectorsImg()
 {
+    QString filename;
+    FileSystem fileSystem;
+    QDir dir(TEMP_PATH);
+    dir.removeRecursively();
+
+    reloadVectors();
 
     std::vector<cv::Point3f> objp;
     for(int i{0};i<CHECKERBOARD_[1];i++)
@@ -14,61 +20,65 @@ void CalibrationProcessor::accumulationVectorsImg()
         for(int j{0}; j<CHECKERBOARD_[0]; j++)
         objp.push_back(cv::Point3f(j,i,0));
     }
-
     std::vector<cv::Point2f> corner_pts; // Вектор для хранения пикселей координат углов шахматной доски
     bool success;
-
-    for(int i = 0;i<maxCountInTable_;i++)
+    for(int i = 0;i<vectorPathImg_.length();i++)
     {
+        inputFrame_= cv::imread(vectorPathImg_[i].toStdString());
+        cv::cvtColor(inputFrame_,gray,cv::COLOR_BGR2GRAY);
 
-    getFrameFromTable(i);
     //Поиск углов шахматной доски
     //Если на изображении найдено нужное количество углов, то успех = истина
-    success = cv::findChessboardCorners(inputFrame_,cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]),corner_pts);
-
-
+        success = cv::findChessboardCorners(gray,cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]),corner_pts);
     if(success)
     {
-          emit sendStatusImg("Success", i);
-          cv::drawChessboardCorners(inputFrame_, cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]), corner_pts, success);
-//        objpoints_.push_back(objp);
-//        imgpoints_.push_back(corner_pts);
+         cv::TermCriteria criteria(cv::TermCriteria::EPS | cv::TermCriteria::MAX_ITER, subPixelIter_, 0.001);
+         cv::cornerSubPix(gray,corner_pts,cv::Size(11,11), cv::Size(-1,-1),criteria);
+         cv::drawChessboardCorners(inputFrame_, cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]), corner_pts, success);
+         emit sendStatusImg("Success", i);
 
-//        std::cout << "cameraMatrix : " << cameraMatrix_ << std::endl;
-//        std::cout << "distCoeffs : " << distCoeffs_ << std::endl;
-//        std::cout << "Rotation vector : " << R_ << std::endl;
-//        std::cout << "Translation vector : " << T_ << std::endl;
+         objpoints_.push_back(objp);
+         imgpoints_.push_back(corner_pts);
 
-//        FileSystem fileSystem;
-//        QPixmap saveImg = QPixmap::fromImage(
-//                                    QImage(inputFrame_.data,
-//                                    inputFrame_.cols,
-//                                    inputFrame_.rows,
-//                                    inputFrame_.step,
-//                                    QImage::Format_RGB888).rgbSwapped());
-//        fileSystem.saveResult(saveImg, cameraMatrix_, distCoeffs_, R_, T_);
+
+         QPixmap saveImg = QPixmap::fromImage(
+                                   QImage(inputFrame_.data,
+                                   inputFrame_.cols,
+                                   inputFrame_.rows,
+                                   inputFrame_.step,
+                                   QImage::Format_RGB888).rgbSwapped());
+
+        fileSystem.saveInImg(saveImg,QString::number(i));
 
     }else emit sendStatusImg("No find corners", i);
 
-    }
+    cameraCalibrationChessboardMethod();
+}
+
 
 }
 
-bool CalibrationProcessor::getFrameFromTable(int row)
+void CalibrationProcessor::reloadVectors()
 {
-    emit requestFromTable(row);
+    objpoints_.clear();
+    imgpoints_.clear();
+    imgpoints_.clear();
+
 }
 
-void CalibrationProcessor::setMaxCountInTable(int count)
+void CalibrationProcessor::setVectorPathImg(QVector<QString> vector)
 {
-    maxCountInTable_ = count;
+    vectorPathImg_=vector;
 }
 
-//void CalibrationProcessor::calibrationChessboardMethod(cv::Mat inputFrame)
-//{
-//        //cv::calibrateCamera(objpoints_, imgpoints_, cv::Size(inputFrame.rows, inputFrame.cols), cameraMatrix_, distCoeffs_, R_, T_);
 
-//}
+void CalibrationProcessor::cameraCalibrationChessboardMethod()
+{
+    cv::calibrateCamera(objpoints_, imgpoints_, cv::Size(gray.rows, gray.cols), cameraMatrix_, distCoeffs_, R_, T_);
+
+    FileSystem fs;
+    fs.saveFileInYaml(cameraMatrix_,distCoeffs_,R_,T_,"D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Temp/Result");
+}
 
 void CalibrationProcessor::setTargetType(QString qstring)
 {
@@ -84,10 +94,5 @@ void CalibrationProcessor::setTargetSize(int row, int col)
 void CalibrationProcessor::setSubPixIter(int count)
 {
     subPixelIter_ = count;
-}
-
-void CalibrationProcessor::setInputFrame(QString path)
-{
-    inputFrame_ = cv::imread(path.toStdString());
 }
 

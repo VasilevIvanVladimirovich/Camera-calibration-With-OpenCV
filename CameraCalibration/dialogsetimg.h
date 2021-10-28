@@ -22,11 +22,14 @@ public:
 signals:
     void outFolderPath(QString path);
     void setTableItems();
+    void signalVideoStream(int countframe);
 
 private slots:
     void on_btn_findpath_clicked();
 
     void on_buttonBox_accepted();
+
+    void on_btn_getCameraImg_clicked();
 
 private:
     Ui::DialogSetImg *ui;

@@ -12,39 +12,18 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     ui->debugLine->setReadOnly(true);
     ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableWidget->setColumnCount(3);
-    ui->tableWidget->setHorizontalHeaderLabels(QStringList()<<"Include"<<"Status"<<"File name");
+    ui->tableWidget->setHorizontalHeaderLabels(QStringList()<<"Draw"<<"Status"<<"File name");
     ui->tableWidget->setShowGrid(false);
     // Разрешаем выделение только одного элемента
     ui->tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
     // Разрешаем выделение построчно
     ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-//    imgprocessor_ = new ImageProcessor(NUMBER_CAM);
-//    connect(imgprocessor_,
-//            SIGNAL(outDisplay(QPixmap)),
-//            ui->widget_img,
-//            SLOT(setPixmap(QPixmap)));
-
-//    connect(imgprocessor_,
-//            SIGNAL(finished()),
-//            imgprocessor_,
-//            SLOT(deleteLater()));
-
-//    imgprocessor_->start();
 
     connect(&calibprocessor_,
             SIGNAL(sendStatusImg(QString,int)),
             this,
             SLOT(setStatusImg(QString,int)));
-    connect(&calibprocessor_,
-            SIGNAL(requestFromTable(int)),
-            this,
-            SLOT(answerFromTable(int)));
-    connect(this,
-            SIGNAL(sendFromTable(QString)),
-            &calibprocessor_,
-            SLOT(setInputFrame(QString)));
-
     connect(&fileSystem_,
             SIGNAL(outTableItems(QTableWidgetItem*,QTableWidgetItem*)),
             this,
@@ -53,6 +32,10 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
             SIGNAL(outImgDisplay(QPixmap)),
             ui->widget_img,
             SLOT(setPixmap(QPixmap)));
+//    connect(&fileSystem_,
+//            SIGNAL(outTextDisplay(QPixmap)),
+//            ui->widget_img,
+//            SLOT(setPixmap(QPixmap)));
 }
 
 MainWindow::~MainWindow()
@@ -60,6 +43,44 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+QVector<QString> MainWindow::getVectorImgFromTable()
+{
+    QVector<QString> vector;
+    for(int i = 0;i < ui->tableWidget->rowCount();i++)
+    {
+        vector.push_back(ui->tableWidget->item(i,2)->text());
+    }
+    return vector;
+}
+
+void MainWindow::videoStream(int countframe)
+{
+        imgprocessor_ = new ImageProcessor(NUMBER_CAM);
+        connect(imgprocessor_,
+                SIGNAL(outDisplay(QPixmap)),
+                ui->widget_img,
+                SLOT(setPixmap(QPixmap)));
+
+        connect(imgprocessor_,
+                SIGNAL(finished()),
+                imgprocessor_,
+                SLOT(deleteLater()));
+
+        connect(imgprocessor_,
+                SIGNAL(setItem(QTableWidgetItem*,QTableWidgetItem*)),
+                this,
+                SLOT(addItem(QTableWidgetItem*,QTableWidgetItem*)));
+
+        imgprocessor_->setPath(fileSystem_.getFilePath());
+        imgprocessor_->setCountFrame(countframe);
+        imgprocessor_->start();
+
+}
+
+void MainWindow::on_btn_stopVideo_clicked()
+{
+    imgprocessor_->stopedThread();
+}
 
 void MainWindow::addItem(QTableWidgetItem *Item1,QTableWidgetItem *Item2)
 {
@@ -68,10 +89,6 @@ void MainWindow::addItem(QTableWidgetItem *Item1,QTableWidgetItem *Item2)
     ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,2,Item2);
 }
 
-void MainWindow::answerFromTable(int row)
-{
-    emit sendFromTable(ui->tableWidget->item(row,2)->text());
-}
 
 void MainWindow::setStatusImg(QString status, int row)
 {
@@ -79,14 +96,10 @@ void MainWindow::setStatusImg(QString status, int row)
     ui->tableWidget->setItem(row,1,st);
 }
 
-//void MainWindow::on_btn_calibration_clicked()
-//{
-//    calibprocessor_.calibrationChessboardMethod(imgprocessor_->getOutFrame());
-//}
-
 
 void MainWindow::on_btn_setImg_clicked()
 {
+
     ui->tableWidget->clearContents();
     DialogSetImg dialog;
     connect(&dialog,
@@ -97,13 +110,21 @@ void MainWindow::on_btn_setImg_clicked()
             SIGNAL(setTableItems()),
             &fileSystem_,
             SLOT(getTableItems()));
+    connect(&dialog,
+            SIGNAL(signalVideoStream(int)),
+            this,
+            SLOT(videoStream(int)));
     dialog.setModal(true);
     dialog.exec();
 }
 
 void MainWindow::on_tableWidget_cellClicked(int row, int column)
 {
-    fileSystem_.openFileInView(ui->tableWidget->item(row,2)->text());
+
+    if(ui->tableWidget->item(row,0)->checkState() == Qt::Checked)
+    {
+          fileSystem_.openFileInView(row);
+    }else fileSystem_.openFileInView(ui->tableWidget->item(row,2)->text());
 }
 
 
@@ -122,9 +143,12 @@ void MainWindow::on_btn_detect_clicked()
             SIGNAL(outSubPixIter(int)),
             &calibprocessor_,
             SLOT(setSubPixIter(int)));  
-    calibprocessor_.setMaxCountInTable(ui->tableWidget->rowCount());
+    calibprocessor_.setVectorPathImg(getVectorImgFromTable());
     dialog.setModal(true);
     dialog.exec();
     calibprocessor_.accumulationVectorsImg();
 }
+
+
+
 

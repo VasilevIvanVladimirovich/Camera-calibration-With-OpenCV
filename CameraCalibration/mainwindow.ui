@@ -44,6 +44,13 @@
         </property>
        </spacer>
       </item>
+      <item>
+       <widget class="QPushButton" name="btn_stopVideo">
+        <property name="text">
+         <string>StopVideo</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
     <item>

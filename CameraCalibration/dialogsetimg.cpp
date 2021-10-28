@@ -29,3 +29,13 @@ void DialogSetImg::on_buttonBox_accepted()
     emit outFolderPath(pathName);
     emit setTableItems();
 }
+
+
+
+void DialogSetImg::on_btn_getCameraImg_clicked()
+{
+    emit outFolderPath(pathName);
+    emit signalVideoStream(ui->countframe->value());
+    close();
+}
+
