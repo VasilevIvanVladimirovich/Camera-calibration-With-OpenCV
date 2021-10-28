@@ -11,6 +11,11 @@ void CalibrationProcessor::accumulationVectorsImg()
     FileSystem fileSystem;
     QDir dir(TEMP_PATH);
     dir.removeRecursively();
+    dir.mkpath(TEMP_PATH);
+
+
+
+
 
     reloadVectors();
 
@@ -40,22 +45,19 @@ void CalibrationProcessor::accumulationVectorsImg()
          objpoints_.push_back(objp);
          imgpoints_.push_back(corner_pts);
 
-
          QPixmap saveImg = QPixmap::fromImage(
                                    QImage(inputFrame_.data,
                                    inputFrame_.cols,
                                    inputFrame_.rows,
                                    inputFrame_.step,
                                    QImage::Format_RGB888).rgbSwapped());
-
-        fileSystem.saveInImg(saveImg,QString::number(i));
+        filename = TEMP_PATH + QString::number(i) + ".png";
+        fileSystem.saveInImg(saveImg,filename);
 
     }else emit sendStatusImg("No find corners", i);
 
     cameraCalibrationChessboardMethod();
 }
-
-
 }
 
 void CalibrationProcessor::reloadVectors()
