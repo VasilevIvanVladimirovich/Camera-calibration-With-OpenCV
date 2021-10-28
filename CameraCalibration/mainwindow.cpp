@@ -2,14 +2,14 @@
 #include "dialogsetimg.h"
 #include "ui_mainwindow.h"
 
-#define NUMBER_CAM 0
+#define NUMBER_CAM 1
 
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow)
 {
 
     ui->setupUi(this);
-    ui->debugLine->setReadOnly(true);
+    ui->calibOutputTextEdit->setReadOnly(true);
     ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableWidget->setColumnCount(3);
     ui->tableWidget->setHorizontalHeaderLabels(QStringList()<<"Draw"<<"Status"<<"File name");
@@ -32,10 +32,11 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
             SIGNAL(outImgDisplay(QPixmap)),
             ui->widget_img,
             SLOT(setPixmap(QPixmap)));
-//    connect(&fileSystem_,
-//            SIGNAL(outTextDisplay(QPixmap)),
-//            ui->widget_img,
-//            SLOT(setPixmap(QPixmap)));
+    connect(&fileSystem_,
+            SIGNAL(outTextDisplayYamlCalib(QString)),
+            ui->calibOutputTextEdit,
+            SLOT(setText(QString)));
+
 }
 
 MainWindow::~MainWindow()
@@ -73,6 +74,7 @@ void MainWindow::videoStream(int countframe)
 
         imgprocessor_->setPath(fileSystem_.getFilePath());
         imgprocessor_->setCountFrame(countframe);
+        imgprocessor_->setTransformImg(false);
         imgprocessor_->start();
 
 }
@@ -147,8 +149,34 @@ void MainWindow::on_btn_detect_clicked()
     dialog.setModal(true);
     dialog.exec();
     calibprocessor_.accumulationVectorsImg();
+    QString output;
+    output = "Calib errors: " + QString::number(calibprocessor_.computeReprojectionErrors());
+    ui->texteditErrorsCalib->setText(output);
+    fileSystem_.openFileInViewYamlCalib("D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Temp/Result.YAML");
+}
+void MainWindow::on_chekResultInVideoStream_clicked()
+{
+
+    QString filename;
+    filename = QFileDialog::getOpenFileName(0, "Открыть", "", "*.YAML");
+    videoStream(filename);
 }
 
+void MainWindow::videoStream(QString qstring)
+{
+    imgprocessor_ = new ImageProcessor(NUMBER_CAM);
+    connect(imgprocessor_,
+            SIGNAL(outDisplay(QPixmap)),
+            ui->widget_img,
+            SLOT(setPixmap(QPixmap)));
 
+    connect(imgprocessor_,
+            SIGNAL(finished()),
+            imgprocessor_,
+            SLOT(deleteLater()));
 
+    imgprocessor_->setPath(qstring);
+    imgprocessor_->setTransformImg(true);
+    imgprocessor_->start();
+}
 

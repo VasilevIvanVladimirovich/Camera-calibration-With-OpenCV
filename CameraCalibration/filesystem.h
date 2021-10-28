@@ -26,17 +26,20 @@ class FileSystem : public QObject
 public:
     FileSystem();
 
+    void openFileInViewYamlCalib(QString pathName);
     void openFileInView(QString filePath);
     void openFileInView(int row);
+    void readYamlMatrix(QString path, cv::Mat* cameraMatrix);
+    void readYamldistCoef(QString path, cv::Mat* distCoeffs);
     void saveResult(QPixmap qpixmap, cv::Mat cameraMatrix,cv::Mat distCoeffs, cv::Mat R, cv::Mat T);
-    void saveFileInYaml(cv::Mat cameraMatrix,cv::Mat distCoeffs, cv::Mat R, cv::Mat T, QString name);
+    void saveFileInYaml(cv::Mat cameraMatrix,cv::Mat distCoeffs, std::vector<cv::Mat> R, std::vector<cv::Mat> T, QString name);
     void saveInImg(QPixmap qpixmap, QString name);
     int  countImgInDir(QString path);
     QString getFilePath();
 
 signals:
     void outImgDisplay(QPixmap pixmap);
-    void outTextDisplay(QString qstring);
+    void outTextDisplayYamlCalib(QString qstring);
     void outTableItems(QTableWidgetItem *item1,QTableWidgetItem *item2);
 
 public slots:

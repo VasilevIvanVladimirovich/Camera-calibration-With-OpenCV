@@ -9,6 +9,38 @@ QString FileSystem::getFilePath()
 {
     return filePath;
 }
+
+void FileSystem::openFileInViewYamlCalib(QString pathName)
+{
+     std::string output="";
+     cv::Mat cameraMatrix,distCoeffs,R,T;
+     QString fileResultPath = pathName;
+
+             cv::FileStorage fs(fileResultPath.toStdString(),cv::FileStorage::READ);
+             fs["cameraMatrix"] >> cameraMatrix;
+             fs["distCoeffs"] >> distCoeffs;
+             output += "CameraMatrix: \n";
+             output += "[";
+             for(int i=0; i<3; i++)
+                 {
+                    for(int j=0; j<3; j++)
+                    {
+                        output += std::to_string(cameraMatrix.at<double>(i,j)) + ", \t";
+                    }
+                  output += "\n";
+                 }
+             output += "]";
+             output += "\n DistCoeffs: \n";
+             output += "[";
+                    for(int i=0; i<5; i++)
+                    {
+                        output += std::to_string(distCoeffs.at<double>(i)) + ", ";
+                    }
+             output += "]";
+             qDebug()<<QString::fromStdString(output);
+             emit outTextDisplayYamlCalib(QString::fromStdString(output));
+             fs.release();
+}
 //Открыть файлы для просмотра и вывести
 void FileSystem::openFileInView(QString pathName)
 {
@@ -22,39 +54,6 @@ void FileSystem::openFileInView(QString pathName)
             emit outImgDisplay(QPixmap::fromImage(img));
         }
 
-
-        //кусок кода, который выводит значения из файла YAML
-//        if(splitname.back()=="YAML")
-//        {
-//            std::string output="";
-//            cv::Mat cameraMatrix,distCoeffs,R,T;
-//            QString fileResultPath = pathName;
-
-//                    cv::FileStorage fs(fileResultPath.toStdString(),cv::FileStorage::READ);
-//                    fs["cameraMatrix"] >> cameraMatrix;
-//                    fs["distCoeffs"] >> distCoeffs;
-//                    output += "CameraMatrix: \n";
-//                    output += "[";
-//                    for(int i=0; i<3; i++)
-//                        {
-//                           for(int j=0; j<3; j++)
-//                           {
-//                               output += std::to_string(cameraMatrix.at<double>(i,j)) + ", \t";
-//                           }
-//                         output += "\n";
-//                        }
-//                    output += "]";
-//                    output += "\n DistCoeffs: \n";
-//                    output += "[";
-//                           for(int i=0; i<5; i++)
-//                           {
-//                               output += std::to_string(distCoeffs.at<double>(i)) + ", ";
-//                           }
-//                    output += "]";
-//                    emit outTextDisplay(QString::fromStdString(output));
-//                    fs.release();
-//        }
-
 }
 
 void FileSystem::openFileInView(int row)
@@ -64,6 +63,21 @@ void FileSystem::openFileInView(int row)
         QImage img(pathName);
         emit outImgDisplay(QPixmap::fromImage(img));
 
+}
+
+void FileSystem::readYamldistCoef(QString path,cv::Mat* distCoeffs)
+{
+    cv::FileStorage fs(path.toStdString(),cv::FileStorage::READ);
+    fs["distCoeffs"] >> *distCoeffs;
+    fs.release();
+
+}
+
+void FileSystem::readYamlMatrix(QString path,cv::Mat* cameraMatrix)
+{
+    cv::FileStorage fs(path.toStdString(),cv::FileStorage::READ);
+    fs["cameraMatrix"] >> *cameraMatrix;
+    fs.release();
 }
 
 void FileSystem::saveResult(QPixmap qpixmap, cv::Mat cameraMatrix, cv::Mat distCoeffs, cv::Mat R, cv::Mat T)
@@ -83,17 +97,19 @@ void FileSystem::saveResult(QPixmap qpixmap, cv::Mat cameraMatrix, cv::Mat distC
     saveInImg(qpixmap, fullNameJpg);
 }
 
-void FileSystem::saveFileInYaml(cv::Mat cameraMatrix, cv::Mat distCoeffs, cv::Mat R, cv::Mat T, QString name)
+void FileSystem::saveFileInYaml(cv::Mat cameraMatrix, cv::Mat distCoeffs, std::vector<cv::Mat> R, std::vector<cv::Mat> T, QString name)
 {
     name = TEMP_PATH + name + ".YAML";
     std::string fileResultPath = name.toStdString();
             cv::FileStorage fs(fileResultPath,cv::FileStorage::WRITE);
             fs << "cameraMatrix" << cameraMatrix
-               << "distCoeffs"   << distCoeffs
-               << "R"   << R
-               << "T"   << T;
+               << "distCoeffs"   << distCoeffs;
+//               << "R"   << R
+//               << "T"   << T;
             fs.release();
 }
+
+
 
 void FileSystem::saveInImg(QPixmap qpixmap, QString path)
 {

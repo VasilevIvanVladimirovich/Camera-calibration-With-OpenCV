@@ -28,6 +28,7 @@ public:
     bool getFrameFromTable(int row);
     void cameraCalibrationChessboardMethod();
     void setVectorPathImg(QVector<QString> vector);
+    double computeReprojectionErrors();
 
 signals:
     void sendStatusImg(QString status, int row);
@@ -46,8 +47,8 @@ private:
     cv::Mat gray;
     cv::Mat cameraMatrix_;
     cv::Mat distCoeffs_;
-    cv::Mat R_;
-    cv::Mat T_;
+    std::vector<cv::Mat> R_;
+    std::vector<cv::Mat> T_;
 
 };
 

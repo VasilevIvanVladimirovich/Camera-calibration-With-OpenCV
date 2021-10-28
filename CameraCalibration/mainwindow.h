@@ -40,6 +40,8 @@ public:
     ~MainWindow();
 
    QVector<QString> getVectorImgFromTable();
+   void videoStream(QString qstring);
+
 
 private:
     Ui::MainWindow *ui;
@@ -63,5 +65,6 @@ private slots:
     void on_tableWidget_cellClicked(int row, int column);
     void on_btn_detect_clicked();
     void on_btn_stopVideo_clicked();
+    void on_chekResultInVideoStream_clicked();
 };
 #endif // MAINWINDOW_H
