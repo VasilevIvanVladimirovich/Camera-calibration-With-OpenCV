@@ -72,7 +72,7 @@ void MainWindow::videoStream(int countframe)
                 this,
                 SLOT(addItem(QTableWidgetItem*,QTableWidgetItem*)));
 
-        imgprocessor_->setPath(fileSystem_.getFilePath());
+        imgprocessor_->setPath(fileSystem_.getFilePath()+"/");
         imgprocessor_->setCountFrame(countframe);
         imgprocessor_->setTransformImg(false);
         imgprocessor_->start();
@@ -103,6 +103,7 @@ void MainWindow::on_btn_setImg_clicked()
 {
 
     ui->tableWidget->clearContents();
+    ui->tableWidget->setRowCount(0);
     DialogSetImg dialog;
     connect(&dialog,
             SIGNAL(outFolderPath(QString)),
