@@ -17,37 +17,52 @@
 #include <QTableWidget>
 #include <QDebug>
 
-#define TEMP_PATH "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Temp/"
-
-
 class FileSystem : public QObject
 {
     Q_OBJECT
 public:
     FileSystem();
+    QString getFilePath();
 
-    void openFileInViewYamlCalib(QString pathName);
+    void createWorkDir();
+
+    void copyDirImgInWorkDir(QString path);
+
+    void openFileInViewYamlCalib();
     void openFileInView(QString filePath);
-    void openFileInView(int row);
+    void openDrawImgInView(int row);
+
     void readYamlMatrix(QString path, cv::Mat* cameraMatrix);
     void readYamldistCoef(QString path, cv::Mat* distCoeffs);
-    void saveResult(QPixmap qpixmap, cv::Mat cameraMatrix,cv::Mat distCoeffs, cv::Mat R, cv::Mat T);
-    void saveFileInYaml(cv::Mat cameraMatrix,cv::Mat distCoeffs, std::vector<cv::Mat> R, std::vector<cv::Mat> T, QString name);
+
+    void saveFileInYaml(cv::Mat cameraMatrix,cv::Mat distCoeffs, std::vector<cv::Mat> R, std::vector<cv::Mat> T,
+                        int countImg,QString date,double rmse);
+
     void saveInImg(QPixmap qpixmap, QString name);
+    void saveInImgDrawing(QPixmap qpixmap, QString name);
+
+    void getOneTableItemsinTableCompare();
+    void getTableItemsinTableCompare();
+
     int  countImgInDir(QString path);
-    QString getFilePath();
+
+    bool isSelectedDir();
+    bool isValidOpenDir();
 
 signals:
     void outImgDisplay(QPixmap pixmap);
     void outTextDisplayYamlCalib(QString qstring);
     void outTableItems(QTableWidgetItem *item1,QTableWidgetItem *item2);
+    void outTableItemsCompare(QTableWidgetItem* itemFile,QTableWidgetItem* itemDate,
+                              QTableWidgetItem* itemCount,QTableWidgetItem* itemPattern,
+                              QTableWidgetItem* itemRmse);
 
 public slots:
     void setPath(QString path);
     void getTableItems();
 
 private:
-    QString filePath;
+    QString filePath_;
 };
 
 #endif // FILESYSTEM_H

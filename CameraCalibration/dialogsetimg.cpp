@@ -13,29 +13,37 @@ DialogSetImg::~DialogSetImg()
     delete ui;
 }
 
+void DialogSetImg::setFileSystem(FileSystem *fs)
+{
+    this->fs = fs;
+}
+
 void DialogSetImg::on_btn_findpath_clicked()
 {
     pathName = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
                                                          "/home",
                                                          QFileDialog::ShowDirsOnly
-                                                         | QFileDialog::DontResolveSymlinks);
+                                                         |QFileDialog::DontResolveSymlinks);
     ui->label_pathname->setText(pathName);
-    ui->label_countfindimg->setText(QString::number(fs.countImgInDir(pathName)) + " find img");
 }
-
 
 void DialogSetImg::on_buttonBox_accepted()
 {
-    emit outFolderPath(pathName);
-    emit setTableItems();
+    fs->copyDirImgInWorkDir(pathName);
+    fs->getTableItems();
 }
-
-
 
 void DialogSetImg::on_btn_getCameraImg_clicked()
 {
-    emit outFolderPath(pathName);
-    emit signalVideoStream(ui->countframe->value());
+    QTreeWidgetItem* item;
+    item = ui->treeWidgetPattern->currentItem();
+    QString str = item->text(0);
+    emit signalVideoStream(ui->frameRate->value(),
+                           ui->countFrame->value(),
+                           ui->spinRow->value(),
+                           ui->spinColumn->value(),
+                           ui->checkBoxUsePattern->checkState(),
+                           str);
     close();
 }
 

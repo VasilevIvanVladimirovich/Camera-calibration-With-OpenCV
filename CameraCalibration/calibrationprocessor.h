@@ -4,6 +4,8 @@
 #include <QString>
 #include <QPixmap>
 #include <QObject>
+#include <QDate>
+#include <string>
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
@@ -15,7 +17,6 @@
 
 #include "filesystem.h"
 
-#define TEMP_PATH "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Temp/"
 
 class CalibrationProcessor :public QObject
 {
@@ -23,13 +24,21 @@ class CalibrationProcessor :public QObject
 public:
     CalibrationProcessor(QObject *parent = nullptr);
 
-    void accumulationVectorsImg();
-    void reloadVectors();
-    bool getFrameFromTable(int row);
-    void cameraCalibrationChessboardMethod();
     void setVectorPathImg(QVector<QString> vector);
-    double computeReprojectionErrors();
 
+    void setPath(QString path);
+
+    bool getFrameFromTable(int row);
+
+    void accumulationVectorsImg();
+
+    void reloadVectors();
+
+    void cameraCalibrationChessboardMethod();
+
+    bool isFramePattern(cv::Mat* frame,QString pattern,int row, int col);
+
+    double Rmse();
 signals:
     void sendStatusImg(QString status, int row);
 public slots:
@@ -37,19 +46,19 @@ public slots:
     void setTargetSize(int row,int col);
     void setSubPixIter(int count);
 private:
-    QVector<QString> vectorPathImg_;
-    QString targetType_;
     int subPixelIter_;
     int CHECKERBOARD_[2]; //размер шахматной доски убрать автоэкспозицию!
-    std::vector<std::vector<cv::Point3f> > objpoints_; //Вектор, для хранения векторов 3d точек для каждого изображения шахматной доски
-    std::vector<std::vector<cv::Point2f> > imgpoints_; //Вектор, для хранения векторов 2d точек для каждого изображения шахматной доски
+    QString targetType_;
     cv::Mat inputFrame_;
     cv::Mat gray;
     cv::Mat cameraMatrix_;
     cv::Mat distCoeffs_;
+    std::vector<std::vector<cv::Point3f> > objpoints_; //Вектор, для хранения векторов 3d точек для каждого изображения шахматной доски
+    std::vector<std::vector<cv::Point2f> > imgpoints_; //Вектор, для хранения векторов 2d точек для каждого изображения шахматной доски
     std::vector<cv::Mat> R_;
     std::vector<cv::Mat> T_;
-
+    QVector<QString> vectorPathImg_;
+    FileSystem fs_;
 };
 
 #endif // CALIBRATIONPROCESSOR_H

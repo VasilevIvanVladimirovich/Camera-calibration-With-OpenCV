@@ -10,6 +10,9 @@
 #include <QtGui>
 #include <QFileDialog>
 #include <QObject>
+#include <QMessageBox>
+#include <QTreeWidget>
+#include <QListWidget>
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
@@ -22,9 +25,10 @@
 #include "calibrationprocessor.h"
 #include "filesystem.h"
 #include "dialogdetect.h"
+#include "tablecompare.h"
 
 #include <stdio.h>
-#include <QListWidget>
+
 
 
 QT_BEGIN_NAMESPACE
@@ -39,9 +43,8 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-   QVector<QString> getVectorImgFromTable();
-   void videoStream(QString qstring);
-
+    QVector<QString> getVectorImgFromTable();
+    void videoStream(QString qstring);
 
 private:
     Ui::MainWindow *ui;
@@ -56,8 +59,13 @@ private:
 
     FileSystem fileSystem_;
 
+    TableCompare* tableCompare_;
+
 public slots:
-    void videoStream(int countframe);
+    void setqToolBarNew();
+    void setqToolBarOpen();
+    void videoStream(int frameRate,int countframe,int row,
+                     int col,bool isCheked,QString pattern);
     void addItem(QTableWidgetItem *Item1,QTableWidgetItem *Item2);
     void setStatusImg(QString status,int row);
 private slots:
@@ -66,5 +74,6 @@ private slots:
     void on_btn_detect_clicked();
     void on_btn_stopVideo_clicked();
     void on_chekResultInVideoStream_clicked();
+    void on_OpenTable_clicked();
 };
 #endif // MAINWINDOW_H

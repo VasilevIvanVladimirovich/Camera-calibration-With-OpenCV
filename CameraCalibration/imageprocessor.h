@@ -17,6 +17,7 @@
 #include <QThread>
 
 #include "filesystem.h"
+#include "calibrationprocessor.h"
 
 class ImageProcessor :public QThread
 {
@@ -25,16 +26,23 @@ public:
    ImageProcessor(int num_web_cam);
    ImageProcessor(cv::Mat img);
 
-   void stopedThread();
-   void setOutFrame(cv::Mat frame);
-   cv::Mat getOutFrame();
 
+   void setOutFrame(cv::Mat frame);
    void setPath(QString qstring);
    void setCountFrame(int countFrame);
-
+   void setFrameRate(int frameRate);
    void setTransformImg(bool newTransformImg);
+   void setIsPattern(bool isPattern);
+   void setPattern(QString pattern);
+   void setCheckboardstate(int row,int col);
+
+   QPixmap toMatQpixmap(cv::Mat mat);
+
+   cv::Mat getOutFrame();
 
    void undistort(cv::Mat input,cv::Mat output,cv::Mat cameraMatrix,cv::Mat distCoeffs);
+
+   void stopedThread();
 
 signals:
     void outDisplay(QPixmap pixmap);
@@ -44,18 +52,22 @@ public slots:
     void run() override;
 
 private:
-    bool end_;
-    cv::VideoCapture web_cam_;
+    bool isTransformImg_ = false;
+    bool isEnd_;
+    bool isPattern_ = false;
+    int frameRate_;
+    int countFrame_;
+    int CHECKERBOARD_[2];
+    QString path_;
+    QString pattern_;
+    FileSystem filesystem;
     cv::Mat cameraMatrix_;
     cv::Mat newCameraMatrix_;
     cv::Mat distCoeffs_;
     cv::Mat inputFrame_;
     cv::Mat outFrame_;
-    FileSystem filesystem;
-    QString path_;
-    int countFrame_;
-    bool transformImg;
-
+    cv::VideoCapture web_cam_;
+    CalibrationProcessor calibProcessor_;
 };
 
 #endif // IMAGEPROCESSOR_H

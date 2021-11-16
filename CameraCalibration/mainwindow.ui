@@ -20,7 +20,7 @@
       <item>
        <widget class="QPushButton" name="btn_setImg">
         <property name="text">
-         <string>SetImg</string>
+         <string>Import</string>
         </property>
        </widget>
       </item>
@@ -28,6 +28,13 @@
        <widget class="QPushButton" name="btn_detect">
         <property name="text">
          <string>Detect</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="OpenTable">
+        <property name="text">
+         <string>OpenTable</string>
         </property>
        </widget>
       </item>
@@ -45,9 +52,29 @@
        </spacer>
       </item>
       <item>
+       <widget class="QLabel" name="labelFileOpen">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
        <widget class="QPushButton" name="chekResultInVideoStream">
         <property name="text">
-         <string>ChekResult</string>
+         <string>Undistort</string>
         </property>
        </widget>
       </item>
@@ -89,11 +116,11 @@
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_3">
            <attribute name="title">
-            <string>Tab 1</string>
+            <string>Statistics</string>
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>

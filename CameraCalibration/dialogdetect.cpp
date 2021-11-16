@@ -21,5 +21,5 @@ void DialogDetect::on_buttonBox_accepted()
     }
     emit outTargetSize(ui->sb_row->value(),ui->sb_col->value());
     emit outSubPixIter(ui->sb_subIter->value());
+    close();
 }
-

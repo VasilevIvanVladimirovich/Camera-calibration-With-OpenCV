@@ -8,11 +8,6 @@ CalibrationProcessor::CalibrationProcessor(QObject *parent) : QObject(parent)
 void CalibrationProcessor::accumulationVectorsImg()
 {
     QString filename;
-    FileSystem fileSystem;
-    QDir dir(TEMP_PATH);
-    dir.removeRecursively();
-    dir.mkpath(TEMP_PATH);
-
     reloadVectors();
 
     std::vector<cv::Point3f> objp;
@@ -22,38 +17,37 @@ void CalibrationProcessor::accumulationVectorsImg()
         objp.push_back(cv::Point3f(j,i,0));
     }
     std::vector<cv::Point2f> corner_pts; // Вектор для хранения пикселей координат углов шахматной доски
-    bool success;
+    bool isSuccess;
     for(int i = 0;i<vectorPathImg_.length();i++)
     {
-        inputFrame_= cv::imread(vectorPathImg_[i].toStdString());
+        inputFrame_ = cv::imread(vectorPathImg_[i].toStdString());
         cv::cvtColor(inputFrame_,gray,cv::COLOR_BGR2GRAY);
+        isSuccess = cv::findChessboardCorners(gray,cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]),corner_pts);
 
-    //Поиск углов шахматной доски
-    //Если на изображении найдено нужное количество углов, то успех = истина
-        success = cv::findChessboardCorners(gray,cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]),corner_pts);
-    if(success)
-    {
-         cv::TermCriteria criteria(cv::TermCriteria::EPS | cv::TermCriteria::MAX_ITER, subPixelIter_, 0.001);
-         cv::cornerSubPix(gray,corner_pts,cv::Size(11,11), cv::Size(-1,-1),criteria);
-         cv::drawChessboardCorners(inputFrame_, cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]), corner_pts, success);
-         emit sendStatusImg("Success", i);
+        if(isSuccess)
+        {
+           cv::TermCriteria criteria(cv::TermCriteria::EPS | cv::TermCriteria::MAX_ITER, subPixelIter_, 0.001);
+           cv::cornerSubPix(gray,corner_pts,cv::Size(11,11), cv::Size(-1,-1),criteria);
+           cv::drawChessboardCorners(inputFrame_, cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]), corner_pts, isSuccess);
+           emit sendStatusImg("Success", i);
 
-         objpoints_.push_back(objp);
-         imgpoints_.push_back(corner_pts);
+           objpoints_.push_back(objp);
+           imgpoints_.push_back(corner_pts);
 
-         QPixmap saveImg = QPixmap::fromImage(
-                                   QImage(inputFrame_.data,
-                                   inputFrame_.cols,
-                                   inputFrame_.rows,
-                                   inputFrame_.step,
-                                   QImage::Format_RGB888).rgbSwapped());
-        filename = TEMP_PATH + QString::number(i) + ".png";
-        fileSystem.saveInImg(saveImg,filename);
+           QPixmap saveImg = QPixmap::fromImage(
+                              QImage(inputFrame_.data,
+                                     inputFrame_.cols,
+                                     inputFrame_.rows,
+                                     inputFrame_.step,
+                              QImage::Format_RGB888).rgbSwapped());
 
-    }else emit sendStatusImg("No find corners", i);
+           filename = QString::number(i) + ".png";
+           fs_.saveInImgDrawing(saveImg,filename);
 
-    cameraCalibrationChessboardMethod();
-}
+       }else emit sendStatusImg("No find corners", i);
+
+        cameraCalibrationChessboardMethod();
+    }
 }
 
 void CalibrationProcessor::reloadVectors()
@@ -69,11 +63,17 @@ void CalibrationProcessor::setVectorPathImg(QVector<QString> vector)
     vectorPathImg_=vector;
 }
 
-double CalibrationProcessor::computeReprojectionErrors()
+void CalibrationProcessor::setPath(QString path)
+{
+    fs_.setPath(path);
+}
+
+double CalibrationProcessor::Rmse()
 {
 
     std::vector<cv::Point2f> imagePoints2;
-    double totalErr=0,err;
+    double totalErr = 0;
+    double err;
     size_t totalPoints=0;
     for(size_t i = 0; i < objpoints_.size(); ++i )
     {
@@ -86,14 +86,32 @@ double CalibrationProcessor::computeReprojectionErrors()
     return std::sqrt(totalErr/totalPoints);
 }
 
-
 void CalibrationProcessor::cameraCalibrationChessboardMethod()
 {
     cv::calibrateCamera(objpoints_, imgpoints_, cv::Size(gray.rows, gray.cols), cameraMatrix_, distCoeffs_, R_, T_);
 
-    FileSystem fs;
-    fs.saveFileInYaml(cameraMatrix_,distCoeffs_,R_,T_,"Result");  
+    QDateTime date;
+    date = QDateTime::currentDateTime();
+    int countImg;
+    countImg = vectorPathImg_.length();
+    double rmse;
+    rmse = Rmse();
+    fs_.saveFileInYaml(cameraMatrix_,distCoeffs_,R_,T_,countImg,date.toString("yyyy.dd.M--HH:mm:ss"),rmse);
+}
 
+bool CalibrationProcessor::isFramePattern(cv::Mat* frame, QString pattern,int row, int col)
+{
+    cv::cvtColor(*frame,gray,cv::COLOR_BGR2GRAY);
+    std::vector<cv::Point2f> corner_pts;
+    if(pattern == "Chessboard")
+    {
+        if(cv::findChessboardCorners(gray,cv::Size(row, col),corner_pts))
+        {
+            cv::drawChessboardCorners(*frame, cv::Size(row, col), corner_pts, true);
+            return true;
+        }
+    }
+    return false;
 }
 
 void CalibrationProcessor::setTargetType(QString qstring)
@@ -103,12 +121,11 @@ void CalibrationProcessor::setTargetType(QString qstring)
 
 void CalibrationProcessor::setTargetSize(int row, int col)
 {
-    CHECKERBOARD_[0]=row;
-    CHECKERBOARD_[1]=col;
+    CHECKERBOARD_[0] = row;
+    CHECKERBOARD_[1] = col;
 }
 
 void CalibrationProcessor::setSubPixIter(int count)
 {
     subPixelIter_ = count;
 }
-

@@ -15,7 +15,8 @@ SOURCES += \
     filesystem.cpp \
     imageprocessor.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    tablecompare.cpp
 
 HEADERS += \
     calibrationprocessor.h \
@@ -23,7 +24,8 @@ HEADERS += \
     dialogsetimg.h \
     filesystem.h \
     imageprocessor.h \
-    mainwindow.h
+    mainwindow.h \
+    tablecompare.h
 
 FORMS += \
     dialogdetect.ui \

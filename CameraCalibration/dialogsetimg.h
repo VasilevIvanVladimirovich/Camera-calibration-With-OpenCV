@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QFileDialog>
+#include <QTreeWidget>
 
 #include "filesystem.h"
 
@@ -19,10 +20,12 @@ public:
     explicit DialogSetImg(QWidget *parent = nullptr);
     ~DialogSetImg();
 
+    void setFileSystem(FileSystem* fs);
+
+
 signals:
-    void outFolderPath(QString path);
-    void setTableItems();
-    void signalVideoStream(int countframe);
+    void signalVideoStream(int frameRate,int countframe,int row,
+                           int col,bool isCheked,QString pattern);
 
 private slots:
     void on_btn_findpath_clicked();
@@ -33,7 +36,7 @@ private slots:
 
 private:
     Ui::DialogSetImg *ui;
-    FileSystem fs;
+    FileSystem* fs;
     QString pathName;
 
 };
