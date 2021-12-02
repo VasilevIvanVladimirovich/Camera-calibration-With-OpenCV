@@ -46,6 +46,22 @@ public:
     QVector<QString> getVectorImgFromTable();
     void videoStream(QString qstring);
 
+public slots:
+    void setqToolBarNew();
+    void setqToolBarOpen();
+    void videoStream(int frameRate, int countframe, int row,
+                     int col, bool isPattern, bool isSnapShoot, QString pattern);
+    void addItem(QTableWidgetItem *Item, QTableWidgetItem *item1, QTableWidgetItem *Item2);
+    void setStatusImg(QString status,int row);
+private slots:
+    void on_btn_setImg_clicked();
+    void on_tableWidget_cellClicked(int row, int column);
+    void on_btn_detect_clicked();
+    void on_btn_stopVideo_clicked();
+    void on_chekResultInVideoStream_clicked();
+    void on_OpenTable_clicked();
+    void on_btn_snapshoot_clicked();
+
 private:
     Ui::MainWindow *ui;
 
@@ -55,25 +71,10 @@ private:
 
     ImageProcessor *imgprocessor_ = nullptr;
 
-    CalibrationProcessor calibprocessor_;
+    CalibrationProcessor *calibprocessor_ = nullptr;
 
     FileSystem fileSystem_;
 
     TableCompare* tableCompare_;
-
-public slots:
-    void setqToolBarNew();
-    void setqToolBarOpen();
-    void videoStream(int frameRate,int countframe,int row,
-                     int col,bool isCheked,QString pattern);
-    void addItem(QTableWidgetItem *Item1,QTableWidgetItem *Item2);
-    void setStatusImg(QString status,int row);
-private slots:
-    void on_btn_setImg_clicked();
-    void on_tableWidget_cellClicked(int row, int column);
-    void on_btn_detect_clicked();
-    void on_btn_stopVideo_clicked();
-    void on_chekResultInVideoStream_clicked();
-    void on_OpenTable_clicked();
 };
 #endif // MAINWINDOW_H

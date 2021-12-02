@@ -15,14 +15,16 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
 
+
+#include <QThread>
 #include "filesystem.h"
 
 
-class CalibrationProcessor :public QObject
+class CalibrationProcessor :public QThread
 {
     Q_OBJECT
 public:
-    CalibrationProcessor(QObject *parent = nullptr);
+    CalibrationProcessor();
 
     void setVectorPathImg(QVector<QString> vector);
 
@@ -30,18 +32,20 @@ public:
 
     bool getFrameFromTable(int row);
 
-    void accumulationVectorsImg();
-
     void reloadVectors();
 
-    void cameraCalibrationChessboardMethod();
+    void cameraCalibration();
 
     bool isFramePattern(cv::Mat* frame,QString pattern,int row, int col);
 
     double Rmse();
 signals:
     void sendStatusImg(QString status, int row);
+    void sendOpenFileInViewYamlCalib(QString filepath);
 public slots:
+
+    void run() override;
+
     void setTargetType(QString qstring);
     void setTargetSize(int row,int col);
     void setSubPixIter(int count);

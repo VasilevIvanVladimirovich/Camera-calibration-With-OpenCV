@@ -72,6 +72,13 @@
        </spacer>
       </item>
       <item>
+       <widget class="QPushButton" name="btn_snapshoot">
+        <property name="text">
+         <string>snapshot</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="chekResultInVideoStream">
         <property name="text">
          <string>Undistort</string>

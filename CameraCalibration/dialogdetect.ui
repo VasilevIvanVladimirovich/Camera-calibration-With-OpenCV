@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>411</width>
+    <height>481</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,41 +17,34 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <widget class="QTreeWidget" name="PatternWidget">
+       <property name="maximumSize">
+        <size>
+         <width>200</width>
+         <height>200</height>
+        </size>
+       </property>
+       <column>
+        <property name="text">
+         <string>Pattarn</string>
+        </property>
+       </column>
        <item>
-        <widget class="QLabel" name="label">
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>25</height>
-          </size>
-         </property>
-         <property name="text">
-          <string>Target type</string>
-         </property>
-        </widget>
+        <property name="text">
+         <string>Chessboard</string>
+        </property>
        </item>
        <item>
-        <widget class="QRadioButton" name="rb_ches">
-         <property name="text">
-          <string>Chessboard</string>
-         </property>
-        </widget>
+        <property name="text">
+         <string>Circle</string>
+        </property>
        </item>
        <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
+        <property name="text">
+         <string>Assymetric Circles</string>
+        </property>
        </item>
-      </layout>
+      </widget>
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -71,36 +64,51 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
-          <widget class="QLabel" name="label_3">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Colums</string>
-           </property>
-          </widget>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_7">
+             <item>
+              <widget class="QLabel" name="label_3">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>25</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Colums</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="sb_col"/>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_6">
+             <item>
+              <widget class="QLabel" name="label_4">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>25</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Rows</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="sb_row"/>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </item>
          <item>
-          <widget class="QSpinBox" name="sb_col"/>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_4">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>25</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Rows</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QSpinBox" name="sb_row"/>
+          <layout class="QVBoxLayout" name="verticalLayout_2"/>
          </item>
          <item>
           <spacer name="verticalSpacer_2">

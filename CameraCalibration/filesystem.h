@@ -28,18 +28,21 @@ public:
 
     void copyDirImgInWorkDir(QString path);
 
-    void openFileInViewYamlCalib();
     void openFileInView(QString filePath);
     void openDrawImgInView(int row);
+    void openUndistImgInView(int row);
 
     void readYamlMatrix(QString path, cv::Mat* cameraMatrix);
     void readYamldistCoef(QString path, cv::Mat* distCoeffs);
 
     void saveFileInYaml(cv::Mat cameraMatrix,cv::Mat distCoeffs, std::vector<cv::Mat> R, std::vector<cv::Mat> T,
-                        int countImg,QString date,double rmse);
+                        int countImg, QString date, double rmse, QString pattern, int rowPattern, int colPattern);
 
     void saveInImg(QPixmap qpixmap, QString name);
     void saveInImgDrawing(QPixmap qpixmap, QString name);
+
+
+    void createImgUndistorted(cv::Mat cameraMatrix, cv::Mat distCoeffs);
 
     void getOneTableItemsinTableCompare();
     void getTableItemsinTableCompare();
@@ -52,14 +55,15 @@ public:
 signals:
     void outImgDisplay(QPixmap pixmap);
     void outTextDisplayYamlCalib(QString qstring);
-    void outTableItems(QTableWidgetItem *item1,QTableWidgetItem *item2);
+    void outTableItems(QTableWidgetItem *item, QTableWidgetItem *item1, QTableWidgetItem *item2);
     void outTableItemsCompare(QTableWidgetItem* itemFile,QTableWidgetItem* itemDate,
                               QTableWidgetItem* itemCount,QTableWidgetItem* itemPattern,
-                              QTableWidgetItem* itemRmse);
+                              QTableWidgetItem* itemSizePattern, QTableWidgetItem* itemRmse);
 
 public slots:
     void setPath(QString path);
     void getTableItems();
+    void openFileInViewYamlCalib(QString path);
 
 private:
     QString filePath_;

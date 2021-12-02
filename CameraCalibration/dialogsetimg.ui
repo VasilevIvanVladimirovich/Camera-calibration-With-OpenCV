@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>427</width>
-    <height>368</height>
+    <height>397</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -62,7 +62,7 @@
          <item row="0" column="0">
           <widget class="QCheckBox" name="checkBoxUsePattern">
            <property name="text">
-            <string>use pattern</string>
+            <string>use Pattern</string>
            </property>
           </widget>
          </item>
@@ -80,9 +80,26 @@
            </item>
            <item>
             <property name="text">
-             <string>ChaRuCo</string>
+             <string>Circles</string>
             </property>
            </item>
+           <item>
+            <property name="text">
+             <string>Assymetric Circles</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>ChArUco</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QCheckBox" name="checkBoxUseSnapShoot">
+           <property name="text">
+            <string>Use SnapShoot</string>
+           </property>
           </widget>
          </item>
         </layout>

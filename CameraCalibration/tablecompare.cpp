@@ -14,16 +14,16 @@ TableCompare::TableCompare(QWidget* parent): QWidget(parent)
     connect(&fs_,
             SIGNAL(outTableItemsCompare(QTableWidgetItem*,QTableWidgetItem*,
                                         QTableWidgetItem*, QTableWidgetItem*,
-                                        QTableWidgetItem*)),
+                                        QTableWidgetItem*, QTableWidgetItem*)),
             this,
             SLOT(addItem(QTableWidgetItem*,QTableWidgetItem*,
                          QTableWidgetItem*, QTableWidgetItem*,
-                         QTableWidgetItem*)));
+                         QTableWidgetItem*, QTableWidgetItem*)));
 
 
     table_->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    table_->setColumnCount(5);
-    table_->setHorizontalHeaderLabels(QStringList()<<"File"<<"Date"<<"Count img"<<"Pattern"<<"Rmse");
+    table_->setColumnCount(6);
+    table_->setHorizontalHeaderLabels(QStringList()<<"File"<<"Date"<<"Count img"<<"Pattern"<<"SizePattern"<<"Rmse");
     table_->setShowGrid(false);
     table_->setSelectionMode(QAbstractItemView::SingleSelection);    // Разрешаем выделение только одного элемента
     table_->setSelectionBehavior(QAbstractItemView::SelectRows);    // Разрешаем выделение построчно
@@ -78,13 +78,14 @@ void TableCompare::on_btnClearTable_clicked()
 
 void TableCompare::addItem(QTableWidgetItem* itemFile,QTableWidgetItem* itemDate,
                            QTableWidgetItem* itemCount,QTableWidgetItem* itemPattern,
-                           QTableWidgetItem* itemRmse)
+                           QTableWidgetItem* itemSizePattern, QTableWidgetItem* itemRmse)
 {
     table_->setRowCount(table_->rowCount()+1);
     table_->setItem(table_->rowCount()-1,0,itemFile);
     table_->setItem(table_->rowCount()-1,1,itemDate);
     table_->setItem(table_->rowCount()-1,2,itemCount);
     table_->setItem(table_->rowCount()-1,3,itemPattern);
-    table_->setItem(table_->rowCount()-1,4,itemRmse);
+    table_->setItem(table_->rowCount()-1,4,itemSizePattern);
+    table_->setItem(table_->rowCount()-1,5,itemRmse);
 }
 

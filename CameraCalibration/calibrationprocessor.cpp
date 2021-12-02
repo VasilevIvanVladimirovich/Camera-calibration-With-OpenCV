@@ -1,11 +1,11 @@
 #include "calibrationprocessor.h"
 
-CalibrationProcessor::CalibrationProcessor(QObject *parent) : QObject(parent)
+CalibrationProcessor::CalibrationProcessor()
 {
 
 }
 
-void CalibrationProcessor::accumulationVectorsImg()
+void CalibrationProcessor::run()
 {
     QString filename;
     reloadVectors();
@@ -18,16 +18,25 @@ void CalibrationProcessor::accumulationVectorsImg()
     }
     std::vector<cv::Point2f> corner_pts; // Вектор для хранения пикселей координат углов шахматной доски
     bool isSuccess;
+
     for(int i = 0;i<vectorPathImg_.length();i++)
     {
         inputFrame_ = cv::imread(vectorPathImg_[i].toStdString());
         cv::cvtColor(inputFrame_,gray,cv::COLOR_BGR2GRAY);
-        isSuccess = cv::findChessboardCorners(gray,cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]),corner_pts);
+
+        if(targetType_ == "Chessboard")
+             isSuccess = cv::findChessboardCorners(gray,cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]),corner_pts);
+        else if(targetType_ == "Circle")
+             isSuccess = cv::findCirclesGrid(gray, cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]), corner_pts,
+                         cv::CALIB_CB_SYMMETRIC_GRID, cv::SimpleBlobDetector::create());
+        else if(targetType_ == "Assymetric Circles")
+             isSuccess = cv::findCirclesGrid(gray, cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]), corner_pts,
+                         cv::CALIB_CB_ASYMMETRIC_GRID, cv::SimpleBlobDetector::create());
 
         if(isSuccess)
         {
-           cv::TermCriteria criteria(cv::TermCriteria::EPS | cv::TermCriteria::MAX_ITER, subPixelIter_, 0.001);
-           cv::cornerSubPix(gray,corner_pts,cv::Size(11,11), cv::Size(-1,-1),criteria);
+           //cv::TermCriteria criteria(cv::TermCriteria::EPS | cv::TermCriteria::MAX_ITER, subPixelIter_, 0.001);
+           //cv::cornerSubPix(gray,corner_pts, cv::Size(11,11), cv::Size(-1,-1),criteria);
            cv::drawChessboardCorners(inputFrame_, cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]), corner_pts, isSuccess);
            emit sendStatusImg("Success", i);
 
@@ -35,19 +44,34 @@ void CalibrationProcessor::accumulationVectorsImg()
            imgpoints_.push_back(corner_pts);
 
            QPixmap saveImg = QPixmap::fromImage(
-                              QImage(inputFrame_.data,
+                             QImage(inputFrame_.data,
                                      inputFrame_.cols,
                                      inputFrame_.rows,
                                      inputFrame_.step,
-                              QImage::Format_RGB888).rgbSwapped());
+                             QImage::Format_RGB888).rgbSwapped());
 
            filename = QString::number(i) + ".png";
-           fs_.saveInImgDrawing(saveImg,filename);
-
+           fs_.saveInImgDrawing(saveImg, filename);
        }else emit sendStatusImg("No find corners", i);
-
-        cameraCalibrationChessboardMethod();
     }
+    cameraCalibration();
+    emit sendOpenFileInViewYamlCalib(fs_.getFilePath());
+}
+
+void CalibrationProcessor::cameraCalibration()
+{
+    cv::calibrateCamera(objpoints_, imgpoints_, cv::Size(gray.rows, gray.cols), cameraMatrix_, distCoeffs_, R_, T_);
+
+    fs_.createImgUndistorted(cameraMatrix_, distCoeffs_);
+
+    QDateTime date;
+    date = QDateTime::currentDateTime();
+    int countImg;
+    countImg = vectorPathImg_.length();
+    double rmse;
+    rmse = Rmse();
+    fs_.saveFileInYaml(cameraMatrix_, distCoeffs_, R_, T_, countImg, date.toString("yyyy.dd.M--HH:mm:ss"),
+                       rmse, targetType_, CHECKERBOARD_[0], CHECKERBOARD_[1]);
 }
 
 void CalibrationProcessor::reloadVectors()
@@ -86,30 +110,39 @@ double CalibrationProcessor::Rmse()
     return std::sqrt(totalErr/totalPoints);
 }
 
-void CalibrationProcessor::cameraCalibrationChessboardMethod()
-{
-    cv::calibrateCamera(objpoints_, imgpoints_, cv::Size(gray.rows, gray.cols), cameraMatrix_, distCoeffs_, R_, T_);
-
-    QDateTime date;
-    date = QDateTime::currentDateTime();
-    int countImg;
-    countImg = vectorPathImg_.length();
-    double rmse;
-    rmse = Rmse();
-    fs_.saveFileInYaml(cameraMatrix_,distCoeffs_,R_,T_,countImg,date.toString("yyyy.dd.M--HH:mm:ss"),rmse);
-}
 
 bool CalibrationProcessor::isFramePattern(cv::Mat* frame, QString pattern,int row, int col)
 {
-    cv::cvtColor(*frame,gray,cv::COLOR_BGR2GRAY);
+    cv::cvtColor(*frame, gray, cv::COLOR_BGR2GRAY);
     std::vector<cv::Point2f> corner_pts;
+
     if(pattern == "Chessboard")
     {
-        if(cv::findChessboardCorners(gray,cv::Size(row, col),corner_pts))
+        if(cv::findChessboardCorners(gray, cv::Size(row, col), corner_pts, cv::CALIB_CB_FAST_CHECK))
         {
             cv::drawChessboardCorners(*frame, cv::Size(row, col), corner_pts, true);
             return true;
         }
+    }
+    if(pattern == "Circles")
+    {
+        if(cv::findCirclesGrid(gray, cv::Size(row, col), corner_pts, cv::CALIB_CB_SYMMETRIC_GRID, cv::SimpleBlobDetector::create()))
+        {
+            cv::drawChessboardCorners(*frame, cv::Size(row, col), cv::Mat(corner_pts), true);
+            return true;
+        }
+    }
+    if(pattern == "Assymetric Circles")
+    {
+        if(cv::findCirclesGrid(gray, cv::Size(row, col), corner_pts, cv::CALIB_CB_ASYMMETRIC_GRID, cv::SimpleBlobDetector::create()))
+        {
+            cv::drawChessboardCorners(*frame, cv::Size(row, col), cv::Mat(corner_pts), true);
+            return true;
+        }
+    }
+    if(pattern == "ChArUco")
+    {
+//        cv::detectMarkers();
     }
     return false;
 }

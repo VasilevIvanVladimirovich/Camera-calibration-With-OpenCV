@@ -37,13 +37,14 @@ void DialogSetImg::on_btn_getCameraImg_clicked()
 {
     QTreeWidgetItem* item;
     item = ui->treeWidgetPattern->currentItem();
-    QString str = item->text(0);
+    QString pattern = item->text(0);
     emit signalVideoStream(ui->frameRate->value(),
                            ui->countFrame->value(),
                            ui->spinRow->value(),
                            ui->spinColumn->value(),
                            ui->checkBoxUsePattern->checkState(),
-                           str);
+                           ui->checkBoxUseSnapShoot->checkState(),
+                           pattern);
     close();
 }
 

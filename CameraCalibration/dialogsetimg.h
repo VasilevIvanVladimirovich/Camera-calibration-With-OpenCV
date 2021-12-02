@@ -24,8 +24,8 @@ public:
 
 
 signals:
-    void signalVideoStream(int frameRate,int countframe,int row,
-                           int col,bool isCheked,QString pattern);
+    void signalVideoStream(int frameRate, int countframe, int row,
+                           int col, bool isPattern, bool isSnapshoot, QString pattern);
 
 private slots:
     void on_btn_findpath_clicked();

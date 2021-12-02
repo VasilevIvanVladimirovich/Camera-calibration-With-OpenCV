@@ -7,6 +7,7 @@
 #include <QFile>
 #include <QString>
 
+
 #include<opencv2/opencv.hpp>
 #include<opencv2/core/core.hpp>
 #include <opencv2/core/persistence.hpp>
@@ -15,6 +16,7 @@
 #include<opencv2/calib3d/calib3d.hpp>
 
 #include <QThread>
+#include <QApplication>
 
 #include "filesystem.h"
 #include "calibrationprocessor.h"
@@ -35,7 +37,9 @@ public:
    void setIsPattern(bool isPattern);
    void setPattern(QString pattern);
    void setCheckboardstate(int row,int col);
+   void setIsSnapShoot(bool isSnapShoot);
 
+   void setIsPressSnap();
    QPixmap toMatQpixmap(cv::Mat mat);
 
    cv::Mat getOutFrame();
@@ -46,12 +50,13 @@ public:
 
 signals:
     void outDisplay(QPixmap pixmap);
-    void setItem(QTableWidgetItem* item,QTableWidgetItem* item1);
+    void setItem(QTableWidgetItem* item, QTableWidgetItem* item1, QTableWidgetItem* item2);
 
 public slots:
     void run() override;
-
 private:
+    bool isPressSnap_ = false;
+    bool isSnapShoot_ = false;
     bool isTransformImg_ = false;
     bool isEnd_;
     bool isPattern_ = false;

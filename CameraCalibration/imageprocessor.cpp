@@ -19,50 +19,112 @@ void ImageProcessor::run()
     isEnd_ = false;
     QString namepath;
     if(isTransformImg_){
-        filesystem.readYamlMatrix(path_,&cameraMatrix_);
-        filesystem.readYamldistCoef(path_,&distCoeffs_);
+        filesystem.readYamlMatrix(path_, &cameraMatrix_);
+        filesystem.readYamldistCoef(path_, &distCoeffs_);
     }
     cv::Mat drawFrame;
     while(web_cam_.isOpened() && !isEnd_){
         if(isTransformImg_){
             web_cam_ >> inputFrame_;
             cv::undistort(inputFrame_,outFrame_,cameraMatrix_,distCoeffs_);
-            QPixmap img = toMatQpixmap(inputFrame_);;
-           emit outDisplay(img);
+            QPixmap img = toMatQpixmap(inputFrame_);
+            emit outDisplay(img);
         }else{
            web_cam_ >> outFrame_;
            outFrame_.copyTo(drawFrame);
            count++;
+           if(isSnapShoot_)
+           {
+               if(isPressSnap_)
+               {
+                   if(countImg == countFrame_)
+                       stopedThread();
+                   //saved frame
+                   if(isPattern_)
+                   {
+                       if (calibProcessor_.isFramePattern(&drawFrame, pattern_, CHECKERBOARD_[0], CHECKERBOARD_[1]))
+                       {
+                           QPixmap imgInDisplay = toMatQpixmap(drawFrame);
+                           emit outDisplay(imgInDisplay);
+
+                           QPixmap imgInSave = toMatQpixmap(outFrame_);
+                           namepath = path_.chopped(1) + "Accumulated/" + QString::number(countImg) + ".png";
+                           countImg++;
+                           filesystem.saveInImg(imgInSave,namepath);
+                           QTableWidgetItem *item = new QTableWidgetItem();
+                           item->setCheckState(Qt::Unchecked);
+                           QTableWidgetItem *item1 = new QTableWidgetItem();
+                           item1->setCheckState(Qt::Unchecked);
+                           QTableWidgetItem *item2 = new QTableWidgetItem(namepath);
+                           emit setItem(item, item1, item2);
+                           isPressSnap_ = false;
+                       }
+                   }else{
+                       QPixmap img= toMatQpixmap(outFrame_);
+                       emit outDisplay(img);
+                       QApplication::beep();
+                       namepath = path_.chopped(1) + "Accumulated/" + QString::number(countImg) + ".png";
+                       countImg++;
+                       filesystem.saveInImg(img,namepath);
+                       QTableWidgetItem *item = new QTableWidgetItem();
+                       item->setCheckState(Qt::Unchecked);
+                       QTableWidgetItem *item1 = new QTableWidgetItem();
+                       item1->setCheckState(Qt::Unchecked);
+                       QTableWidgetItem *item2 = new QTableWidgetItem(namepath);
+                       emit setItem(item,item1, item2);
+                       isPressSnap_ = false;
+                   }
+               }else{
+                   if(isPattern_)
+                   {
+                       if(calibProcessor_.isFramePattern(&drawFrame,pattern_,CHECKERBOARD_[0],CHECKERBOARD_[1])){
+                           QPixmap imgInDisplay = toMatQpixmap(drawFrame);
+                           emit outDisplay(imgInDisplay);
+                       }else{
+                           QPixmap img = toMatQpixmap(outFrame_);
+                           emit outDisplay(img);
+                       }
+                   }else{
+                       QPixmap img= toMatQpixmap(outFrame_);
+                       emit outDisplay(img);
+                   }
+               }
+           }else{
            if(count % frameRate_ == 0){
                if(countImg == countFrame_)
                    stopedThread();
                //saved frame
                if(isPattern_)
                {
-                   if (calibProcessor_.isFramePattern(&drawFrame,pattern_,CHECKERBOARD_[0],CHECKERBOARD_[1]))
+                   if (calibProcessor_.isFramePattern(&drawFrame, pattern_, CHECKERBOARD_[0], CHECKERBOARD_[1]))
                    {
                        QPixmap imgInDisplay = toMatQpixmap(drawFrame);
                        emit outDisplay(imgInDisplay);
 
                        QPixmap imgInSave = toMatQpixmap(outFrame_);
-                       namepath = path_.chopped(1) + "Аccumulated/" + QString::number(countImg) + ".png";
+                       namepath = path_.chopped(1) + "Accumulated/" + QString::number(countImg) + ".png";
                        countImg++;
                        filesystem.saveInImg(imgInSave,namepath);
                        QTableWidgetItem *item = new QTableWidgetItem();
                        item->setCheckState(Qt::Unchecked);
-                       QTableWidgetItem *item1 = new QTableWidgetItem(namepath);
-                       emit setItem(item,item1);
+                       QTableWidgetItem *item1 = new QTableWidgetItem();
+                       item1->setCheckState(Qt::Unchecked);
+                       QTableWidgetItem *item2 = new QTableWidgetItem(namepath);
+                       emit setItem(item, item1, item2);
                    }
                }else{
                    QPixmap img= toMatQpixmap(outFrame_);
                    emit outDisplay(img);
-                   namepath = path_.chopped(1) + "Аccumulated/" + QString::number(countImg) + ".png";
+                   QApplication::beep();
+                   namepath = path_.chopped(1) + "Accumulated/" + QString::number(countImg) + ".png";
                    countImg++;
                    filesystem.saveInImg(img,namepath);
                    QTableWidgetItem *item = new QTableWidgetItem();
                    item->setCheckState(Qt::Unchecked);
-                   QTableWidgetItem *item1 = new QTableWidgetItem(namepath);
-                   emit setItem(item,item1);
+                   QTableWidgetItem *item1 = new QTableWidgetItem();
+                   item1->setCheckState(Qt::Unchecked);
+                   QTableWidgetItem *item2 = new QTableWidgetItem(namepath);
+                   emit setItem(item,item1, item2);
                }
            }else{
                if(isPattern_)
@@ -74,11 +136,11 @@ void ImageProcessor::run()
                        QPixmap img = toMatQpixmap(outFrame_);
                        emit outDisplay(img);
                    }
-
                }else{
                    QPixmap img= toMatQpixmap(outFrame_);
                    emit outDisplay(img);
                }
+           }
            }
         }
     }
@@ -103,6 +165,16 @@ void ImageProcessor::setCheckboardstate(int row, int col)
 {
     CHECKERBOARD_[0] = row;
     CHECKERBOARD_[1] = col;
+}
+
+void ImageProcessor::setIsSnapShoot(bool isSnapShoot)
+{
+    isSnapShoot_ = isSnapShoot;
+}
+
+void ImageProcessor::setIsPressSnap()
+{
+    isPressSnap_ = true;
 }
 
 QPixmap ImageProcessor::toMatQpixmap(cv::Mat mat)
