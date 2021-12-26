@@ -29,7 +29,8 @@ public:
 public slots:
     void addItem(QTableWidgetItem* itemFile,QTableWidgetItem* itemDate,
                  QTableWidgetItem* itemCount,QTableWidgetItem* itemPattern,
-                 QTableWidgetItem* itemSizePattern, QTableWidgetItem* itemRmse);
+                 QTableWidgetItem* itemSizePattern, QTableWidgetItem* itemRmse,
+                 QTableWidgetItem* itemFlags );
 private slots:
     void on_btnAddFile_clicked();
     void on_btnOpenDir_clicked();

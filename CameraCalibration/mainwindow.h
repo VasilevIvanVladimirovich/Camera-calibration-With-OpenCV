@@ -20,12 +20,17 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
+#include <opencv2/aruco.hpp>
+#include <opencv2/aruco/charuco.hpp>
 
 #include "imageprocessor.h"
 #include "calibrationprocessor.h"
 #include "filesystem.h"
 #include "dialogdetect.h"
 #include "tablecompare.h"
+#include "dialogwindowimportimage.h"
+#include "dialogwindowdetectcalibration.h"
+#include "menuwindownewfile.h"
 
 #include <stdio.h>
 
@@ -49,13 +54,14 @@ public:
 public slots:
     void setqToolBarNew();
     void setqToolBarOpen();
-    void videoStream(int frameRate, int countframe, int row,
-                     int col, bool isPattern, bool isSnapShoot, QString pattern);
+    void videoStream(int numCum, int frameRate, int countframe,bool isSnapShoot);
     void addItem(QTableWidgetItem *Item, QTableWidgetItem *item1, QTableWidgetItem *Item2);
-    void setStatusImg(QString status,int row);
+    void setStatusImg(QString status, int row);
+    void runCalib();
+    void setPath(QString path);
 private slots:
     void on_btn_setImg_clicked();
-    void on_tableWidget_cellClicked(int row, int column);
+    void on_tableWidget_cellClicked(int row);
     void on_btn_detect_clicked();
     void on_btn_stopVideo_clicked();
     void on_chekResultInVideoStream_clicked();
@@ -76,5 +82,11 @@ private:
     FileSystem fileSystem_;
 
     TableCompare* tableCompare_;
+
+    DialogWindowImportImage* WindowImportImage;
+
+    DialogWindowDetectCalibration* WindowDetectCalibration;
+
+    MenuWindowNewFile* windowNewFile;
 };
 #endif // MAINWINDOW_H

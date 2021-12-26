@@ -38,6 +38,9 @@ public:
    void setPattern(QString pattern);
    void setCheckboardstate(int row,int col);
    void setIsSnapShoot(bool isSnapShoot);
+   void setCheckerSize(double checkerSize);
+   void setMarkerSize(double markerSize);
+   void setDictionaryName(QString dictionaryName);
 
    void setIsPressSnap();
    QPixmap toMatQpixmap(cv::Mat mat);
@@ -59,10 +62,13 @@ private:
     bool isSnapShoot_ = false;
     bool isTransformImg_ = false;
     bool isEnd_;
-    bool isPattern_ = false;
+    bool isPattern_ = true;
     int frameRate_;
     int countFrame_;
     int CHECKERBOARD_[2];
+    int dictionary_;
+    double checkerSize_;
+    double markerSize_;
     QString path_;
     QString pattern_;
     FileSystem filesystem;

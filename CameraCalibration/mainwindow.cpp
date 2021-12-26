@@ -2,8 +2,6 @@
 #include "dialogsetimg.h"
 #include "ui_mainwindow.h"
 
-#define NUMBER_CAM 1
-
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -61,10 +59,9 @@ QVector<QString> MainWindow::getVectorImgFromTable()
     return vector;
 }
 
-void MainWindow::videoStream(int frameRate,int countframe,int row,
-                             int col,bool isPattern,bool isSnapShoot, QString pattern)
+void MainWindow::videoStream(int numCum, int frameRate, int countframe,bool isSnapShoot)
 {
-    imgprocessor_ = new ImageProcessor(NUMBER_CAM);
+    imgprocessor_ = new ImageProcessor(numCum);
 
     connect(imgprocessor_,
         SIGNAL(outDisplay(QPixmap)),
@@ -84,13 +81,16 @@ void MainWindow::videoStream(int frameRate,int countframe,int row,
     imgprocessor_->setPath(fileSystem_.getFilePath()+"/");
     imgprocessor_->setFrameRate(frameRate);
     imgprocessor_->setCountFrame(countframe);
-    imgprocessor_->setIsPattern(isPattern);
+    imgprocessor_->setPattern(fileSystem_.getPattern());
+    imgprocessor_->setCheckboardstate(fileSystem_.getRow(), fileSystem_.getCol());
+    imgprocessor_->setCheckerSize(fileSystem_.getCheckerSize());
+    imgprocessor_->setMarkerSize(fileSystem_.getMarkerSize());
     imgprocessor_->setIsSnapShoot(isSnapShoot);
-    imgprocessor_->setPattern(pattern);
-    imgprocessor_->setCheckboardstate(row,col);
+    imgprocessor_->setDictionaryName(fileSystem_.getDictionaryName());
+
+
     imgprocessor_->setTransformImg(false);
     imgprocessor_->start();
-
 }
 
 void MainWindow::on_btn_stopVideo_clicked()
@@ -112,29 +112,46 @@ void MainWindow::setStatusImg(QString status, int row)
     ui->tableWidget->setItem(row,2,st);
 }
 
+void MainWindow::runCalib()
+{
+    calibprocessor_->setPattern(fileSystem_.getPattern());
+    calibprocessor_->setTargetSize(fileSystem_.getRow(), fileSystem_.getCol(),
+                                   fileSystem_.getMarkerSize(), fileSystem_.getCheckerSize(),
+                                   fileSystem_.getDictionaryName());
+    calibprocessor_->setSubPixelIter(fileSystem_.getSubPixIter());
+    calibprocessor_->setCalibrationFlags(fileSystem_.getCalibFlags());
+    calibprocessor_->run();
+}
+
+void MainWindow::setPath(QString path)
+{
+    fileSystem_.setPath(path);
+    ui->labelFileOpen->setText(path);
+}
+
 void MainWindow::on_btn_setImg_clicked()
 {
     if(fileSystem_.isSelectedDir())
     {
         ui->tableWidget->clearContents();
         ui->tableWidget->setRowCount(0);
-        DialogSetImg dialog;
 
-        dialog.setFileSystem(&fileSystem_);
+        WindowImportImage = new DialogWindowImportImage();
 
-        connect(&dialog,
-                SIGNAL(signalVideoStream(int,int,int,int,bool,bool,QString)),
+        WindowImportImage->setFileSystem(&fileSystem_);
+
+        connect(WindowImportImage,
+                SIGNAL(signalVideoStream(int,int,int,bool)),
                 this,
-                SLOT(videoStream(int,int,int,int,bool,bool,QString)));
+                SLOT(videoStream(int,int,int,bool)));
 
-        dialog.setModal(true);
-        dialog.exec();
+       WindowImportImage->show();
     }
-    else
+   else
         QMessageBox::warning(this, tr("Warning"),tr("File is not open"));
 }
 
-void MainWindow::on_tableWidget_cellClicked(int row, int column)
+void MainWindow::on_tableWidget_cellClicked(int row)
 {
     if(ui->tableWidget->item(row, 0)->checkState() == Qt::Checked){
         fileSystem_.openDrawImgInView(row);
@@ -146,29 +163,22 @@ void MainWindow::on_tableWidget_cellClicked(int row, int column)
 
 void MainWindow::on_btn_detect_clicked()
 {
+
     if(fileSystem_.isSelectedDir())
     {
         calibprocessor_ = new CalibrationProcessor();
 
-        DialogDetect dialog;
+        WindowDetectCalibration = new DialogWindowDetectCalibration();
 
         connect(calibprocessor_,
             SIGNAL(finished()),
             calibprocessor_,
             SLOT(deleteLater()));
 
-        connect(&dialog,
-                SIGNAL(outTargetType(QString)),
-                calibprocessor_,
-                SLOT(setTargetType(QString)));
-        connect(&dialog,
-                SIGNAL(outTargetSize(int,int)),
-                calibprocessor_,
-                SLOT(setTargetSize(int,int)));
-        connect(&dialog,
-                SIGNAL(outSubPixIter(int)),
-                calibprocessor_,
-                SLOT(setSubPixIter(int)));
+        connect(WindowDetectCalibration,
+                SIGNAL(goCalib()),
+                this,
+                SLOT(runCalib()));
 
         connect(calibprocessor_,
                 SIGNAL(sendStatusImg(QString,int)),
@@ -180,12 +190,12 @@ void MainWindow::on_btn_detect_clicked()
                 &fileSystem_,
                 SLOT(openFileInViewYamlCalib(QString)));
 
-
         calibprocessor_->setVectorPathImg(getVectorImgFromTable());
-        dialog.setModal(true);
-        dialog.exec();
         calibprocessor_->setPath(fileSystem_.getFilePath());
-        calibprocessor_->run();
+
+
+        WindowDetectCalibration->setFileSystem(&fileSystem_);
+        WindowDetectCalibration->show();
     }else
         QMessageBox::warning(this, tr("Warning"),tr("File is not open"));
 }
@@ -200,7 +210,7 @@ void MainWindow::on_chekResultInVideoStream_clicked()
 
 void MainWindow::videoStream(QString qstring)
 {
-    imgprocessor_ = new ImageProcessor(NUMBER_CAM);
+    imgprocessor_ = new ImageProcessor(1);
 
     connect(imgprocessor_,
             SIGNAL(outDisplay(QPixmap)),
@@ -219,14 +229,26 @@ void MainWindow::videoStream(QString qstring)
 
 void MainWindow::setqToolBarNew()
 {
-    QString pathName;
-    pathName = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-                                                 "/home",
-                                                 QFileDialog::ShowDirsOnly
-                                                 | QFileDialog::DontResolveSymlinks);
-    fileSystem_.setPath(pathName+"/");
-    fileSystem_.createWorkDir();
-    ui->labelFileOpen->setText(pathName);
+//    QString pathName;
+//    pathName = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+//                                                 "/home",
+//                                                 QFileDialog::ShowDirsOnly
+//                                                 | QFileDialog::DontResolveSymlinks);
+//    fileSystem_.setPath(pathName+"/");
+//    fileSystem_.createWorkDir();
+//    ui->labelFileOpen->setText(pathName);
+
+    windowNewFile = new MenuWindowNewFile();
+    connect(windowNewFile, SIGNAL(setPathDir(QString)),
+            this, SLOT(setPath(QString)));
+
+    connect(windowNewFile, SIGNAL(setParamentCalib(QString, int, int,
+                                                   double,double, QString)),
+            &fileSystem_, SLOT(writeSettingCalibInYaml(QString, int, int,
+                                                      double,double, QString)));
+
+    windowNewFile->show();
+
 }
 
 void MainWindow::setqToolBarOpen()

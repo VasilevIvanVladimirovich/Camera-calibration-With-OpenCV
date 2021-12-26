@@ -26,8 +26,8 @@ void ImageProcessor::run()
     while(web_cam_.isOpened() && !isEnd_){
         if(isTransformImg_){
             web_cam_ >> inputFrame_;
-            cv::undistort(inputFrame_,outFrame_,cameraMatrix_,distCoeffs_);
-            QPixmap img = toMatQpixmap(inputFrame_);
+            cv::undistort(inputFrame_, outFrame_, cameraMatrix_, distCoeffs_);
+            QPixmap img = toMatQpixmap(outFrame_);
             emit outDisplay(img);
         }else{
            web_cam_ >> outFrame_;
@@ -42,7 +42,7 @@ void ImageProcessor::run()
                    //saved frame
                    if(isPattern_)
                    {
-                       if (calibProcessor_.isFramePattern(&drawFrame, pattern_, CHECKERBOARD_[0], CHECKERBOARD_[1]))
+                       if (calibProcessor_.isFramePattern(&drawFrame, pattern_, CHECKERBOARD_[0], CHECKERBOARD_[1], checkerSize_, markerSize_, dictionary_))
                        {
                            QPixmap imgInDisplay = toMatQpixmap(drawFrame);
                            emit outDisplay(imgInDisplay);
@@ -77,7 +77,7 @@ void ImageProcessor::run()
                }else{
                    if(isPattern_)
                    {
-                       if(calibProcessor_.isFramePattern(&drawFrame,pattern_,CHECKERBOARD_[0],CHECKERBOARD_[1])){
+                       if(calibProcessor_.isFramePattern(&drawFrame, pattern_, CHECKERBOARD_[0],CHECKERBOARD_[1], checkerSize_, markerSize_, dictionary_)){
                            QPixmap imgInDisplay = toMatQpixmap(drawFrame);
                            emit outDisplay(imgInDisplay);
                        }else{
@@ -96,7 +96,7 @@ void ImageProcessor::run()
                //saved frame
                if(isPattern_)
                {
-                   if (calibProcessor_.isFramePattern(&drawFrame, pattern_, CHECKERBOARD_[0], CHECKERBOARD_[1]))
+                   if (calibProcessor_.isFramePattern(&drawFrame, pattern_, CHECKERBOARD_[0], CHECKERBOARD_[1], checkerSize_, markerSize_, dictionary_))
                    {
                        QPixmap imgInDisplay = toMatQpixmap(drawFrame);
                        emit outDisplay(imgInDisplay);
@@ -129,7 +129,7 @@ void ImageProcessor::run()
            }else{
                if(isPattern_)
                {
-                   if(calibProcessor_.isFramePattern(&drawFrame,pattern_,CHECKERBOARD_[0],CHECKERBOARD_[1])){
+                   if(calibProcessor_.isFramePattern(&drawFrame,pattern_,CHECKERBOARD_[0],CHECKERBOARD_[1], checkerSize_, markerSize_, dictionary_)){
                        QPixmap imgInDisplay = toMatQpixmap(drawFrame);
                        emit outDisplay(imgInDisplay);
                    }else{
@@ -170,6 +170,41 @@ void ImageProcessor::setCheckboardstate(int row, int col)
 void ImageProcessor::setIsSnapShoot(bool isSnapShoot)
 {
     isSnapShoot_ = isSnapShoot;
+}
+
+void ImageProcessor::setCheckerSize(double checkerSize)
+{
+    checkerSize_ = checkerSize;
+}
+
+void ImageProcessor::setMarkerSize(double markerSize)
+{
+    markerSize_ = markerSize;
+}
+
+void ImageProcessor::setDictionaryName(QString dictionaryName)
+{
+    if(dictionaryName == "DICT_4X4_50") dictionary_ = 0;
+    else if(dictionaryName == "DICT_4X4_50") dictionary_ = 1;
+    else if(dictionaryName == "DICT_4X4_100") dictionary_ = 2;
+    else if(dictionaryName == "DICT_4X4_1000") dictionary_ = 3;
+    else if(dictionaryName == "DICT_5X5_50") dictionary_ = 4;
+    else if(dictionaryName == "DICT_5X5_100") dictionary_ = 5;
+    else if(dictionaryName == "DICT_5X5_250") dictionary_ = 6;
+    else if(dictionaryName == "DICT_5X5_1000") dictionary_ = 7;
+    else if(dictionaryName == "DICT_6X6_50") dictionary_ = 8;
+    else if(dictionaryName == "DICT_6X6_100") dictionary_ = 9;
+    else if(dictionaryName == "DICT_6X6_250") dictionary_ = 10;
+    else if(dictionaryName == "DICT_6X6_1000") dictionary_ = 11;
+    else if(dictionaryName == "DICT_7X7_50") dictionary_ = 12;
+    else if(dictionaryName == "DICT_7X7_100") dictionary_ = 13;
+    else if(dictionaryName == "DICT_7X7_250") dictionary_ = 14;
+    else if(dictionaryName == "DICT_7X7_1000") dictionary_ = 15;
+    else if(dictionaryName == "DICT_ARUCO_ORIGINAL") dictionary_ = 16;
+    else if(dictionaryName == "DICT_APRILTAG_16h5") dictionary_ = 17;
+    else if(dictionaryName == "DICT_APRILTAG_25h9") dictionary_ = 18;
+    else if(dictionaryName == "DICT_APRILTAG_36h10") dictionary_ = 19;
+    else if(dictionaryName == "NULL") dictionary_ = -1;
 }
 
 void ImageProcessor::setIsPressSnap()

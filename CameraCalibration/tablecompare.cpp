@@ -12,21 +12,23 @@ TableCompare::TableCompare(QWidget* parent): QWidget(parent)
     connect(btnOpenDir_, SIGNAL(clicked()), this, SLOT(on_btnOpenDir_clicked()));
     connect(btnClearTable_, SIGNAL(clicked()), this, SLOT(on_btnClearTable_clicked()));
     connect(&fs_,
-            SIGNAL(outTableItemsCompare(QTableWidgetItem*,QTableWidgetItem*,
+            SIGNAL(outTableItemsCompare(QTableWidgetItem*, QTableWidgetItem*,
                                         QTableWidgetItem*, QTableWidgetItem*,
-                                        QTableWidgetItem*, QTableWidgetItem*)),
+                                        QTableWidgetItem*, QTableWidgetItem*,
+                                        QTableWidgetItem*)),
             this,
-            SLOT(addItem(QTableWidgetItem*,QTableWidgetItem*,
+            SLOT(addItem(QTableWidgetItem*, QTableWidgetItem*,
                          QTableWidgetItem*, QTableWidgetItem*,
-                         QTableWidgetItem*, QTableWidgetItem*)));
+                         QTableWidgetItem*, QTableWidgetItem*,
+                         QTableWidgetItem*)));
 
 
     table_->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    table_->setColumnCount(6);
-    table_->setHorizontalHeaderLabels(QStringList()<<"File"<<"Date"<<"Count img"<<"Pattern"<<"SizePattern"<<"Rmse");
+    table_->setColumnCount(7);
+    table_->setHorizontalHeaderLabels(QStringList()<<"File"<<"Date"<<"Count img"<<"Pattern"<<"SizePattern"<<"Rmse"<<"Flag");
     table_->setShowGrid(false);
-    table_->setSelectionMode(QAbstractItemView::SingleSelection);    // Разрешаем выделение только одного элемента
-    table_->setSelectionBehavior(QAbstractItemView::SelectRows);    // Разрешаем выделение построчно
+    table_->setSelectionMode(QAbstractItemView::SingleSelection);       // Разрешаем выделение только одного элемента
+    table_->setSelectionBehavior(QAbstractItemView::SelectRows);        // Разрешаем выделение построчно
     table_->setSortingEnabled(false);
 
     QHBoxLayout* layout_forBtn = new QHBoxLayout;
@@ -40,7 +42,6 @@ TableCompare::TableCompare(QWidget* parent): QWidget(parent)
     layout_main->addWidget(table_);
 
     setLayout(layout_main);
-
 }
 
 TableCompare::~TableCompare()
@@ -78,7 +79,8 @@ void TableCompare::on_btnClearTable_clicked()
 
 void TableCompare::addItem(QTableWidgetItem* itemFile,QTableWidgetItem* itemDate,
                            QTableWidgetItem* itemCount,QTableWidgetItem* itemPattern,
-                           QTableWidgetItem* itemSizePattern, QTableWidgetItem* itemRmse)
+                           QTableWidgetItem* itemSizePattern, QTableWidgetItem* itemRmse,
+                           QTableWidgetItem* itemFlags)
 {
     table_->setRowCount(table_->rowCount()+1);
     table_->setItem(table_->rowCount()-1,0,itemFile);
@@ -87,5 +89,6 @@ void TableCompare::addItem(QTableWidgetItem* itemFile,QTableWidgetItem* itemDate
     table_->setItem(table_->rowCount()-1,3,itemPattern);
     table_->setItem(table_->rowCount()-1,4,itemSizePattern);
     table_->setItem(table_->rowCount()-1,5,itemRmse);
+    table_->setItem(table_->rowCount()-1,6,itemFlags);
 }
 

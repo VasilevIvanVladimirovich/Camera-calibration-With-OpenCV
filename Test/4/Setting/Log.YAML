@@ -1,0 +1,13 @@
+%YAML:1.0
+---
+Pattern: Chessboard
+Row: 5
+Col: 8
+CheckerSize: 0.
+MarkerSize: 0.
+DictionaryName: NULL
+...
+---
+SubPixIter: 0
+intFlags: 6
+intName: "CV_CALIB_FIX_PRINCIPAL_POINT\nCV_CALIB_FIX_ASPECT_RATIO\n"

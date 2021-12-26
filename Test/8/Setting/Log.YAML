@@ -1,0 +1,11 @@
+%YAML:1.0
+---
+Pattern: ChArUco
+Row: 6
+Col: 9
+CheckerSize: 2.1000000000000001e-02
+MarkerSize: 1.6000000000000000e-02
+DictionaryName: DICT_5X5_100
+SubPixIter: 0
+intFlags: 4
+FlagsName: CV_CALIB_FIX_PRINCIPAL_POINT/n
