@@ -26,7 +26,6 @@
 #include "imageprocessor.h"
 #include "calibrationprocessor.h"
 #include "filesystem.h"
-#include "dialogdetect.h"
 #include "tablecompare.h"
 #include "dialogwindowimportimage.h"
 #include "dialogwindowdetectcalibration.h"

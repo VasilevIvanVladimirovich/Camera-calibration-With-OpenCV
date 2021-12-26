@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-#include "dialogsetimg.h"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow)
@@ -248,7 +247,6 @@ void MainWindow::setqToolBarNew()
                                                       double,double, QString)));
 
     windowNewFile->show();
-
 }
 
 void MainWindow::setqToolBarOpen()
@@ -266,7 +264,7 @@ void MainWindow::setqToolBarOpen()
     {
         ui->labelFileOpen->setText(pathName);
         fileSystem_.getTableItems();
-        QFileInfo check_file(pathName + "Accumulated");
+        QFileInfo check_file(fileSystem_.getFilePath() + "Result" + "/" + "Result.YAML");
         if(check_file.exists())
             fileSystem_.openFileInViewYamlCalib(fileSystem_.getFilePath());
     }else
