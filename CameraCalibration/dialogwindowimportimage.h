@@ -18,6 +18,9 @@
 #include <QMetaObject>
 #include <QFormLayout>
 #include <QList>
+#include <QComboBox>
+#include <QCameraDevice>
+#include <QMediaDevices>
 
 #include "filesystem.h"
 
@@ -31,13 +34,13 @@ public:
     void setFileSystem(FileSystem* fs);
 
 signals:
-    void signalVideoStream(int numCum, int frameRate, int countframe, bool isSnapshoot);
+    void signalVideoStream(int frameRate, int countframe, bool isSnapshoot);
+
 private slots:
     void on_btnStartVideoStream_clicked();
     void on_btnSetFolderPath_clicked();
     void on_btnSetOk_clicked();
     void on_btnSetCancel_clicked();
-    void on_tree_inputPatern_clicked(QTreeWidgetItem* item, int col);
 
 private:
     FileSystem* fs;
@@ -48,26 +51,18 @@ private:
     QPushButton* btnSetOk;
     QPushButton* btnSetCancel;
 
-    QSpinBox* spinBox_numCamera;
+//    QSpinBox* spinBox_numCameraFirst;
+//    QSpinBox* spinBox_numCameraSecond;
+    QComboBox *box_cameraFirst;
+    QComboBox *box_cameraSecond;
+
     QSpinBox* spinBox_frameRate;
     QSpinBox* spinBox_countFrame;
-    QSpinBox* spinBox_rowCount;
-    QSpinBox* spinBox_colCount;
-    QSpinBox* spinBox_checkerSize;
-    QSpinBox* spinBox_markerSize;
 
-    QCheckBox* checkBox_isPattern;
     QCheckBox* checkBox_isSnapShoot;
-
-    QTreeWidget* tree_inputPatern;
-    QTreeWidget* tree_inputDictionaryName;
 
     QLineEdit* line_folderPath;
 
-    QLabel* label_row;
-    QLabel* label_col;
-    QLabel* label_checkerSize;
-    QLabel* label_markerSize;
     QLabel* label_headerSelectFolder;
     QLabel* label_folderPath;
 };

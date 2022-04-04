@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QDate>
 #include <string>
+#include <QMessageBox>
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
@@ -26,11 +27,8 @@ class CalibrationProcessor :public QThread
 {
     Q_OBJECT
 public:
+    CalibrationProcessor(FileSystem* fs);
     CalibrationProcessor();
-
-    void setVectorPathImg(QVector<QString> vector);
-
-    void setPath(QString path);
 
     void setPattern(QString Pattern);
     void setRowCol(int row, int col);
@@ -39,13 +37,11 @@ public:
     void setDictionaryName(QString dictionaryName);
     void setSubPixelIter(int iter);
     void setCalibrationFlags(int calibrationFlags);
-
     bool getFrameFromTable(int row);
-
     void reloadVectors();
-
     void cameraCalibration();
-
+    void stereoCalibration();
+    void singleCalibration();
     void charucoAccumulation(int i);
     void chessboardAccumulation(int i, bool isSuccess,
                                 std::vector<cv::Point3f> objp,
@@ -56,22 +52,19 @@ public:
     void aCircleAccumulation(int i, bool isSuccess,
                              std::vector<cv::Point3f> objp,
                              std::vector<cv::Point2f> corner_pts);
-
     bool isFramePattern(cv::Mat* frame,QString pattern,int row, int col,
                         double icheckerSize, double imarkerSize, int idictionary);
-
     double Rmse();
 signals:
     void sendStatusImg(QString status, int row);
     void sendOpenFileInViewYamlCalib(QString filepath);
 public slots:
-
     void run() override;
-
     void setTargetType(QString qstring);
     void setTargetSize(int row,int col, double markerSize, double checkerSize, QString dictionaryName);
 private:
     bool isRefindStrategy_;
+    int numCam_;
     int subPixelIter_;
     int calibrationFlags_;
     int intDictionary_;
@@ -89,15 +82,15 @@ private:
     cv::Ptr<cv::aruco::CharucoBoard> charucoboard_;
     cv::Ptr<cv::aruco::Dictionary> dictionary_;
     cv::Ptr<cv::aruco::DetectorParameters> params_;
-    std::vector<std::vector<cv::Point3f> > objpoints_; //Вектор, для хранения векторов 3d точек для каждого изображения шахматной доски
-    std::vector<std::vector<cv::Point2f> > imgpoints_; //Вектор, для хранения векторов 2d точек для каждого изображения шахматной доски
+    std::vector<std::vector<cv::Point3f>> objpoints_; //Вектор, для хранения векторов 3d точек для каждого изображения шахматной доски
+    std::vector<std::vector<cv::Point2f>> imgpoints_; //Вектор, для хранения векторов 2d точек для каждого изображения шахматной доски
     std::vector<std::vector<cv::Point2f>>  allCharucoCorners;
     std::vector<std::vector<int>> allCharucoIds;
     std::vector< cv::Mat > allImgs;
     std::vector<cv::Mat> R_;
     std::vector<cv::Mat> T_;
     QVector<QString> vectorPathImg_;
-    FileSystem fs_;
+    FileSystem* fs_;
 };
 
 #endif // CALIBRATIONPROCESSOR_H

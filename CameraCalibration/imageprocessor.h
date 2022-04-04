@@ -7,10 +7,9 @@
 #include <QFile>
 #include <QString>
 
-
 #include<opencv2/opencv.hpp>
 #include<opencv2/core/core.hpp>
-#include <opencv2/core/persistence.hpp>
+#include<opencv2/core/persistence.hpp>
 #include<opencv2/highgui/highgui.hpp>
 #include<opencv2/imgproc.hpp>
 #include<opencv2/calib3d/calib3d.hpp>
@@ -25,9 +24,27 @@ class ImageProcessor :public QThread
 {
     Q_OBJECT
 public:
-   ImageProcessor(int num_web_cam);
-   ImageProcessor(cv::Mat img);
 
+    enum StateVideoStream{
+        FIND_FIRST_STREAM,
+        FIND_SECOND_STREAM,
+
+        FIRST_STREAM,
+        SECOND_STREAM,
+        FIRST_SECOND_STREAM,
+        FIRST_SECOND_STREAM_WHITHLINE,
+        FIRST_CALIBRATED_STREAM,
+        SECOND_CALIBRATED_STREAM,
+        FIRST_SECOND_CALIBRATED_STREAM,
+        STEREO_STREAM,
+        STEREO_DEPTH_STREAM
+    };
+
+    Q_ENUM(StateVideoStream)
+
+   ImageProcessor(int indexCam,int numCam);
+   ImageProcessor(FileSystem *fs, QString current);
+   ImageProcessor(cv::Mat img);
 
    void setOutFrame(cv::Mat frame);
    void setPath(QString qstring);
@@ -41,19 +58,22 @@ public:
    void setCheckerSize(double checkerSize);
    void setMarkerSize(double markerSize);
    void setDictionaryName(QString dictionaryName);
-
    void setIsPressSnap();
+   void setFileSystem(FileSystem *fs);
    QPixmap toMatQpixmap(cv::Mat mat);
-
    cv::Mat getOutFrame();
-
    void undistort(cv::Mat input,cv::Mat output,cv::Mat cameraMatrix,cv::Mat distCoeffs);
-
    void stopedThread();
+   void undistirtedStream();
+
+   void initCamera();
 
 signals:
     void outDisplay(QPixmap pixmap);
+    void outDisplayFirst(QPixmap pixmap);
+    void outDisplaySecond(QPixmap pixmap);
     void setItem(QTableWidgetItem* item, QTableWidgetItem* item1, QTableWidgetItem* item2);
+    void andStream();
 
 public slots:
     void run() override;
@@ -63,6 +83,7 @@ private:
     bool isTransformImg_ = false;
     bool isEnd_;
     bool isPattern_ = true;
+    int numCam_;
     int frameRate_;
     int countFrame_;
     int CHECKERBOARD_[2];
@@ -71,14 +92,17 @@ private:
     double markerSize_;
     QString path_;
     QString pattern_;
-    FileSystem filesystem;
+    FileSystem *filesystem;
     cv::Mat cameraMatrix_;
     cv::Mat newCameraMatrix_;
     cv::Mat distCoeffs_;
     cv::Mat inputFrame_;
     cv::Mat outFrame_;
     cv::VideoCapture web_cam_;
+    cv::VideoCapture web_camFirst_;
+    cv::VideoCapture web_camSecond_;
     CalibrationProcessor calibProcessor_;
-};
 
+    StateVideoStream state_video_stream;
+};
 #endif // IMAGEPROCESSOR_H

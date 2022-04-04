@@ -19,6 +19,9 @@
 #include <QFormLayout>
 #include <QSizePolicy>
 #include <QLineEdit>
+#include <QComboBox>
+#include <QCameraDevice>
+#include <QMediaDevices>
 
 #include "filesystem.h"
 
@@ -39,6 +42,7 @@ private slots:
     void on_btnSetCancel_clicked();
     void on_btnSetFolderPath_clicked();
     void on_tree_inputPatern_clicked(QTreeWidgetItem* item, int col);
+    void on_box_cameraFirst_IndexChanged(int index);
 private:
     FileSystem fileSystem_;
 
@@ -52,6 +56,9 @@ private:
     QSpinBox* spinBox_colCount;
     QSpinBox* spinBox_checkerSize;
     QSpinBox* spinBox_markerSize;
+
+    QComboBox *box_cameraFirst;
+    QComboBox *box_cameraSecond;
 
     QPushButton* btnSetOk;
     QPushButton* btnSetCancel;

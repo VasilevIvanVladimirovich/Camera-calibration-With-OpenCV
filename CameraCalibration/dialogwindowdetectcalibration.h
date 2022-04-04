@@ -30,7 +30,6 @@ public:
     ~DialogWindowDetectCalibration();
 
     int translateFlags(QString textFlag);
-
     void setFileSystem(FileSystem* fs);
 
 signals:
@@ -40,29 +39,27 @@ private slots:
     void on_btnSetOk_clicked();
     void on_btnCancel_clicked();
     void on_tree_inputPatern_clicked(QTreeWidgetItem* item, int col);
+    void on_isCalib_stateChanged(int state);
+    void on_isStereoCalib_stateChanged(int state);
 private:
     FileSystem* fs_;
 
     QPushButton* btnSetOk;
     QPushButton* btnCancel;
 
-    QSpinBox* spinBox_rowCount;
-    QSpinBox* spinBox_colCount;
     QSpinBox* spinBox_iterationSub;
-    QSpinBox* spinBox_checkerSize;
-    QSpinBox* spinBox_markerSize;
 
-    QTreeWidget* tree_inputPatern;
-    QTreeWidget* tree_inputDictionaryName;
+    QCheckBox* isCalib;
+    QCheckBox* isStereoCalib;
 
     QListWidget* list_inputFlags;
+    QListWidget* list_inputFlagsStereo;
 
-    QLabel* label_row;
-    QLabel* label_col;
     QLabel* label_subpix;
     QLabel* label_iteration;
-    QLabel* label_checkerSize;
-    QLabel* label_markerSize;
+
+    int camSecond_;
+    int camFirst_;
 };
 
 #endif // DIALOGWINDOWDETECTCALIBRATION_H

@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui multimedia widgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -10,6 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     calibrationprocessor.cpp \
+    controlwindow.cpp \
     dialogwindowdetectcalibration.cpp \
     dialogwindowimportimage.cpp \
     filesystem.cpp \
@@ -17,42 +18,25 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     menuwindownewfile.cpp \
+    streamsetting.cpp \
     tablecompare.cpp
 
 HEADERS += \
     calibrationprocessor.h \
+    controlwindow.h \
     dialogwindowdetectcalibration.h \
     dialogwindowimportimage.h \
     filesystem.h \
     imageprocessor.h \
     mainwindow.h \
     menuwindownewfile.h \
+    streamsetting.h \
     tablecompare.h
 
 FORMS += \
     mainwindow.ui
 
-INCLUDEPATH += D:\PRoG\CLib\opencv453\opencv-4.5.3\build\install\include\
-
-
-LIBS += D:\PRoG\CLib\opencv453\opencv-4.5.3\build\bin\libopencv_core453.dll
-LIBS += D:\PRoG\CLib\opencv453\opencv-4.5.3\build\bin\libopencv_highgui453.dll
-LIBS += D:\PRoG\CLib\opencv453\opencv-4.5.3\build\bin\libopencv_imgcodecs453.dll
-LIBS += D:\PRoG\CLib\opencv453\opencv-4.5.3\build\bin\libopencv_imgproc453.dll
-LIBS += D:\PRoG\CLib\opencv453\opencv-4.5.3\build\bin\libopencv_calib3d453.dll
-LIBS += D:\PRoG\CLib\opencv453\opencv-4.5.3\build\bin\libopencv_videoio453.dll
-LIBS += D:\PRoG\CLib\opencv453\opencv-4.5.3\build\bin\libopencv_video453.dll
-LIBS += D:\PRoG\CLib\opencv453\opencv-4.5.3\build\bin\libopencv_photo453.dll
-LIBS += D:\PRoG\CLib\opencv453\opencv-4.5.3\build\bin\libopencv_objdetect453.dll
-LIBS += D:\PRoG\CLib\opencv453\opencv-4.5.3\build\bin\libopencv_ml453.dll
-LIBS += D:\PRoG\CLib\opencv453\opencv-4.5.3\build\bin\libopencv_gapi453.dll
-LIBS += D:\PRoG\CLib\opencv453\opencv-4.5.3\build\bin\libopencv_flann453.dll
-LIBS += D:\PRoG\CLib\opencv453\opencv-4.5.3\build\bin\libopencv_features2d453.dll
-LIBS += D:\PRoG\CLib\opencv453\opencv-4.5.3\build\bin\libopencv_dnn453.dll
-LIBS += D:\PRoG\CLib\opencv453\opencv-4.5.3\build\bin\libopencv_stitching453.dll
-LIBS += D:\PRoG\CLib\opencv453\opencv-4.5.3\build\bin\opencv_videoio_ffmpeg453_64.dll
-
-LIBS += D:\PRoG\CLib\opencv453\opencv-4.5.3\build\bin\libopencv_aruco453.dll
+include(../CameraCalibration/opencv_library_path.pri)
 
 
 # Default rules for deployment.

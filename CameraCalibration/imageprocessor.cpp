@@ -1,10 +1,28 @@
 #include "imageprocessor.h"
 
-ImageProcessor::ImageProcessor(int num_web_cam)
+ImageProcessor::ImageProcessor(int indexCam,int numCam)
 {
-    web_cam_.open(num_web_cam);
+    numCam_= numCam;
+    web_cam_.open(indexCam);
     web_cam_.set(cv::CAP_PROP_AUTOFOCUS, 0);
     web_cam_.set(cv::CAP_PROP_AUTO_EXPOSURE, 0.75); //where X is a camera-dependent value such as 0.25 or 0.75.
+}
+
+ImageProcessor::ImageProcessor(FileSystem *fs, QString current)
+{
+    filesystem = fs;
+
+    if(current == "FindFirstCameraStream") state_video_stream = FIND_FIRST_STREAM;
+    if(current == "FindSecondCameraStream") state_video_stream = FIND_SECOND_STREAM;
+    if(current == "FirstCameraStream") state_video_stream = FIRST_STREAM;
+    if(current == "SecondCameraStream") state_video_stream = SECOND_STREAM;
+    if(current == "FirstAndSecondCameraStream") state_video_stream = FIRST_SECOND_STREAM;
+    if(current == "FirstAndSecondCameraStreamWhithLine") state_video_stream = FIRST_SECOND_STREAM_WHITHLINE;
+    if(current == "FirstCameraCalibratedStream") state_video_stream = FIRST_CALIBRATED_STREAM;
+    if(current == "SecondCameraCalibratedStream") state_video_stream = SECOND_CALIBRATED_STREAM;
+    if(current == "FirstAndSecondCameraCalibratedStream") state_video_stream = FIRST_SECOND_CALIBRATED_STREAM;
+    if(current == "StereoCalibratedStream") state_video_stream = STEREO_STREAM;
+    if(current == "DepthMapStream") state_video_stream = STEREO_DEPTH_STREAM;
 }
 
 ImageProcessor::ImageProcessor(cv::Mat img)
@@ -14,118 +32,138 @@ ImageProcessor::ImageProcessor(cv::Mat img)
 
 void ImageProcessor::run()
 {
+    initCamera();
+    if(state_video_stream == FIND_FIRST_STREAM || state_video_stream == FIND_SECOND_STREAM)
+    {
+    path_ = filesystem->getFilePath();
+    pattern_ = filesystem->getPattern();
+    CHECKERBOARD_[0] = filesystem->getRow();
+    CHECKERBOARD_[1] = filesystem->getCol();
+    checkerSize_ = filesystem->getCheckerSize();
+    markerSize_ = filesystem->getMarkerSize();
+    setDictionaryName(filesystem->getDictionaryName());
     int count = 0;
     int countImg = 1;
     isEnd_ = false;
     QString namepath;
-    if(isTransformImg_){
-        filesystem.readYamlMatrix(path_, &cameraMatrix_);
-        filesystem.readYamldistCoef(path_, &distCoeffs_);
-    }
     cv::Mat drawFrame;
+    if(isTransformImg_)
+    {
+        undistirtedStream();
+    }
     while(web_cam_.isOpened() && !isEnd_){
-        if(isTransformImg_){
-            web_cam_ >> inputFrame_;
-            cv::undistort(inputFrame_, outFrame_, cameraMatrix_, distCoeffs_);
-            QPixmap img = toMatQpixmap(outFrame_);
-            emit outDisplay(img);
-        }else{
-           web_cam_ >> outFrame_;
-           outFrame_.copyTo(drawFrame);
-           count++;
-           if(isSnapShoot_)
-           {
-               if(isPressSnap_)
-               {
-                   if(countImg == countFrame_)
-                       stopedThread();
-                   //saved frame
-                   if(isPattern_)
-                   {
-                       if (calibProcessor_.isFramePattern(&drawFrame, pattern_, CHECKERBOARD_[0], CHECKERBOARD_[1], checkerSize_, markerSize_, dictionary_))
-                       {
-                           QPixmap imgInDisplay = toMatQpixmap(drawFrame);
-                           emit outDisplay(imgInDisplay);
+        web_cam_ >> outFrame_;
+        outFrame_.copyTo(drawFrame);
+        count++;
+        if(countImg - 1 == countFrame_)
+            stopedThread();
+        //действие по нажатию кнопки
+        if(isSnapShoot_)
+        {
+            if(isPressSnap_) //если кнопка нажата
+            {
+                //saved frame
+                if(isPattern_) //есть ли шаблон на экране (если есть, показываем на экране) и сохраняем его в таблицу
+                {
+                    if (calibProcessor_.isFramePattern(&drawFrame, pattern_, CHECKERBOARD_[0], CHECKERBOARD_[1], checkerSize_, markerSize_, dictionary_))
+                    {
+                        QPixmap imgInDisplay = toMatQpixmap(drawFrame);
+                        emit outDisplay(imgInDisplay);
 
-                           QPixmap imgInSave = toMatQpixmap(outFrame_);
-                           namepath = path_.chopped(1) + "Accumulated/" + QString::number(countImg) + ".png";
-                           countImg++;
-                           filesystem.saveInImg(imgInSave,namepath);
-                           QTableWidgetItem *item = new QTableWidgetItem();
-                           item->setCheckState(Qt::Unchecked);
-                           QTableWidgetItem *item1 = new QTableWidgetItem();
-                           item1->setCheckState(Qt::Unchecked);
-                           QTableWidgetItem *item2 = new QTableWidgetItem(namepath);
-                           emit setItem(item, item1, item2);
-                           isPressSnap_ = false;
-                       }
+                        QPixmap imgInSave = toMatQpixmap(outFrame_);
+                        namepath = QString(path_ + "Camera%1/" + "Accumulated/" + QString::number(countImg) + ".png").arg(numCam_);
+
+                        filesystem->saveInImg(imgInSave,namepath);
+                        if(numCam_==1)
+                        {
+                            QTableWidgetItem *item = new QTableWidgetItem();
+                            item->setCheckState(Qt::Unchecked);
+                            QTableWidgetItem *item1 = new QTableWidgetItem();
+                            item1->setCheckState(Qt::Unchecked);
+                            QTableWidgetItem *item2 = new QTableWidgetItem(QString::number(countImg) + ".png");
+                            emit setItem(item,item1, item2);
+                        }
+                        countImg++;
+                        isPressSnap_ = false;
                    }else{
-                       QPixmap img= toMatQpixmap(outFrame_);
-                       emit outDisplay(img);
-                       QApplication::beep();
-                       namepath = path_.chopped(1) + "Accumulated/" + QString::number(countImg) + ".png";
-                       countImg++;
-                       filesystem.saveInImg(img,namepath);
-                       QTableWidgetItem *item = new QTableWidgetItem();
-                       item->setCheckState(Qt::Unchecked);
-                       QTableWidgetItem *item1 = new QTableWidgetItem();
-                       item1->setCheckState(Qt::Unchecked);
-                       QTableWidgetItem *item2 = new QTableWidgetItem(namepath);
-                       emit setItem(item,item1, item2);
-                       isPressSnap_ = false;
-                   }
-               }else{
-                   if(isPattern_)
-                   {
-                       if(calibProcessor_.isFramePattern(&drawFrame, pattern_, CHECKERBOARD_[0],CHECKERBOARD_[1], checkerSize_, markerSize_, dictionary_)){
-                           QPixmap imgInDisplay = toMatQpixmap(drawFrame);
-                           emit outDisplay(imgInDisplay);
-                       }else{
-                           QPixmap img = toMatQpixmap(outFrame_);
-                           emit outDisplay(img);
-                       }
-                   }else{
-                       QPixmap img= toMatQpixmap(outFrame_);
-                       emit outDisplay(img);
+                        QPixmap img = toMatQpixmap(outFrame_);
+                        emit outDisplay(img);
+                        QApplication::beep();
+                        namepath = QString(path_ + "Camera%1/" + "Accumulated/" + QString::number(countImg) + ".png").arg(numCam_);
+
+                        filesystem->saveInImg(img,namepath);
+                        if(numCam_==1)
+                        {
+                            QTableWidgetItem *item = new QTableWidgetItem();
+                            item->setCheckState(Qt::Unchecked);
+                            QTableWidgetItem *item1 = new QTableWidgetItem();
+                            item1->setCheckState(Qt::Unchecked);
+                            QTableWidgetItem *item2 = new QTableWidgetItem(QString::number(countImg) + ".png");
+                            emit setItem(item,item1, item2);
+                        }
+                        countImg++;
+                        isPressSnap_ = false;
+                  }
+                }
+               }else{ // если кнопка не была нажата
+                    if(isPattern_) //если шаблон был найден, показываем его на экране
+                    {
+                        if(calibProcessor_.isFramePattern(&drawFrame, pattern_, CHECKERBOARD_[0],CHECKERBOARD_[1], checkerSize_, markerSize_, dictionary_)){
+                            QPixmap imgInDisplay = toMatQpixmap(drawFrame);
+                            emit outDisplay(imgInDisplay);
+                        }else{
+                            QPixmap img = toMatQpixmap(outFrame_);
+                            emit outDisplay(img);
+                        }
+                   }else{ //если шаблона нету, показываем просто на экране
+                        QPixmap img= toMatQpixmap(outFrame_);
+                        emit outDisplay(img);
                    }
                }
            }else{
+           //действие по таймеру
            if(count % frameRate_ == 0){
-               if(countImg == countFrame_)
-                   stopedThread();
                //saved frame
-               if(isPattern_)
+               if(isPattern_)  //есть ли шаблон на экране (если есть, показываем на экране) и сохраняем его в таблицу
                {
-                   if (calibProcessor_.isFramePattern(&drawFrame, pattern_, CHECKERBOARD_[0], CHECKERBOARD_[1], checkerSize_, markerSize_, dictionary_))
-                   {
-                       QPixmap imgInDisplay = toMatQpixmap(drawFrame);
-                       emit outDisplay(imgInDisplay);
+                    if (calibProcessor_.isFramePattern(&drawFrame, pattern_, CHECKERBOARD_[0], CHECKERBOARD_[1], checkerSize_, markerSize_, dictionary_))
+                    {
+                        QPixmap imgInDisplay = toMatQpixmap(drawFrame);
+                        emit outDisplay(imgInDisplay);
 
-                       QPixmap imgInSave = toMatQpixmap(outFrame_);
-                       namepath = path_.chopped(1) + "Accumulated/" + QString::number(countImg) + ".png";
-                       countImg++;
-                       filesystem.saveInImg(imgInSave,namepath);
-                       QTableWidgetItem *item = new QTableWidgetItem();
-                       item->setCheckState(Qt::Unchecked);
-                       QTableWidgetItem *item1 = new QTableWidgetItem();
-                       item1->setCheckState(Qt::Unchecked);
-                       QTableWidgetItem *item2 = new QTableWidgetItem(namepath);
-                       emit setItem(item, item1, item2);
+                        QPixmap imgInSave = toMatQpixmap(outFrame_);
+                        namepath = QString(path_ + "Camera%1/" + "Accumulated/" + QString::number(countImg) + ".png").arg(numCam_);
+
+                        filesystem->saveInImg(imgInSave,namepath);
+                        if(numCam_==1)
+                        {
+                            QTableWidgetItem *item = new QTableWidgetItem();
+                            item->setCheckState(Qt::Unchecked);
+                            QTableWidgetItem *item1 = new QTableWidgetItem();
+                            item1->setCheckState(Qt::Unchecked);
+                            QTableWidgetItem *item2 = new QTableWidgetItem(QString::number(countImg) + ".png");
+                            emit setItem(item,item1, item2);
+                        }
+                        countImg++;
                    }
                }else{
-                   QPixmap img= toMatQpixmap(outFrame_);
-                   emit outDisplay(img);
-                   QApplication::beep();
-                   namepath = path_.chopped(1) + "Accumulated/" + QString::number(countImg) + ".png";
-                   countImg++;
-                   filesystem.saveInImg(img,namepath);
-                   QTableWidgetItem *item = new QTableWidgetItem();
-                   item->setCheckState(Qt::Unchecked);
-                   QTableWidgetItem *item1 = new QTableWidgetItem();
-                   item1->setCheckState(Qt::Unchecked);
-                   QTableWidgetItem *item2 = new QTableWidgetItem(namepath);
-                   emit setItem(item,item1, item2);
-               }
+                    QPixmap img= toMatQpixmap(outFrame_);
+                    emit outDisplay(img);
+                    QApplication::beep();
+                    namepath = QString(path_ + "Camera%1/" + "Accumulated/" + QString::number(countImg) + ".png").arg(numCam_);
+
+                    filesystem->saveInImg(img,namepath);
+                    if(numCam_==1)
+                    {
+                        QTableWidgetItem *item = new QTableWidgetItem();
+                        item->setCheckState(Qt::Unchecked);
+                        QTableWidgetItem *item1 = new QTableWidgetItem();
+                        item1->setCheckState(Qt::Unchecked);
+                        QTableWidgetItem *item2 = new QTableWidgetItem(QString::number(countImg) + ".png");
+                        emit setItem(item,item1, item2);
+                    }
+                    countImg++;
+              }
            }else{
                if(isPattern_)
                {
@@ -142,8 +180,250 @@ void ImageProcessor::run()
                }
            }
            }
+    }
+    }
+    if(state_video_stream == FIRST_STREAM)
+    {
+        qDebug()<<"inFc";
+        while(web_camFirst_.isOpened() && !isEnd_)
+        {
+            web_camFirst_ >> outFrame_;
+            QPixmap img = toMatQpixmap(outFrame_);
+            emit outDisplayFirst(img);
         }
     }
+    if(state_video_stream == SECOND_STREAM)
+    {
+        while(web_camSecond_.isOpened() && !isEnd_)
+        {
+            web_camSecond_ >> outFrame_;
+            QPixmap img = toMatQpixmap(outFrame_);
+            emit outDisplaySecond(img);
+        }
+    }
+    if(state_video_stream == FIRST_SECOND_STREAM)
+    {
+        cv::Mat outFrameFirst,outFrameSecond;
+        while(web_camFirst_.isOpened() && web_camSecond_.isOpened() && !isEnd_)
+        {
+            web_camFirst_ >> outFrameFirst;
+            web_camSecond_ >> outFrameSecond;
+
+            QPixmap imgFirst = toMatQpixmap(outFrameFirst);
+            emit outDisplayFirst(imgFirst);
+
+            QPixmap imgSecond = toMatQpixmap(outFrameSecond);
+            emit outDisplaySecond(imgSecond);
+        }
+    }
+    if(state_video_stream == FIRST_SECOND_STREAM_WHITHLINE)
+    {
+        cv::Mat outFrameFirst,outFrameSecond;
+        while(web_camFirst_.isOpened() && web_camSecond_.isOpened() && !isEnd_)
+        {
+            web_camFirst_ >> outFrameFirst;
+            web_camSecond_ >> outFrameSecond;
+
+            for(int j = 0; j < outFrameFirst.rows; j += 16)
+                line(outFrameFirst, cv::Point(0, j), cv::Point(outFrameFirst.cols, j), cv::Scalar(0, 255, 0), 1, 8);
+
+            for(int j = 0; j < outFrameFirst.cols; j += 64)
+                line(outFrameFirst, cv::Point(j, 0), cv::Point(j, outFrameFirst.rows), cv::Scalar(0, 255, 0), 1, 8);
+
+            QPixmap imgFirst = toMatQpixmap(outFrameFirst);
+            emit outDisplayFirst(imgFirst);
+
+            for(int j = 0; j < outFrameSecond.rows; j += 16 )
+                line(outFrameSecond, cv::Point(0, j), cv::Point(outFrameSecond.cols, j), cv::Scalar(0, 255, 0), 1, 8);
+
+            for(int j = 0; j < outFrameSecond.cols; j += 64 )
+                line(outFrameSecond, cv::Point(j, 0), cv::Point(j,outFrameSecond.cols), cv::Scalar(0, 255, 0), 1, 8);
+
+            QPixmap imgSecond = toMatQpixmap(outFrameSecond);
+            emit outDisplaySecond(imgSecond);
+        }
+    }
+
+
+    if(state_video_stream == FIRST_CALIBRATED_STREAM)
+    {
+        cv::Mat cameraMatrixFirst, distCoeffsFirst;
+        filesystem->readYamlMatrixFirst(&cameraMatrixFirst);
+        filesystem->readYamldistCoefSecond(&distCoeffsFirst);
+        while(web_camFirst_.isOpened() && !isEnd_)
+        {
+            web_camFirst_ >> inputFrame_;
+            cv::undistort(inputFrame_, outFrame_, cameraMatrixFirst, distCoeffsFirst);
+            QPixmap img = toMatQpixmap(outFrame_);
+            emit outDisplayFirst(img);
+        }
+    }
+    if(state_video_stream == SECOND_CALIBRATED_STREAM)
+    {
+        cv::Mat cameraMatrixSecond, distCoeffsSecond;
+        filesystem->readYamlMatrixFirst(&cameraMatrixSecond);
+        filesystem->readYamldistCoefSecond(&distCoeffsSecond);
+        while(web_camSecond_.isOpened() && !isEnd_)
+        {
+            web_camSecond_ >> inputFrame_;
+            cv::undistort(inputFrame_, outFrame_, cameraMatrixSecond, distCoeffsSecond);
+            QPixmap img = toMatQpixmap(outFrame_);
+            emit outDisplaySecond(img);
+        }
+    }
+    if(state_video_stream == FIRST_SECOND_CALIBRATED_STREAM)
+    {
+        cv::Mat cameraMatrixFirst, distCoeffsFirst;
+        cv::Mat cameraMatrixSecond, distCoeffsSecond;
+        cv::Mat inputFirst,outputFirst;
+        cv::Mat inputSecond,outputSecond;
+        filesystem->readYamlMatrixFirst(&cameraMatrixFirst);
+        filesystem->readYamldistCoefSecond(&distCoeffsFirst);
+        filesystem->readYamlMatrixFirst(&cameraMatrixSecond);
+        filesystem->readYamldistCoefSecond(&distCoeffsSecond);
+        while(web_camFirst_.isOpened() && web_camSecond_.isOpened() && !isEnd_)
+        {
+            web_camFirst_ >> inputFirst;
+            web_camSecond_ >> inputSecond;
+            cv::undistort(inputFirst, outputFirst, cameraMatrixFirst, distCoeffsFirst);
+            cv::undistort(inputSecond, outputSecond, cameraMatrixSecond, distCoeffsSecond);
+            QPixmap imgFirst = toMatQpixmap(outputFirst);
+            QPixmap imgSecond = toMatQpixmap(outputSecond);
+            emit outDisplayFirst(imgFirst);
+            emit outDisplaySecond(imgSecond);
+        }
+    }
+    if(state_video_stream == STEREO_STREAM)
+    {
+        cv::Mat cameraMatrixFirst, distCoeffsFirst;
+        cv::Mat cameraMatrixSecond, distCoeffsSecond;
+        cv::Mat inputFirst,outputFirst;
+        cv::Mat inputSecond,outputSecond;
+        cv::Mat rmap[2][2];
+        filesystem->readYamlMatrixFirst(&cameraMatrixFirst);
+        filesystem->readYamldistCoefSecond(&distCoeffsFirst);
+        filesystem->readYamlMatrixFirst(&cameraMatrixSecond);
+        filesystem->readYamldistCoefSecond(&distCoeffsSecond);
+        rmap[0][0] = filesystem->getRmap00();
+        rmap[0][1] = filesystem->getRmap01();
+        rmap[1][0] = filesystem->getRmap10();
+        rmap[1][1] = filesystem->getRmap11();
+        while(web_camFirst_.isOpened() && web_camSecond_.isOpened() && !isEnd_)
+        {
+            web_camFirst_ >> inputFirst;
+            web_camSecond_ >> inputSecond;
+
+            cv::remap(inputFirst, outputFirst, rmap[0][0], rmap[0][1], cv::INTER_LINEAR, cv::BORDER_DEFAULT, cv::Scalar());
+            QPixmap imgFirst = toMatQpixmap(outputFirst);
+            emit outDisplayFirst(imgFirst);
+
+            cv::remap(inputSecond, outputSecond, rmap[1][0], rmap[1][1], cv::INTER_LINEAR, cv::BORDER_DEFAULT, cv::Scalar());
+            QPixmap imgSecond = toMatQpixmap(outputSecond);
+            emit outDisplaySecond(imgSecond);
+
+        }
+    }
+    if(state_video_stream == STEREO_DEPTH_STREAM)
+    {
+        cv::Mat cameraMatrixFirst, distCoeffsFirst;
+        cv::Mat cameraMatrixSecond, distCoeffsSecond;
+        cv::Mat inputFirst,outputFirst;
+        cv::Mat inputSecond,outputSecond;
+        cv::Mat grayScaleFirst,grayScaleSecond;
+        cv::Mat disparity;
+        cv::Mat rmap[2][2];
+        filesystem->readYamlMatrixFirst(&cameraMatrixFirst);
+        filesystem->readYamldistCoefSecond(&distCoeffsFirst);
+        filesystem->readYamlMatrixFirst(&cameraMatrixSecond);
+        filesystem->readYamldistCoefSecond(&distCoeffsSecond);
+        rmap[0][0] = filesystem->getRmap00();
+        rmap[0][1] = filesystem->getRmap01();
+        rmap[1][0] = filesystem->getRmap10();
+        rmap[1][1] = filesystem->getRmap11();
+
+        cv::Ptr<cv::StereoBM> sbm =  cv::StereoBM::create(16,21);
+
+        sbm->setDisp12MaxDiff(1);
+        sbm->setSpeckleRange(8);
+        sbm->setSpeckleWindowSize(9);
+        sbm->setUniquenessRatio(0);
+        sbm->setTextureThreshold(507);
+        sbm->setMinDisparity(-39);
+        sbm->setPreFilterCap(61);
+        sbm->setPreFilterSize(5);
+
+        while(web_camFirst_.isOpened() && web_camSecond_.isOpened() && !isEnd_)
+        {
+            web_camFirst_ >> inputFirst;
+            web_camSecond_ >> inputSecond;
+            cv::remap(inputFirst, outputFirst, rmap[0][0], rmap[0][1], cv::INTER_LINEAR, cv::BORDER_DEFAULT, cv::Scalar());
+            cv::remap(inputSecond, outputSecond, rmap[1][0], rmap[1][1], cv::INTER_LINEAR, cv::BORDER_DEFAULT, cv::Scalar());
+
+            cvtColor(outputFirst, grayScaleFirst, cv::COLOR_RGB2GRAY);
+            cvtColor(outputSecond, grayScaleSecond, cv::COLOR_RGB2GRAY);
+
+            sbm->compute(grayScaleFirst, grayScaleSecond, disparity);
+
+            QPixmap img = toMatQpixmap(disparity);
+            emit outDisplayFirst(img);
+        }
+    }
+}
+
+void ImageProcessor::undistirtedStream()
+{
+//    filesystem->readYamlMatrix(path_, &cameraMatrix_);
+//    filesystem->readYamldistCoef(path_, &distCoeffs_);
+//    while(web_cam_.isOpened() && !isEnd_){
+//        web_cam_ >> inputFrame_;
+//        cv::undistort(inputFrame_, outFrame_, cameraMatrix_, distCoeffs_);
+//        QPixmap img = toMatQpixmap(outFrame_);
+//        emit outDisplay(img);
+//    }
+}
+
+void ImageProcessor::initCamera()
+{
+    if(state_video_stream == FIND_FIRST_STREAM)
+    {
+        numCam_= 1;
+        web_cam_.open(filesystem->getIndexCameraFirst());
+        web_cam_.set(cv::CAP_PROP_AUTOFOCUS, 0);
+        web_cam_.set(cv::CAP_PROP_AUTO_EXPOSURE, 0.75);
+        web_cam_.set(cv::CAP_PROP_FRAME_WIDTH, 1280);
+        web_cam_.set(cv::CAP_PROP_FRAME_HEIGHT, 720);
+    }
+    if(state_video_stream == FIND_SECOND_STREAM)
+    {
+        numCam_= 2;
+        web_cam_.open(filesystem->getIndexCameraSecond());
+        web_cam_.set(cv::CAP_PROP_AUTOFOCUS, 0);
+        web_cam_.set(cv::CAP_PROP_AUTO_EXPOSURE, 0.75);
+        web_cam_.set(cv::CAP_PROP_FRAME_WIDTH, 1280);
+        web_cam_.set(cv::CAP_PROP_FRAME_HEIGHT, 720);
+    }
+    if(state_video_stream == FIRST_STREAM || state_video_stream == FIRST_SECOND_STREAM || state_video_stream == FIRST_SECOND_STREAM_WHITHLINE ||
+       state_video_stream == FIRST_CALIBRATED_STREAM || state_video_stream == FIRST_SECOND_CALIBRATED_STREAM ||
+       state_video_stream == STEREO_STREAM || state_video_stream == STEREO_DEPTH_STREAM)
+    {
+        web_camFirst_.open(filesystem->getIndexCameraFirst());
+        web_camFirst_.set(cv::CAP_PROP_AUTOFOCUS, 0);
+        web_camFirst_.set(cv::CAP_PROP_AUTO_EXPOSURE, 0.75);
+        web_camFirst_.set(cv::CAP_PROP_FRAME_WIDTH, 1280);
+        web_camFirst_.set(cv::CAP_PROP_FRAME_HEIGHT, 720);
+    }
+
+    if(state_video_stream == SECOND_STREAM || state_video_stream == FIRST_SECOND_STREAM || state_video_stream == FIRST_SECOND_STREAM_WHITHLINE ||
+       state_video_stream == SECOND_CALIBRATED_STREAM || state_video_stream == FIRST_SECOND_CALIBRATED_STREAM ||
+       state_video_stream == STEREO_STREAM || state_video_stream == STEREO_DEPTH_STREAM)
+    {
+        web_camSecond_.open(filesystem->getIndexCameraSecond());
+        web_camSecond_.set(cv::CAP_PROP_AUTOFOCUS, 0);
+        web_camSecond_.set(cv::CAP_PROP_AUTO_EXPOSURE, 0.75);
+        web_camSecond_.set(cv::CAP_PROP_FRAME_WIDTH, 1280);
+        web_camSecond_.set(cv::CAP_PROP_FRAME_HEIGHT, 720);
+    }
+
 }
 
 void ImageProcessor::setTransformImg(bool newTransformImg)
@@ -212,6 +492,11 @@ void ImageProcessor::setIsPressSnap()
     isPressSnap_ = true;
 }
 
+void ImageProcessor::setFileSystem(FileSystem *fs)
+{
+    filesystem = fs;
+}
+
 QPixmap ImageProcessor::toMatQpixmap(cv::Mat mat)
 {
     return QPixmap::fromImage(
@@ -256,5 +541,8 @@ void ImageProcessor::setFrameRate(int frameRate)
 
 void ImageProcessor::stopedThread()
 {
+    emit andStream();
     isEnd_=true;
 }
+
+

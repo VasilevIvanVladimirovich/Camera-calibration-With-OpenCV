@@ -31,19 +31,38 @@ MenuWindowNewFile::MenuWindowNewFile(QWidget* parent): QWidget(parent)
     layout_inputSelectFolder->addWidget(line_folderPath);
     layout_inputSelectFolder->addWidget(btnSetFolderPath);
 
+    QFormLayout *layout_importCameras = new QFormLayout;
+
+    box_cameraFirst = new QComboBox();
+    layout_importCameras->addRow("Camera Number first:", box_cameraFirst);
+
+    box_cameraSecond = new QComboBox();
+    layout_importCameras->addRow("Camera Number Second:", box_cameraSecond);
+
+    connect(box_cameraFirst,SIGNAL(currentIndexChanged(int)),this,SLOT(on_box_cameraFirst_IndexChanged(int)));
+
+    box_cameraFirst->addItem("NULL");
+    box_cameraSecond->addItem("NULL");
+    QList<QCameraDevice> cameras = QMediaDevices::videoInputs();
+    for (const QCameraDevice &cameraDevice : cameras) {
+        box_cameraFirst->addItem(cameraDevice.description());
+        box_cameraSecond->addItem(cameraDevice.description());
+    }
+
     layout_selectFolder->addLayout(layout_inputSelectFolder);
+    layout_selectFolder->addLayout(layout_importCameras);
 
-        QFormLayout *layout_chekingPatternSetting = new QFormLayout;
+    QFormLayout *layout_chekingPatternSetting = new QFormLayout;
 
-        tree_inputPatern = new QTreeWidget;
-        tree_inputPatern->setColumnCount(1);
-        tree_inputPatern->setHeaderLabels(QStringList() << "Pattern");
-        QList<QTreeWidgetItem *> items_inputPatern;
-        items_inputPatern.append(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(QString("Chessboard"))));
-        items_inputPatern.append(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(QString("Circles"))));
-        items_inputPatern.append(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(QString("Assymetric Circles"))));
-        items_inputPatern.append(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(QString("ChArUco"))));
-        tree_inputPatern->insertTopLevelItems(0, items_inputPatern);
+    tree_inputPatern = new QTreeWidget;
+    tree_inputPatern->setColumnCount(1);
+    tree_inputPatern->setHeaderLabels(QStringList() << "Pattern");
+    QList<QTreeWidgetItem *> items_inputPatern;
+    items_inputPatern.append(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(QString("Chessboard"))));
+    items_inputPatern.append(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(QString("Circles"))));
+    items_inputPatern.append(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(QString("Assymetric Circles"))));
+    items_inputPatern.append(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(QString("ChArUco"))));
+    tree_inputPatern->insertTopLevelItems(0, items_inputPatern);
 
     connect(tree_inputPatern,SIGNAL(itemClicked(QTreeWidgetItem*, int)),this,SLOT(on_tree_inputPatern_clicked(QTreeWidgetItem*, int)));
 
@@ -112,16 +131,14 @@ MenuWindowNewFile::MenuWindowNewFile(QWidget* parent): QWidget(parent)
     layout_rowColPatternSetting->addLayout(layout_markerSizeSetting);
     layout_rowColPatternSetting->addLayout(layout_dictionarySetting);
 
-    label_row->hide();
-    label_col->hide();
-    spinBox_rowCount->hide();
-    spinBox_colCount->hide();
+    box_cameraSecond->setEnabled(false);
 
-    label_markerSize->hide();
-    label_checkerSize->hide();
-    spinBox_markerSize->hide();
-    spinBox_checkerSize->hide();
-    tree_inputDictionaryName->hide();
+    spinBox_rowCount->setEnabled(false);
+    spinBox_colCount->setEnabled(false);
+
+    spinBox_markerSize->setEnabled(false);
+    spinBox_checkerSize->setEnabled(false);
+    tree_inputDictionaryName->setEnabled(false);
 
 ////
     layout_chekingPatternSetting->addRow("Select pattern", tree_inputPatern);
@@ -148,8 +165,21 @@ MenuWindowNewFile::~MenuWindowNewFile()
 void MenuWindowNewFile::on_btnSetOk_clicked()
 {
 
+    int numCamFirst, numCamSecond;
+    if(box_cameraFirst->currentIndex()==0)
+         numCamFirst=-1;
+    else numCamFirst = box_cameraFirst->currentIndex()-1;
+    if(box_cameraSecond->currentIndex()==0)
+        numCamSecond=-1;
+    else {numCamSecond = box_cameraSecond->currentIndex()-1;}
+
+    QString nameCumFirst = box_cameraFirst->itemText(box_cameraFirst->currentIndex());
+    QString nameCumSecond = box_cameraSecond->itemText(box_cameraSecond->currentIndex());
+
     fileSystem_.setPath(pathName+"/");
-    fileSystem_.createWorkDir();
+    if(numCamSecond != -1) fileSystem_.createWorkDir(2);
+    else {fileSystem_.createWorkDir(1);}
+
     emit setPathDir(fileSystem_.getFilePath());
 
     QTreeWidgetItem* item_tree_inputDictionaryName;
@@ -169,13 +199,16 @@ void MenuWindowNewFile::on_btnSetOk_clicked()
     else {
         dictionaryName = item_tree_inputDictionaryName->text(0);
     }
-
-        emit setParamentCalib(pattern,
-                                 spinBox_rowCount->value(),
-                                 spinBox_colCount->value(),
-                                 spinBox_checkerSize->value(),
-                                 spinBox_markerSize->value(),
-                                 dictionaryName);
+    fileSystem_.writeSettingCalibInYaml(numCamFirst,
+                                        nameCumFirst,
+                                        numCamSecond,
+                                        nameCumSecond,
+                                        pattern,
+                                        spinBox_rowCount->value(),
+                                        spinBox_colCount->value(),
+                                        spinBox_checkerSize->value(),
+                                        spinBox_markerSize->value(),
+                                        dictionaryName);
     close();
 }
 
@@ -196,36 +229,32 @@ void MenuWindowNewFile::on_btnSetFolderPath_clicked()
 
 void MenuWindowNewFile::on_tree_inputPatern_clicked(QTreeWidgetItem* item, int col)
 {
-    label_row->hide();
-    label_col->hide();
-    spinBox_rowCount->hide();
-    spinBox_colCount->hide();
+    spinBox_rowCount->setEnabled(false);
+    spinBox_colCount->setEnabled(false);
 
-    label_markerSize->hide();
-    label_checkerSize->hide();
-    spinBox_markerSize->hide();
-    spinBox_checkerSize->hide();
-    tree_inputDictionaryName->hide();
+    spinBox_markerSize->setEnabled(false);
+    spinBox_checkerSize->setEnabled(false);
+    tree_inputDictionaryName->setEnabled(false);
 
     pattern = item->text(0);
     if(pattern == "Chessboard" || pattern == "Circles" || pattern == "Assymetric Circles")
     {
-        label_row->show();
-        label_col->show();
-        spinBox_rowCount->show();
-        spinBox_colCount->show();
+        spinBox_rowCount->setEnabled(true);
+        spinBox_colCount->setEnabled(true);
     }
     if(pattern == "ChArUco")
-    {
-        label_row->show();
-        label_col->show();
-        spinBox_rowCount->show();
-        spinBox_colCount->show();
+    {;
+        spinBox_rowCount->setEnabled(true);
+        spinBox_colCount->setEnabled(true);
 
-        label_markerSize->show();
-        label_checkerSize->show();
-        spinBox_markerSize->show();
-        spinBox_checkerSize->show();
-        tree_inputDictionaryName->show();
+        spinBox_markerSize->setEnabled(true);
+        spinBox_checkerSize->setEnabled(true);
+        tree_inputDictionaryName->setEnabled(true);
     }
+}
+
+void MenuWindowNewFile::on_box_cameraFirst_IndexChanged(int index)
+{
+    if(index ==-1 || index ==0) box_cameraSecond->setEnabled(false);
+    else box_cameraSecond->setEnabled(true);
 }
