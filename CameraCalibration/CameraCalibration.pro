@@ -1,6 +1,5 @@
-QT       += core gui multimedia widgets
+QT       += core gui multimedia widgets charts
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
 
@@ -37,7 +36,7 @@ FORMS += \
     mainwindow.ui
 
 include(../CameraCalibration/opencv_library_path.pri)
-
+include(../CameraCalibration/balserCamera_library_path.pri)
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

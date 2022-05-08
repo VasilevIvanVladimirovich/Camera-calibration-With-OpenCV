@@ -8,9 +8,10 @@ ImageProcessor::ImageProcessor(int indexCam,int numCam)
     web_cam_.set(cv::CAP_PROP_AUTO_EXPOSURE, 0.75); //where X is a camera-dependent value such as 0.25 or 0.75.
 }
 
-ImageProcessor::ImageProcessor(FileSystem *fs, QString current)
+ImageProcessor::ImageProcessor(FileSystem *fs, QString current,QMutex *data_lock)
 {
     filesystem = fs;
+    lock = data_lock;
 
     if(current == "FindFirstCameraStream") state_video_stream = FIND_FIRST_STREAM;
     if(current == "FindSecondCameraStream") state_video_stream = FIND_SECOND_STREAM;
@@ -33,8 +34,13 @@ ImageProcessor::ImageProcessor(cv::Mat img)
 void ImageProcessor::run()
 {
     initCamera();
+    std::vector<FileSystem::InformationImageSaved> imageInfo;
     if(state_video_stream == FIND_FIRST_STREAM || state_video_stream == FIND_SECOND_STREAM)
     {
+    if(state_video_stream == FIND_FIRST_STREAM )
+        imageInfo = filesystem->getInfoCamera1();
+    else if(state_video_stream == FIND_SECOND_STREAM)
+        imageInfo = filesystem->getInfoCamera2();
     path_ = filesystem->getFilePath();
     pattern_ = filesystem->getPattern();
     CHECKERBOARD_[0] = filesystem->getRow();
@@ -47,16 +53,12 @@ void ImageProcessor::run()
     isEnd_ = false;
     QString namepath;
     cv::Mat drawFrame;
-    if(isTransformImg_)
-    {
-        undistirtedStream();
-    }
     while(web_cam_.isOpened() && !isEnd_){
         web_cam_ >> outFrame_;
         outFrame_.copyTo(drawFrame);
         count++;
         if(countImg - 1 == countFrame_)
-            stopedThread();
+            break;
         //действие по нажатию кнопки
         if(isSnapShoot_)
         {
@@ -71,17 +73,19 @@ void ImageProcessor::run()
                         emit outDisplay(imgInDisplay);
 
                         QPixmap imgInSave = toMatQpixmap(outFrame_);
-                        namepath = QString(path_ + "Camera%1/" + "Accumulated/" + QString::number(countImg) + ".png").arg(numCam_);
+                        namepath = QString(path_ + "Camera%1/" + "Accumulated/" + QString::number(imageInfo.size() + 1) + ".png").arg(numCam_);
 
                         filesystem->saveInImg(imgInSave,namepath);
+                        FileSystem::InformationImageSaved tmpInfo;
+                        tmpInfo.cameraPath = namepath.toStdString();
+                        imageInfo.push_back(tmpInfo);
+                        QTableWidgetItem *item1;
+                        QTableWidgetItem *item2;
                         if(numCam_==1)
                         {
-                            QTableWidgetItem *item = new QTableWidgetItem();
-                            item->setCheckState(Qt::Unchecked);
-                            QTableWidgetItem *item1 = new QTableWidgetItem();
-                            item1->setCheckState(Qt::Unchecked);
-                            QTableWidgetItem *item2 = new QTableWidgetItem(QString::number(countImg) + ".png");
-                            emit setItem(item,item1, item2);
+                            item1 = new QTableWidgetItem("Camera");
+                            item2 = new QTableWidgetItem("save");
+                            emit setItem(item1, item2);
                         }
                         countImg++;
                         isPressSnap_ = false;
@@ -89,17 +93,19 @@ void ImageProcessor::run()
                         QPixmap img = toMatQpixmap(outFrame_);
                         emit outDisplay(img);
                         QApplication::beep();
-                        namepath = QString(path_ + "Camera%1/" + "Accumulated/" + QString::number(countImg) + ".png").arg(numCam_);
+                        namepath = QString(path_ + "Camera%1/" + "Accumulated/" + QString::number(imageInfo.size() + 1) + ".png").arg(numCam_);
 
                         filesystem->saveInImg(img,namepath);
+                        FileSystem::InformationImageSaved tmpInfo;
+                        tmpInfo.cameraPath = namepath.toStdString();
+                        imageInfo.push_back(tmpInfo);
+                        QTableWidgetItem *item1;
+                        QTableWidgetItem *item2;
                         if(numCam_==1)
                         {
-                            QTableWidgetItem *item = new QTableWidgetItem();
-                            item->setCheckState(Qt::Unchecked);
-                            QTableWidgetItem *item1 = new QTableWidgetItem();
-                            item1->setCheckState(Qt::Unchecked);
-                            QTableWidgetItem *item2 = new QTableWidgetItem(QString::number(countImg) + ".png");
-                            emit setItem(item,item1, item2);
+                            item1 = new QTableWidgetItem("Camera");
+                            item2 = new QTableWidgetItem("save");
+                            emit setItem(item1, item2);
                         }
                         countImg++;
                         isPressSnap_ = false;
@@ -116,7 +122,7 @@ void ImageProcessor::run()
                             emit outDisplay(img);
                         }
                    }else{ //если шаблона нету, показываем просто на экране
-                        QPixmap img= toMatQpixmap(outFrame_);
+                        QPixmap img = toMatQpixmap(outFrame_);
                         emit outDisplay(img);
                    }
                }
@@ -132,17 +138,19 @@ void ImageProcessor::run()
                         emit outDisplay(imgInDisplay);
 
                         QPixmap imgInSave = toMatQpixmap(outFrame_);
-                        namepath = QString(path_ + "Camera%1/" + "Accumulated/" + QString::number(countImg) + ".png").arg(numCam_);
+                        namepath = QString(path_ + "Camera%1/" + "Accumulated/" + QString::number(imageInfo.size() + 1) + ".png").arg(numCam_);
 
                         filesystem->saveInImg(imgInSave,namepath);
+                        FileSystem::InformationImageSaved tmpInfo;
+                        tmpInfo.cameraPath = namepath.toStdString();
+                        imageInfo.push_back(tmpInfo);
+                        QTableWidgetItem *item1;
+                        QTableWidgetItem *item2;
                         if(numCam_==1)
                         {
-                            QTableWidgetItem *item = new QTableWidgetItem();
-                            item->setCheckState(Qt::Unchecked);
-                            QTableWidgetItem *item1 = new QTableWidgetItem();
-                            item1->setCheckState(Qt::Unchecked);
-                            QTableWidgetItem *item2 = new QTableWidgetItem(QString::number(countImg) + ".png");
-                            emit setItem(item,item1, item2);
+                            item1 = new QTableWidgetItem("Camera");
+                            item2 = new QTableWidgetItem("save");
+                            emit setItem(item1, item2);
                         }
                         countImg++;
                    }
@@ -150,17 +158,19 @@ void ImageProcessor::run()
                     QPixmap img= toMatQpixmap(outFrame_);
                     emit outDisplay(img);
                     QApplication::beep();
-                    namepath = QString(path_ + "Camera%1/" + "Accumulated/" + QString::number(countImg) + ".png").arg(numCam_);
+                    namepath = QString(path_ + "Camera%1/" + "Accumulated/" + QString::number(imageInfo.size() + 1) + ".png").arg(numCam_);
 
                     filesystem->saveInImg(img,namepath);
+                    FileSystem::InformationImageSaved tmpInfo;
+                    tmpInfo.cameraPath = namepath.toStdString();
+                    imageInfo.push_back(tmpInfo);
+                    QTableWidgetItem *item1;
+                    QTableWidgetItem *item2;
                     if(numCam_==1)
                     {
-                        QTableWidgetItem *item = new QTableWidgetItem();
-                        item->setCheckState(Qt::Unchecked);
-                        QTableWidgetItem *item1 = new QTableWidgetItem();
-                        item1->setCheckState(Qt::Unchecked);
-                        QTableWidgetItem *item2 = new QTableWidgetItem(QString::number(countImg) + ".png");
-                        emit setItem(item,item1, item2);
+                        item1 = new QTableWidgetItem("Camera");
+                        item2 = new QTableWidgetItem("save");
+                        emit setItem(item1, item2);
                     }
                     countImg++;
               }
@@ -181,10 +191,22 @@ void ImageProcessor::run()
            }
            }
     }
+        if(state_video_stream == FIND_FIRST_STREAM)
+        {
+            lock->lock();
+            filesystem->saveInfoCamera1(imageInfo);
+            lock->unlock();
+            emit andStream();
+        }else if(state_video_stream == FIND_SECOND_STREAM)
+        {
+            lock->lock();
+            filesystem->saveInfoCamera2(imageInfo);
+            lock->unlock();
+            emit andStream();
+        }
     }
     if(state_video_stream == FIRST_STREAM)
     {
-        qDebug()<<"inFc";
         while(web_camFirst_.isOpened() && !isEnd_)
         {
             web_camFirst_ >> outFrame_;
@@ -243,7 +265,6 @@ void ImageProcessor::run()
             emit outDisplaySecond(imgSecond);
         }
     }
-
 
     if(state_video_stream == FIRST_CALIBRATED_STREAM)
     {
@@ -370,24 +391,13 @@ void ImageProcessor::run()
     }
 }
 
-void ImageProcessor::undistirtedStream()
-{
-//    filesystem->readYamlMatrix(path_, &cameraMatrix_);
-//    filesystem->readYamldistCoef(path_, &distCoeffs_);
-//    while(web_cam_.isOpened() && !isEnd_){
-//        web_cam_ >> inputFrame_;
-//        cv::undistort(inputFrame_, outFrame_, cameraMatrix_, distCoeffs_);
-//        QPixmap img = toMatQpixmap(outFrame_);
-//        emit outDisplay(img);
-//    }
-}
 
 void ImageProcessor::initCamera()
 {
     if(state_video_stream == FIND_FIRST_STREAM)
     {
         numCam_= 1;
-        web_cam_.open(filesystem->getIndexCameraFirst());
+        web_cam_.open(filesystem->getIndexCameraFirst(), cv::CAP_DSHOW);
         web_cam_.set(cv::CAP_PROP_AUTOFOCUS, 0);
         web_cam_.set(cv::CAP_PROP_AUTO_EXPOSURE, 0.75);
         web_cam_.set(cv::CAP_PROP_FRAME_WIDTH, 1280);
@@ -396,7 +406,7 @@ void ImageProcessor::initCamera()
     if(state_video_stream == FIND_SECOND_STREAM)
     {
         numCam_= 2;
-        web_cam_.open(filesystem->getIndexCameraSecond());
+        web_cam_.open(filesystem->getIndexCameraSecond(), cv::CAP_DSHOW);
         web_cam_.set(cv::CAP_PROP_AUTOFOCUS, 0);
         web_cam_.set(cv::CAP_PROP_AUTO_EXPOSURE, 0.75);
         web_cam_.set(cv::CAP_PROP_FRAME_WIDTH, 1280);
@@ -406,7 +416,7 @@ void ImageProcessor::initCamera()
        state_video_stream == FIRST_CALIBRATED_STREAM || state_video_stream == FIRST_SECOND_CALIBRATED_STREAM ||
        state_video_stream == STEREO_STREAM || state_video_stream == STEREO_DEPTH_STREAM)
     {
-        web_camFirst_.open(filesystem->getIndexCameraFirst());
+        web_camFirst_.open(filesystem->getIndexCameraFirst(), cv::CAP_DSHOW);
         web_camFirst_.set(cv::CAP_PROP_AUTOFOCUS, 0);
         web_camFirst_.set(cv::CAP_PROP_AUTO_EXPOSURE, 0.75);
         web_camFirst_.set(cv::CAP_PROP_FRAME_WIDTH, 1280);
@@ -417,13 +427,12 @@ void ImageProcessor::initCamera()
        state_video_stream == SECOND_CALIBRATED_STREAM || state_video_stream == FIRST_SECOND_CALIBRATED_STREAM ||
        state_video_stream == STEREO_STREAM || state_video_stream == STEREO_DEPTH_STREAM)
     {
-        web_camSecond_.open(filesystem->getIndexCameraSecond());
+        web_camSecond_.open(filesystem->getIndexCameraSecond(), cv::CAP_DSHOW);
         web_camSecond_.set(cv::CAP_PROP_AUTOFOCUS, 0);
         web_camSecond_.set(cv::CAP_PROP_AUTO_EXPOSURE, 0.75);
         web_camSecond_.set(cv::CAP_PROP_FRAME_WIDTH, 1280);
         web_camSecond_.set(cv::CAP_PROP_FRAME_HEIGHT, 720);
     }
-
 }
 
 void ImageProcessor::setTransformImg(bool newTransformImg)
@@ -489,7 +498,9 @@ void ImageProcessor::setDictionaryName(QString dictionaryName)
 
 void ImageProcessor::setIsPressSnap()
 {
+    lock->lock();
     isPressSnap_ = true;
+    lock->unlock();
 }
 
 void ImageProcessor::setFileSystem(FileSystem *fs)

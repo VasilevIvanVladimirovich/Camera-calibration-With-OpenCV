@@ -1,5 +1,4 @@
 #include "filesystem.h"
-
 FileSystem::FileSystem()
 {
 
@@ -50,40 +49,18 @@ void FileSystem::copyDirImgInWorkDir(QString path)
     }
 }
 
-void FileSystem::openFileInViewYamlCalib(QString path)
+QString FileSystem::openCalibSetting(int numCam)
 {
-    std::string output="";
+    QString output;
     std::string pattern;
     cv::Mat cameraMatrix,distCoeffs,R,T;
     std::string date;
     int countImg;
     double Rmse;
-    QString fileResultPath = path + "Setting" + QDir::separator() + "Log.YAML";
+
+    QString fileResultPath = QString(filePath_ + "Camera%1/" + "Result" + QDir::separator() + "Result.YAML").arg(numCam);
     QFileInfo check_file(fileResultPath);
     if(check_file.exists())
-    {
-        int row, col;
-        double checkerSize, markerSize;
-        std::string dictionaryName;
-        cv::FileStorage fs(fileResultPath.toStdString(), cv::FileStorage::READ);
-        fs["Pattern"] >> pattern;
-        fs["Row"] >> row;
-        fs["Col"] >> col;
-        fs["CheckerSize"] >> checkerSize;
-        fs["MarkerSize"] >> markerSize;
-        fs["DictionaryName"] >> dictionaryName;
-
-        output += "Pattern:" + pattern + "\n";
-        output += "SizePattern:" + std::to_string(row) + "x" + std::to_string(col) + "\n";
-        output += "CheckerSize:" + std::to_string(int(checkerSize * 1000)) + " mm" + "\n";
-        output += "MarkerSize:" + std::to_string(int(markerSize* 1000)) + " mm" +"\n";
-        output += "DictionaryName:" + dictionaryName + "\n";
-        fs.release();
-    }
-
-    fileResultPath = path + "Result" + QDir::separator() + "Result.YAML";
-    QFileInfo check_file2(fileResultPath);
-    if(check_file2.exists())
     {
         cv::FileStorage fs(fileResultPath.toStdString(), cv::FileStorage::READ);
         fs["Date"] >> date;
@@ -92,84 +69,110 @@ void FileSystem::openFileInViewYamlCalib(QString path)
         fs["CameraMatrix"] >> cameraMatrix;
         fs["DistCoeffs"] >> distCoeffs;
 
-        output += "Date:" + date + "\n";
-        output += "CountImg:" + std::to_string(countImg) + "\n";
-        output += "RMSE:" + std::to_string(Rmse) + "\n";
-        output += "CameraMatrix: \n";
-        output += "[";
+        output.push_back("Date: " + QString::fromStdString(date) + "\n");
+        output.push_back("CountImg: " + QString::number(countImg) + "\n");
+        output.push_back("RMSE:" + QString::number(Rmse) + "\n");
+        output.push_back("CameraMatrix: \n");
+        output.push_back("[");
         for(int i=0; i<3; i++){
             for(int j=0; j<3; j++){
-                output += std::to_string(cameraMatrix.at<double>(i,j)) + ", \t";
+                output.push_back(QString::number(cameraMatrix.at<double>(i,j)) + ", \t");
             }
-            output += "\n";
+            output.push_back("\n");
         }
-        output += "]";
-        output += "\n DistCoeffs: \n";
-        output += "[";
+        output.push_back("]");
+        output.push_back("\n DistCoeffs: \n");
+        output.push_back("[");
         for(int i=0; i<5; i++){
-            output += std::to_string(distCoeffs.at<double>(i)) + ", ";
+            output.push_back(QString::number(distCoeffs.at<double>(i)) + ", ");
         }
-        output += "]";
+        output.push_back("]");
         fs.release();
     }
-    emit outTextDisplayYamlCalib(QString::fromStdString(output));
+    return output;
 }
 
-void FileSystem::openFileInView(QString name)
+void FileSystem::openFileInView(int numImg)
 {
-    QString pathFirst(filePath_ + "Camera1/" + "Accumulated/"+ name);
-    QFile filesCameraOne(pathFirst);
-    if(filesCameraOne.open(QIODevice::ReadOnly))
+    std::vector<InformationImageSaved> infoCamera1 = getInfoCamera1();
+    std::vector<InformationImageSaved> infoCamera2 = getInfoCamera2();
+    if(infoCamera1.size() > 0)
     {
-        QImage CameraOne(pathFirst);
-        emit outImgDisplayFirst(QPixmap::fromImage(CameraOne));
+        QString pathFirst = QString::fromStdString(infoCamera1[numImg].cameraPath);
+        QFile filesCameraOne(pathFirst);
+        if(filesCameraOne.open(QIODevice::ReadOnly))
+        {
+            QImage CameraOne(pathFirst);
+            emit outImgDisplayFirst(QPixmap::fromImage(CameraOne));
+        }
     }
 
-    QString pathSecond(filePath_ + "Camera2/" + "Accumulated/" + name);
-    QFile filesCameraSecond(pathSecond);
-    if(filesCameraSecond.open(QIODevice::ReadOnly))
+    if(infoCamera2.size() > 0)
     {
-        QImage CameraSecond(pathSecond);
-        emit outImgDisplaySecond(QPixmap::fromImage(CameraSecond));
+        QString pathSecond = QString::fromStdString(infoCamera2[numImg].cameraPath);
+        QFile filesCameraSecond(pathSecond);
+        if(filesCameraSecond.open(QIODevice::ReadOnly))
+        {
+            QImage CameraSecond(pathSecond);
+            emit outImgDisplaySecond(QPixmap::fromImage(CameraSecond));
+        }
     }
 
 }
 
-void FileSystem::openDrawImgInView(QString name)
+void FileSystem::openDrawImgInView(int numImg)
 {
-    QString pathFirst(filePath_ + "Camera1/" + "Drawnable/"+ name);
-    QFile filesCameraOne(pathFirst);
-    if(filesCameraOne.open(QIODevice::ReadOnly))
+    std::vector<InformationImageSaved> infoCamera1 = getInfoCamera1();
+    std::vector<InformationImageSaved> infoCamera2 = getInfoCamera2();
+
+    if(infoCamera1.size() > 0)
     {
-        QImage CameraOne(pathFirst);
-        emit outImgDisplayFirst(QPixmap::fromImage(CameraOne));
+        QString pathFirst = QString::fromStdString(infoCamera1[numImg].drawPath);
+        QFile filesCameraOne(pathFirst);
+        if(filesCameraOne.open(QIODevice::ReadOnly))
+        {
+            QImage CameraOne(pathFirst);
+            emit outImgDisplayFirst(QPixmap::fromImage(CameraOne));
+        }
     }
 
-    QString pathSecond(filePath_ + "Camera2/" + "Drawnable/" + name);
-    QFile filesCameraSecond(pathSecond);
-    if(filesCameraSecond.open(QIODevice::ReadOnly))
+    if(infoCamera2.size() > 0)
     {
-        QImage CameraSecond(pathSecond);
-        emit outImgDisplaySecond(QPixmap::fromImage(CameraSecond));
+        QString pathSecond = QString::fromStdString(infoCamera2[numImg].drawPath);
+        QFile filesCameraSecond(pathSecond);
+        if(filesCameraSecond.open(QIODevice::ReadOnly))
+        {
+            QImage CameraSecond(pathSecond);
+            emit outImgDisplaySecond(QPixmap::fromImage(CameraSecond));
+        }
     }
 }
 
-void FileSystem::openUndistImgInView(QString name)
+void FileSystem::openUndistImgInView(int numImg)
 {    
-    QString pathFirst(filePath_ + "Camera1/" + "Undistorted/"+ name);
-    QFile filesCameraOne(pathFirst);
-    if(filesCameraOne.open(QIODevice::ReadOnly))
+    std::vector<InformationImageSaved> infoCamera1 = getInfoCamera1();
+    std::vector<InformationImageSaved> infoCamera2 = getInfoCamera2();
+
+    if(infoCamera1.size() > 0)
     {
-        QImage CameraOne(pathFirst);
-        emit outImgDisplayFirst(QPixmap::fromImage(CameraOne));
+        QString pathFirst = QString::fromStdString(infoCamera1[numImg].undistortedPath);
+        QFile filesCameraOne(pathFirst);
+        if(filesCameraOne.open(QIODevice::ReadOnly))
+        {
+            QImage CameraOne(pathFirst);
+            emit outImgDisplayFirst(QPixmap::fromImage(CameraOne));
+        }
     }
 
-    QString pathSecond(filePath_ + "Camera2/" + "Undistorted/" + name);
-    QFile filesCameraSecond(pathSecond);
-    if(filesCameraSecond.open(QIODevice::ReadOnly))
+    if(infoCamera2.size() > 0)
     {
-        QImage CameraSecond(pathSecond);
-        emit outImgDisplaySecond(QPixmap::fromImage(CameraSecond));
+        QString pathSecond = QString::fromStdString(infoCamera2[numImg].undistortedPath);
+        QFile filesCameraSecond(pathSecond);
+        if(filesCameraSecond.open(QIODevice::ReadOnly))
+        {
+            QImage CameraSecond(pathSecond);
+            emit outImgDisplaySecond(QPixmap::fromImage(CameraSecond));
+        }
     }
 }
 
@@ -219,8 +222,6 @@ void FileSystem::saveFileInYaml(std::vector<std::vector<cv::Point3f>> objpoints,
     std::string fileResultPath = name.toStdString();
     cv::FileStorage fs(fileResultPath,cv::FileStorage::WRITE);
     fs << "Date" << date.toStdString()
-       << "Pattern"<< pattern.toStdString()
-       << "SizePattern"<< sizePatern
        << "CountImg" << countImg
        << "RMSE" << rmse
        << "CameraMatrix" << cameraMatrix
@@ -277,11 +278,12 @@ void FileSystem::saveFileInYamlStereo(cv::Mat cameraMatrix0,cv::Mat cameraMatrix
 
 void FileSystem::saveInImg(QPixmap qpixmap, QString name)
 {
-
+    qDebug()<<"QFile file(name);";
     QFile file(name);
     if(file.open(QIODevice::WriteOnly))
         qpixmap.save(name, "png");
     file.close();
+    qDebug()<<"ImageSaved";
 }
 
 void FileSystem::saveInImgDrawing(QPixmap qpixmap, QString fileName,int numCam)
@@ -295,45 +297,6 @@ void FileSystem::saveInImgDrawing(QPixmap qpixmap, QString fileName,int numCam)
     file.open(QIODevice::WriteOnly);
     qpixmap.save(&file, "png");
     file.close();
-}
-
-void FileSystem::createImgUndistorted(cv::Mat cameraMatrix, cv::Mat distCoeffs,int numCam)
-{
-    QDir dir;
-    if(numCam == 1)
-        dir.setPath(filePath_ + "Camera1/" + "Accumulated" + QDir::separator());
-    else if(numCam == 2)
-        dir.setPath(filePath_ + "Camera2/" + "Accumulated" + QDir::separator());
-
-    QFileInfoList fileList;
-    fileList = dir.entryInfoList();
-    fileList.count();
-
-    cv::Mat undist, frame;
-
-    for(int i = 2; i < fileList.count(); i++){
-
-        frame = cv::imread(fileList[i].absoluteFilePath().toStdString());
-        cv::undistort(frame, undist, cameraMatrix, distCoeffs);
-
-        QPixmap saveImg = QPixmap::fromImage(
-                           QImage(undist.data,
-                                  undist.cols,
-                                  undist.rows,
-                                  undist.step,
-                           QImage::Format_RGB888).rgbSwapped());
-
-        QString undistDir;
-        if(numCam == 1)
-            undistDir = filePath_ + "Camera1/" + "Undistorted" + QDir::separator() + QString::number(i - 1) + ".png";
-        else if(numCam == 2)
-            undistDir = filePath_ + "Camera2/" + "Undistorted" + QDir::separator() + QString::number(i - 1) + ".png";
-        QFile file(undistDir);
-
-        file.open(QIODevice::WriteOnly);
-        saveImg.save(&file, "png");
-        file.close();
-    }
 }
 
 int FileSystem::countImgInDir(QString path)
@@ -355,21 +318,27 @@ bool FileSystem::isSelectedDir()
 
 bool FileSystem::isValidOpenDir()
 {
-    bool isAccum, isDraw, isUndist, isRes, isSet;
+    if(!QDir(filePath_ + "Camera1").exists())
+        return false;
+    if(!QDir(filePath_ + "Camera1/Accumulated").exists())
+        return false;
+    if(!QDir(filePath_ + "Camera1/Drawnable").exists())
+        return false;
+    if(!QDir(filePath_ + "Camera1/Result").exists())
+        return false;
+    if(!QDir(filePath_ + "Camera1/Undistorted").exists())
+        return false;
 
-    isAccum = QDir(filePath_ + "Accumulated").exists();
-    isDraw = QDir(filePath_ + "Drawnable").exists();
-    isUndist = QDir(filePath_ + "Undistorted").exists();
-    isRes = QDir(filePath_ + "Result").exists();
-    isSet = QDir(filePath_ + "Setting").exists();
-    if(isAccum && isDraw && isRes && isUndist && isSet)
-        return true;
-    return false;
+    if(!QDir(filePath_ + "Setting").exists())
+        return false;
+
+    return true;
 }
 
 void FileSystem::writeSettingCalibInYaml(int numCamFirst, QString nameCumFirst, int numCamSecond,QString nameCumSecond,
                                          QString pattern, int row, int col,
-                                         double checkerSize, double markerSize, QString dictionaryName)
+                                         double checkerSize, double markerSize, QString dictionaryName,
+                                         bool isWebCamera, bool isBaslerCamera)
 {
 
     checkerSize = checkerSize * 0.001;
@@ -377,6 +346,8 @@ void FileSystem::writeSettingCalibInYaml(int numCamFirst, QString nameCumFirst, 
     QString name;
     name = filePath_ + "Setting/" + "Log" + ".YAML";
     std::string fileResultPath = name.toStdString();
+    std::vector<InformationImageSaved> imageInfo1;
+    std::vector<InformationImageSaved> imageInfo2;
     cv::FileStorage fs(fileResultPath,cv::FileStorage::WRITE);
     fs <<"FirstCameraName"<<nameCumFirst.toStdString()
        <<"FirstCameraIndex"<<numCamFirst
@@ -387,7 +358,18 @@ void FileSystem::writeSettingCalibInYaml(int numCamFirst, QString nameCumFirst, 
        <<"Col"<<col
        <<"CheckerSize"<<checkerSize
        <<"MarkerSize"<<markerSize
-       <<"DictionaryName"<<dictionaryName.toStdString();
+       <<"DictionaryName"<<dictionaryName.toStdString()
+       <<"isWebCamera"<< isWebCamera
+       <<"isBaslerCamera"<<isBaslerCamera
+       <<"isCalibration" << false
+       <<"isStereoCalibration" << false
+       <<"SubPixIter" << 0
+       <<"intFlagsFirst" << 0
+       <<"FlagsNameFirst" << "none"
+       <<"intFlagsSecond" << 0
+       <<"FlagsNameSecond" << "none"
+       <<"ImageInfoCamera1" << imageInfo1
+       <<"ImageInfoCamera2" << imageInfo2;
     fs.release();
 }
 
@@ -520,10 +502,23 @@ bool FileSystem::isStereoCameraResul()
     return fs.isOpened();
 }
 
+static void write(cv::FileStorage& fs, const std::string&, const FileSystem::InformationImageSaved& x)
+{
+    x.write(fs);
+}
+static void read(const cv::FileNode& node, FileSystem::InformationImageSaved& x, const FileSystem::InformationImageSaved& default_value = FileSystem::InformationImageSaved()){
+    if(node.empty())
+        x = default_value;
+    else
+        x.read(node);
+}
+
 void FileSystem::writeSettingCalibInYaml(int subIter, int flagsIntFirst, QString flagsNameFirst,
                                          int flagsIntSecond, QString flagsNameSecond, bool isCalibration,bool isStereo)
 {
     QString name;
+    std::vector<InformationImageSaved> imageInfo1;
+    std::vector<InformationImageSaved> imageInfo2;
     std::string FirstCameraName;
     int FirstCameraIndex;
     std::string SecondCameraName;
@@ -535,6 +530,7 @@ void FileSystem::writeSettingCalibInYaml(int subIter, int flagsIntFirst, QString
     name = filePath_ + "Setting/" + "Log" + ".YAML";
     std::string fileResultPath = name.toStdString();
     cv::FileStorage fs(fileResultPath,cv::FileStorage::READ);
+    bool isWebCamera, isBaslerCamera;
     fs["FirstCameraName"] >>FirstCameraName;
     fs["FirstCameraIndex"] >> FirstCameraIndex;
     fs["SecondCameraName"] >> SecondCameraName;
@@ -544,7 +540,11 @@ void FileSystem::writeSettingCalibInYaml(int subIter, int flagsIntFirst, QString
     fs["Col"] >> col;
     fs["CheckerSize"] >> checkerSize;
     fs["MarkerSize"] >> markerSize;
+    fs["isWebCamera"] >> isWebCamera;
+    fs["isBaslerCamera"]>> isBaslerCamera;
     fs["DictionaryName"] >> dictionaryName;
+    fs["ImageInfoCamera1"] >> imageInfo1;
+    fs["ImageInfoCamera2"] >> imageInfo2;
     fs.release();
 
     cv::FileStorage fss(fileResultPath,cv::FileStorage::WRITE);
@@ -559,13 +559,17 @@ void FileSystem::writeSettingCalibInYaml(int subIter, int flagsIntFirst, QString
        <<"CheckerSize" << checkerSize
        <<"MarkerSize" << markerSize
        <<"DictionaryName" << dictionaryName
+       <<"isWebCamera" << isWebCamera
+       <<"isBaslerCamera" << isBaslerCamera
        <<"isCalibration" << isCalibration
        <<"isStereoCalibration" << isStereo
        <<"SubPixIter" << subIter
        <<"intFlagsFirst" << flagsIntFirst
        <<"FlagsNameFirst" << flagsNameFirst.toStdString()
        <<"intFlagsSecond" << flagsIntSecond
-       <<"FlagsNameSecond" << flagsNameSecond.toStdString();
+       <<"FlagsNameSecond" << flagsNameSecond.toStdString()
+       <<"ImageInfoCamera1"<<imageInfo1
+       <<"ImageInfoCamera2"<<imageInfo2;
     fss.release();
 }
 
@@ -699,8 +703,6 @@ int FileSystem::getRow()
     return row;
 }
 
-
-
 QString FileSystem::getDictionaryName()
 {
     std::string dictionaryName;
@@ -750,20 +752,102 @@ void FileSystem::setPath(QString path)
 
 void FileSystem::getTableItems()
 {
-    QDir dir(filePath_ + "Accumulated" + QDir::separator());
-    QFileInfoList fileList;
-    fileList = dir.entryInfoList();
-    fileList.count();
-    QString status="";
+    std::vector<InformationImageSaved> infoCamera1 = getInfoCamera1();
+    std::vector<InformationImageSaved> infoCamera2 = getInfoCamera2();
 
-    for(int i = 2; i < fileList.count(); i++){
-        QTableWidgetItem *item = new QTableWidgetItem();
-        QTableWidgetItem *item1 = new QTableWidgetItem();
-        QTableWidgetItem *item2 = new QTableWidgetItem(fileList[i].absoluteFilePath());
-        item->setCheckState(Qt::Unchecked);
-        item1->setCheckState(Qt::Unchecked);
-        emit outTableItems(item, item1, item2);
+    QTableWidgetItem *item1;
+    QTableWidgetItem *item2;
+    for(int i = 0; i < infoCamera1.size(); i++){
+        if(infoCamera2.size()>i)
+        {
+            item1 = new QTableWidgetItem("Camera1/Camera2");
+            item2 = new QTableWidgetItem(QString::fromStdString(infoCamera1[i].state + "/" + infoCamera2[i].state));
+        }
+        else
+        {
+            item1 = new QTableWidgetItem("Camera1");
+            item2 = new QTableWidgetItem(QString::fromStdString(infoCamera1[i].state));
+        }
+
+        emit outTableItems(item1, item2);
     }
+}
+
+QString FileSystem::openProjectSetting()
+{
+    QString output;
+    QString name;
+    std::vector<InformationImageSaved> imageInfo1;
+    std::vector<InformationImageSaved> imageInfo2;
+    std::string FirstCameraName;
+    int FirstCameraIndex;
+    std::string SecondCameraName;
+    int SecondCameraIndex;
+    std::string pattern;
+    int row, col;
+    double checkerSize, markerSize;
+    bool isWebCamera, isBaslerCamera;
+    std::string dictionaryName;
+    name = filePath_ + "Setting/" + "Log" + ".YAML";
+    std::string fileResultPath = name.toStdString();
+    cv::FileStorage fs(fileResultPath,cv::FileStorage::READ);
+    fs["FirstCameraName"] >> FirstCameraName;
+    fs["FirstCameraIndex"] >> FirstCameraIndex;
+    fs["SecondCameraName"] >> SecondCameraName;
+    fs["SecondCameraIndex"] >>SecondCameraIndex;
+    fs["Pattern"] >> pattern;
+    fs["Row"] >> row;
+    fs["Col"] >> col;
+    fs["CheckerSize"] >> checkerSize;
+    fs["MarkerSize"] >> markerSize;
+    fs["isWebCamera"] >> isWebCamera;
+    fs["isBaslerCamera"]>> isBaslerCamera;
+    fs["DictionaryName"] >> dictionaryName;
+    fs["ImageInfoCamera1"] >> imageInfo1;
+    fs["ImageInfoCamera2"] >> imageInfo2;
+    fs.release();
+
+    output.append("FirstCameraName: " + QString::fromStdString(FirstCameraName) + '\n');
+    output.append("FirstCameraIndex: " + QString::number(FirstCameraIndex) + '\n');
+    output.append("SecondCameraName: " + QString::fromStdString(SecondCameraName) + '\n');
+    output.append("SecondCameraIndex: " + QString::number(SecondCameraIndex) + '\n');
+    output.append("Pattern: " + QString::fromStdString(pattern) + '\n');
+    output.append("Row: " + QString::number(row) + '\n');
+    output.append("Col: " + QString::number(col) + '\n');
+    output.append("isWebCamera: " + QString::number(isWebCamera) + '\n');
+    output.append("isBaslerCamera: " + QString::number(isBaslerCamera) + '\n');
+    output.append("CheckerSize: " + QString::number(checkerSize) + '\n');
+    output.append("MarkerSize: " + QString::number(markerSize) + '\n');
+    output.append("ImageInfoCamera1: \n");
+    for(int i = 0; i < imageInfo1.size() ;i++)
+    {
+         output.append(" - ");
+         output.append("cameraPath: " + QString::fromStdString(imageInfo1[i].cameraPath) + '\n');
+         output.append(" - ");
+         output.append("drawPath: " + QString::fromStdString(imageInfo1[i].drawPath) + '\n');
+         output.append(" - ");
+         output.append("undistortedPath: " + QString::fromStdString(imageInfo1[i].undistortedPath) + '\n');
+         output.append(" - ");
+         output.append("state: " + QString::fromStdString(imageInfo1[i].state) + '\n');
+         output.append(" - ");
+         output.append("err: " + QString::number(imageInfo1[i].err) + '\n');
+    }
+    output += "ImageInfoCamera2: \n";
+    for(int i = 0; i < imageInfo2.size() ;i++)
+    {
+         output.append(" - ");
+         output.append("cameraPath: " + QString::fromStdString(imageInfo2[i].cameraPath) + '\n');
+         output.append(" - ");
+         output.append("drawPath: " + QString::fromStdString(imageInfo2[i].drawPath) + '\n');
+         output.append(" - ");
+         output.append("undistortedPath: " + QString::fromStdString(imageInfo2[i].undistortedPath) + '\n');
+         output.append(" - ");
+         output.append("state: " + QString::fromStdString(imageInfo2[i].state) + '\n');
+         output.append(" - ");
+         output.append("err: " + QString::number(imageInfo2[i].err) + '\n');
+
+    }
+    return output;
 }
 
 void FileSystem::getOneTableItemsinTableCompare()
@@ -825,3 +909,165 @@ void FileSystem::getTableItemsinTableCompare()
     }
 }
 
+std::vector<FileSystem::InformationImageSaved> FileSystem::getInfoCamera1()
+{
+    std::vector<InformationImageSaved> infoCamera;
+    QString fileResultPath = filePath_ + "Setting" + "/" + "Log.YAML";
+    cv::FileStorage fs(fileResultPath.toStdString(), cv::FileStorage::READ);
+    fs["ImageInfoCamera1"] >> infoCamera;
+    fs.release();
+    return infoCamera;
+}
+
+std::vector<FileSystem::InformationImageSaved> FileSystem::getInfoCamera2()
+{
+    std::vector<InformationImageSaved> infoCamera;
+    QString fileResultPath = filePath_ + "Setting" + "/" + "Log.YAML";
+    cv::FileStorage fs(fileResultPath.toStdString(), cv::FileStorage::READ);
+    fs["ImageInfoCamera2"] >> infoCamera;
+    fs.release();
+    return infoCamera;
+}
+
+void FileSystem::saveInfoCamera1(std::vector<InformationImageSaved> imageInfo1)
+{
+    int subIter;
+    int flagsIntFirst ;
+    std::string flagsNameFirst;
+    int flagsIntSecond;
+    std::string flagsNameSecond;
+    bool isCalibration;
+    bool isStereo;
+    QString name;
+    std::vector<InformationImageSaved> imageInfo2;
+    std::string FirstCameraName;
+    int FirstCameraIndex;
+    std::string SecondCameraName;
+    int SecondCameraIndex;
+    std::string pattern;
+    int row, col;
+    double checkerSize, markerSize;
+    bool isWebCamera, isBaslerCamera;
+    std::string dictionaryName;
+    name = filePath_ + "Setting/" + "Log" + ".YAML";
+    std::string fileResultPath = name.toStdString();
+    cv::FileStorage fs(fileResultPath,cv::FileStorage::READ);
+    fs["FirstCameraName"] >>FirstCameraName;
+    fs["FirstCameraIndex"] >> FirstCameraIndex;
+    fs["SecondCameraName"] >> SecondCameraName;
+    fs["SecondCameraIndex"] >>SecondCameraIndex;
+    fs["Pattern"] >> pattern;
+    fs["Row"] >> row;
+    fs["Col"] >> col;
+    fs["CheckerSize"] >> checkerSize;
+    fs["MarkerSize"] >> markerSize;
+    fs["DictionaryName"] >> dictionaryName;
+    fs["isWebCamera"] >> isWebCamera;
+    fs["isBaslerCamera"]>> isBaslerCamera;
+    fs["isCalibration"] >> isCalibration;
+    fs["isStereoCalibration"] >> isStereo;
+    fs["SubPixIter"] >> subIter;
+    fs["intFlagsFirst"] >> flagsIntFirst;
+    fs["FlagsNameFirst"] >> flagsNameFirst;
+    fs["intFlagsSecond"] >> flagsIntSecond;
+    fs["FlagsNameSecond"] >> flagsNameSecond;
+    fs["ImageInfoCamera2"]>>imageInfo2;
+    fs.release();
+
+    cv::FileStorage fss(fileResultPath,cv::FileStorage::WRITE);
+    fss
+       <<"FirstCameraName" << FirstCameraName
+       <<"FirstCameraIndex" << FirstCameraIndex
+       <<"SecondCameraName" << SecondCameraName
+       <<"SecondCameraIndex" << SecondCameraIndex
+       <<"Pattern" << pattern
+       <<"Row" << row
+       <<"Col" << col
+       <<"CheckerSize" << checkerSize
+       <<"MarkerSize" << markerSize
+       <<"DictionaryName" << dictionaryName
+       <<"isWebCamera" << isWebCamera
+       <<"isBaslerCamera" << isBaslerCamera
+       <<"isCalibration" << isCalibration
+       <<"isStereoCalibration" << isStereo
+       <<"SubPixIter" << subIter
+       <<"intFlagsFirst" << flagsIntFirst
+       <<"FlagsNameFirst" << flagsNameFirst
+       <<"intFlagsSecond" << flagsIntSecond
+       <<"FlagsNameSecond" << flagsNameSecond
+
+       <<"ImageInfoCamera1"<<imageInfo1
+       <<"ImageInfoCamera2"<<imageInfo2;
+    fss.release();
+}
+void FileSystem::saveInfoCamera2(std::vector<InformationImageSaved> imageInfo2)
+{
+    int subIter;
+    int flagsIntFirst ;
+    std::string flagsNameFirst;
+    int flagsIntSecond;
+    std::string flagsNameSecond;
+    bool isCalibration;
+    bool isStereo;
+    QString name;
+    std::vector<InformationImageSaved> imageInfo1;
+    std::string FirstCameraName;
+    int FirstCameraIndex;
+    std::string SecondCameraName;
+    int SecondCameraIndex;
+    std::string pattern;
+    int row, col;
+    double checkerSize, markerSize;
+    bool isWebCamera, isBaslerCamera;
+    std::string dictionaryName;
+    name = filePath_ + "Setting/" + "Log" + ".YAML";
+    std::string fileResultPath = name.toStdString();
+    cv::FileStorage fs(fileResultPath,cv::FileStorage::READ);
+    fs["FirstCameraName"] >>FirstCameraName;
+    fs["FirstCameraIndex"] >> FirstCameraIndex;
+    fs["SecondCameraName"] >> SecondCameraName;
+    fs["SecondCameraIndex"] >>SecondCameraIndex;
+    fs["Pattern"] >> pattern;
+    fs["Row"] >> row;
+    fs["Col"] >> col;
+    fs["CheckerSize"] >> checkerSize;
+    fs["MarkerSize"] >> markerSize;
+    fs["DictionaryName"] >> dictionaryName;
+    fs["ImageInfoCamera1"]>>imageInfo1;
+    fs["isWebCamera"] >> isWebCamera;
+    fs["isBaslerCamera"]>> isBaslerCamera;
+    fs["isCalibration"] >> isCalibration;
+    fs["isStereoCalibration"] >> isStereo;
+    fs["SubPixIter"] >> subIter;
+    fs["intFlagsFirst"] >> flagsIntFirst;
+    fs["FlagsNameFirst"] >> flagsNameFirst;
+    fs["intFlagsSecond"] >> flagsIntSecond;
+    fs["FlagsNameSecond"] >> flagsNameSecond;
+    fs.release();
+
+    cv::FileStorage fss(fileResultPath,cv::FileStorage::WRITE);
+    fss
+       <<"FirstCameraName" << FirstCameraName
+       <<"FirstCameraIndex" << FirstCameraIndex
+       <<"SecondCameraName" << SecondCameraName
+       <<"SecondCameraIndex" << SecondCameraIndex
+       <<"Pattern" << pattern
+       <<"Row" << row
+       <<"Col" << col
+       <<"CheckerSize" << checkerSize
+       <<"MarkerSize" << markerSize
+       <<"DictionaryName" << dictionaryName
+       <<"isWebCamera" << isWebCamera
+       <<"isBaslerCamera" << isBaslerCamera
+       <<"isCalibration" << isCalibration
+       <<"isStereoCalibration" << isStereo
+       <<"SubPixIter" << subIter
+       <<"intFlagsFirst" << flagsIntFirst
+       <<"FlagsNameFirst" << flagsNameFirst
+       <<"intFlagsSecond" << flagsIntSecond
+       <<"FlagsNameSecond" << flagsNameSecond
+
+       <<"ImageInfoCamera1"<<imageInfo1
+       <<"ImageInfoCamera2"<<imageInfo2;
+    fss.release();
+}

@@ -1,0 +1,282 @@
+[2022-04-21 14:12:42,237:pylon.base] NOTICE: Initializing Pylon version 6.3.0.18933 (64 bit) on Windows 10 Home Single Language, 64-Bit (10.0.19041). processID = 9272; threadID = 14456
+[2022-04-21 14:12:42,257:pylon.base] NOTICE: >>> Dumping current environment:
+[2022-04-21 14:12:42,258:pylon.base] NOTICE: ALLUSERSPROFILE=C:\ProgramData
+[2022-04-21 14:12:42,258:pylon.base] NOTICE: APPDATA=C:\Users\vanya\AppData\Roaming
+[2022-04-21 14:12:42,258:pylon.base] NOTICE: BASLER_PATH=D:\PRoG\CLib\baslerCamera
+[2022-04-21 14:12:42,258:pylon.base] NOTICE: CommonProgramFiles=C:\Program Files\Common Files
+[2022-04-21 14:12:42,258:pylon.base] NOTICE: CommonProgramFiles(x86)=C:\Program Files (x86)\Common Files
+[2022-04-21 14:12:42,258:pylon.base] NOTICE: CommonProgramW6432=C:\Program Files\Common Files
+[2022-04-21 14:12:42,259:pylon.base] NOTICE: COMPOSE_CONVERT_WINDOWS_PATHS=true
+[2022-04-21 14:12:42,260:pylon.base] NOTICE: COMPUTERNAME=DESKTOP-IB2N6F1
+[2022-04-21 14:12:42,260:pylon.base] NOTICE: ComSpec=C:\Windows\system32\cmd.exe
+[2022-04-21 14:12:42,260:pylon.base] NOTICE: DOCKER_CERT_PATH=C:\Users\vanya\.docker\machine\machines\default
+[2022-04-21 14:12:42,260:pylon.base] NOTICE: DOCKER_HOST=tcp://192.168.99.100:2376
+[2022-04-21 14:12:42,260:pylon.base] NOTICE: DOCKER_MACHINE_NAME=default
+[2022-04-21 14:12:42,260:pylon.base] NOTICE: DOCKER_TLS_VERIFY=1
+[2022-04-21 14:12:42,260:pylon.base] NOTICE: DOCKER_TOOLBOX_INSTALL_PATH=C:\Program Files\Docker Toolbox
+[2022-04-21 14:12:42,260:pylon.base] NOTICE: DriverData=C:\Windows\System32\Drivers\DriverData
+[2022-04-21 14:12:42,260:pylon.base] NOTICE: FPS_BROWSER_APP_PROFILE_STRING=Internet Explorer
+[2022-04-21 14:12:42,260:pylon.base] NOTICE: FPS_BROWSER_USER_PROFILE_STRING=Default
+[2022-04-21 14:12:42,260:pylon.base] NOTICE: GENICAM_CACHE_V3_1=C:\ProgramData\GenICam\xml\cache
+[2022-04-21 14:12:42,260:pylon.base] NOTICE: GENICAM_GENTL32_PATH=D:\PRoG\CLib\baslerCamera\Runtime\Win32\
+[2022-04-21 14:12:42,261:pylon.base] NOTICE: GENICAM_GENTL64_PATH=D:\PRoG\CLib\baslerCamera\Runtime\x64\
+[2022-04-21 14:12:42,261:pylon.base] NOTICE: GENICAM_LOG_CONFIG_V3_1=D:\PRoG\CLib\baslerCamera\Applications\x64\bin\\DebugLogging.properties 
+[2022-04-21 14:12:42,261:pylon.base] NOTICE: HOMEDRIVE=C:
+[2022-04-21 14:12:42,261:pylon.base] NOTICE: HOMEPATH=\Users\vanya
+[2022-04-21 14:12:42,261:pylon.base] NOTICE: IntelliJ IDEA=D:\PRoG\Program\IntelliJ IDEA 2021.3.3\bin;
+[2022-04-21 14:12:42,261:pylon.base] NOTICE: LOCALAPPDATA=C:\Users\vanya\AppData\Local
+[2022-04-21 14:12:42,261:pylon.base] NOTICE: LOGONSERVER=\\DESKTOP-IB2N6F1
+[2022-04-21 14:12:42,261:pylon.base] NOTICE: NO_PROXY=192.168.99.100
+[2022-04-21 14:12:42,261:pylon.base] NOTICE: NUMBER_OF_PROCESSORS=4
+[2022-04-21 14:12:42,261:pylon.base] NOTICE: OneDrive=C:\Users\vanya\OneDrive
+[2022-04-21 14:12:42,261:pylon.base] NOTICE: OneDriveConsumer=C:\Users\vanya\OneDrive
+[2022-04-21 14:12:42,262:pylon.base] NOTICE: OPENCV=D:\PRoG\CLib\Opencv-455\Release
+[2022-04-21 14:12:42,262:pylon.base] NOTICE: OPENCV_DIR=D:\PRoG\CLib\Opencv-455\Release
+[2022-04-21 14:12:42,262:pylon.base] NOTICE: OPENCV_PATH=D:\PRoG\CLib\Opencv-455\Release
+[2022-04-21 14:12:42,262:pylon.base] NOTICE: OS=Windows_NT
+[2022-04-21 14:12:42,262:pylon.base] NOTICE: Path=D:\PRoG\CLib\baslerCamera\Runtime\x64\;D:\PRoG\CLib\baslerCamera\Runtime\Win32\;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Program Files\Python38\Scripts\;C:\Program Files\Python38\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\Qt\Tools\mingw900_64\bin;C:\Qt\6.2.3\mingw_64\bin;C:\Qt\6.2.3\msvc2019_64\bin;C:\Qt\6.2.3\msvc2019_64\bin\mingw32-make.exe;D:\PRoG\Program\cmake\bin;D:\PRoG\CLib\Opencv-455\Release\bin;D:\PRoG\CLib\Opencv-455\Release\install\x64\mingw\bin;C:\Program Files\Git\cmd;C:\Users\vanya\AppData\Local\Programs\Python\Python37\Scripts\;C:\Users\vanya\AppData\Local\Programs\Python\Python37\;C:\Users\vanya\AppData\Local\Microsoft\WindowsApps;C:\Users\vanya\AppData\Local\GitHubDesktop\bin;D:\PRoG\Program\Microsoft VS Code\bin;D:\PRoG\Program\PyCharm Edu 2021.2.3\bin;;D:\PRoG\Program\VisualStudio;C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\bin\Hostx64\x64;C:\Qt\Tools\CMake_64\bin;C:\Qt\6.2.3\mingw_64\bin;C:\Qt\Tools\mingw900_64\bin;;D:\PRoG\Program\IntelliJ IDEA 2021.3.3\bin;;C:\Program Files\Docker Toolbox
+[2022-04-21 14:12:42,262:pylon.base] NOTICE: PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
+[2022-04-21 14:12:42,262:pylon.base] NOTICE: PROCESSOR_ARCHITECTURE=AMD64
+[2022-04-21 14:12:42,262:pylon.base] NOTICE: PROCESSOR_IDENTIFIER=AMD64 Family 21 Model 101 Stepping 1, AuthenticAMD
+[2022-04-21 14:12:42,262:pylon.base] NOTICE: PROCESSOR_LEVEL=21
+[2022-04-21 14:12:42,263:pylon.base] NOTICE: PROCESSOR_REVISION=6501
+[2022-04-21 14:12:42,263:pylon.base] NOTICE: ProgramData=C:\ProgramData
+[2022-04-21 14:12:42,263:pylon.base] NOTICE: ProgramFiles=C:\Program Files
+[2022-04-21 14:12:42,263:pylon.base] NOTICE: ProgramFiles(x86)=C:\Program Files (x86)
+[2022-04-21 14:12:42,263:pylon.base] NOTICE: ProgramW6432=C:\Program Files
+[2022-04-21 14:12:42,263:pylon.base] NOTICE: PROMPT=$P$G
+[2022-04-21 14:12:42,263:pylon.base] NOTICE: PSModulePath=C:\Program Files\WindowsPowerShell\Modules;C:\Windows\system32\WindowsPowerShell\v1.0\Modules
+[2022-04-21 14:12:42,263:pylon.base] NOTICE: PUBLIC=C:\Users\Public
+[2022-04-21 14:12:42,263:pylon.base] NOTICE: PyCharm Edu=D:\PRoG\Program\PyCharm Edu 2021.2.3\bin;
+[2022-04-21 14:12:42,263:pylon.base] NOTICE: PYLON_CAMEMU=1
+[2022-04-21 14:12:42,263:pylon.base] NOTICE: PYLON_DEV_DIR=D:\PRoG\CLib\baslerCamera\Development\
+[2022-04-21 14:12:42,263:pylon.base] NOTICE: PYLON_GENICAM_VERSION=V3_1
+[2022-04-21 14:12:42,263:pylon.base] NOTICE: SESSIONNAME=Console
+[2022-04-21 14:12:42,263:pylon.base] NOTICE: SystemDrive=C:
+[2022-04-21 14:12:42,264:pylon.base] NOTICE: SystemRoot=C:\Windows
+[2022-04-21 14:12:42,264:pylon.base] NOTICE: TEMP=C:\Users\vanya\AppData\Local\Temp
+[2022-04-21 14:12:42,264:pylon.base] NOTICE: TMP=C:\Users\vanya\AppData\Local\Temp
+[2022-04-21 14:12:42,264:pylon.base] NOTICE: USERDOMAIN=DESKTOP-IB2N6F1
+[2022-04-21 14:12:42,264:pylon.base] NOTICE: USERDOMAIN_ROAMINGPROFILE=DESKTOP-IB2N6F1
+[2022-04-21 14:12:42,264:pylon.base] NOTICE: USERNAME=vanya
+[2022-04-21 14:12:42,264:pylon.base] NOTICE: USERPROFILE=C:\Users\vanya
+[2022-04-21 14:12:42,264:pylon.base] NOTICE: VBOX_HWVIRTEX_IGNORE_SVM_IN_USE=1
+[2022-04-21 14:12:42,264:pylon.base] NOTICE: VBOX_MSI_INSTALL_PATH=D:\PRoG\Program\VirtualBox\
+[2022-04-21 14:12:42,264:pylon.base] NOTICE: windir=C:\Windows
+[2022-04-21 14:12:42,264:pylon.base] NOTICE: <<< End of environment dump
+[2022-04-21 14:12:42,264:pylon.base] NOTICE: Executable: 'D:\PRoG\CLib\baslerCamera\Applications\x64\bin\pylonviewer.exe' ProcID: 9272 ThreadID: 14456
+[2022-04-21 14:12:42,264:pylon.base] NOTICE: PylonBase:  'D:\PRoG\CLib\baslerCamera\Runtime\x64\PylonBase_v6_3.dll'
+[2022-04-21 14:12:42,264:pylon.base] NOTICE: Current Dir: 'D:\PRoG\CLib\baslerCamera\Applications\x64\bin'
+[2022-04-21 14:12:42,708:pylon.utility.LibavAdapter] INFO: Loading libav libraries D:\PRoG\CLib\baslerCamera\Runtime\x64
+[2022-04-21 14:12:42,708:pylon.utility.VideoWriter] WARN: VideoWriter could not find files from Supplementary Package for MPEG-4.
+[2022-04-21 14:12:44,166:pylon.base.TlFactory] NOTICE: Trying to load TL lib 'D:\PRoG\CLib\baslerCamera\Runtime\x64\PylonCamEmu_v6_3_TL.dll'
+[2022-04-21 14:12:44,168:pylon.base.TlFactory] NOTICE: Trying to load TL lib 'D:\PRoG\CLib\baslerCamera\Runtime\x64\PylonGtc_v6_3_TL.dll'
+[2022-04-21 14:12:44,171:Pylon.GenTL.TL] NOTICE: Found 1 DLLs in 1 directories read from GENICAM_GENTL64_PATH.
+[2022-04-21 14:12:44,171:Pylon.GenTL.TL] INFO: Loading GenTL producer Library 'D:\PRoG\CLib\baslerCamera\Runtime\x64\ProducerU3V.cti'
+[2022-04-21 14:12:44,191:Pylon.GenTL.TL] INFO: Successfully loaded GenTL producer library 'D:\PRoG\CLib\baslerCamera\Runtime\x64\ProducerU3V.cti'; ID=000001E938BB8630
+[2022-04-21 14:12:44,191:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] --> GCInitLib()
+[2022-04-21 14:12:44,192:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] <-- GCInitLib returns status=0
+[2022-04-21 14:12:44,192:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] --> GCGetInfo(iInfoCmd=9, piType=0, pBuffer=00000030C3CFEB3C, piSize=4)
+[2022-04-21 14:12:44,192:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] <-- GCGetInfo returns status=0, piType=6, piSize=4, info={1 ''}
+[2022-04-21 14:12:44,192:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] --> GCGetInfo(iInfoCmd=10, piType=0, pBuffer=00000030C3CFEB3C, piSize=4)
+[2022-04-21 14:12:44,192:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] <-- GCGetInfo returns status=0, piType=6, piSize=4, info={5 ''}
+[2022-04-21 14:12:44,192:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] --> GCGetInfo(iInfoCmd=8, piType=0, pBuffer=00000030C3CFE794, piSize=4)
+[2022-04-21 14:12:44,192:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] <-- GCGetInfo returns status=0, piType=5, piSize=4, info={1 ''}
+[2022-04-21 14:12:44,192:Pylon.GenTL.TL] WARN: TL_INFO_CHAR_ENCODING not supported
+[2022-04-21 14:12:44,192:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] --> GCGetInfo(iInfoCmd=0, piType=1, pBuffer=00000030C3CFE689, piSize=127)
+[2022-04-21 14:12:44,192:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] <-- GCGetInfo returns status=0, piType=1, piSize=16, info={0 'ProducerU3V.cti'}
+[2022-04-21 14:12:44,192:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] --> GCGetInfo(iInfoCmd=1, piType=1, pBuffer=00000030C3CFE689, piSize=127)
+[2022-04-21 14:12:44,192:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] <-- GCGetInfo returns status=0, piType=1, piSize=7, info={0 'Basler'}
+[2022-04-21 14:12:44,192:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] --> GCGetInfo(iInfoCmd=2, piType=1, pBuffer=00000030C3CFE689, piSize=127)
+[2022-04-21 14:12:44,192:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] <-- GCGetInfo returns status=0, piType=1, piSize=4, info={0 'U3V'}
+[2022-04-21 14:12:44,192:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] --> GCGetInfo(iInfoCmd=3, piType=1, pBuffer=00000030C3CFE689, piSize=127)
+[2022-04-21 14:12:44,193:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] <-- GCGetInfo returns status=0, piType=1, piSize=8, info={0 '1.0.0.0'}
+[2022-04-21 14:12:44,193:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] --> GCGetInfo(iInfoCmd=4, piType=1, pBuffer=00000030C3CFE689, piSize=127)
+[2022-04-21 14:12:44,193:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] <-- GCGetInfo returns status=0, piType=1, piSize=4, info={0 'U3V'}
+[2022-04-21 14:12:44,193:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] --> GCGetInfo(iInfoCmd=5, piType=1, pBuffer=00000030C3CFE689, piSize=127)
+[2022-04-21 14:12:44,193:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] <-- GCGetInfo returns status=0, piType=1, piSize=16, info={0 'ProducerU3V.cti'}
+[2022-04-21 14:12:44,193:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] --> GCGetInfo(iInfoCmd=7, piType=1, pBuffer=00000030C3CFE689, piSize=127)
+[2022-04-21 14:12:44,193:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] <-- GCGetInfo returns status=0, piType=1, piSize=26, info={0 'Basler U3V GenTL Producer'}
+[2022-04-21 14:12:44,193:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] --> GCCloseLib()
+[2022-04-21 14:12:44,193:Pylon.GenTL.TL] DEBUG: [000001E938BB8630] <-- GCCloseLib returns status=0
+[2022-04-21 14:12:44,193:Pylon.GenTL.TL] INFO: Successfully unloaded GenTL producer library 'D:\PRoG\CLib\baslerCamera\Runtime\x64\ProducerU3V.cti'; ID=000001E938BB8630
+[2022-04-21 14:12:44,194:pylon.base.TlFactory] NOTICE: Trying to load TL lib 'D:\PRoG\CLib\baslerCamera\Runtime\x64\PylonUsb_v6_3_TL.dll'
+[2022-04-21 14:12:44,199:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL created.
+[2022-04-21 14:12:44,212:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:12:44,213:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL destroyed.
+[2022-04-21 14:12:44,232:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3A10: OnConfigurationRegistered, cookie=000001E9391566C8
+[2022-04-21 14:12:44,232:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3A10: OnImageEventHandlerRegistered, cookie=000001E93887EBC8
+[2022-04-21 14:12:44,232:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3A10: Clearing configuration event handler registry.
+[2022-04-21 14:12:44,232:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3A10: OnConfigurationDeregistered, cookie=000001E9391566C8
+[2022-04-21 14:12:44,232:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3A10: OnConfigurationRegistered, cookie=000001E93887EBD8
+[2022-04-21 14:12:44,233:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3A10: OnImageEventHandlerRegistered, cookie=000001E933267EB8
+[2022-04-21 14:12:44,233:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3A10: OnConfigurationRegistered, cookie=000001E933267EC8
+[2022-04-21 14:12:44,235:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnConfigurationRegistered, cookie=000001E938B77938
+[2022-04-21 14:12:44,235:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnImageEventHandlerRegistered, cookie=000001E93887EDE8
+[2022-04-21 14:12:44,235:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: Clearing configuration event handler registry.
+[2022-04-21 14:12:44,235:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnConfigurationDeregistered, cookie=000001E938B77938
+[2022-04-21 14:12:44,235:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnConfigurationRegistered, cookie=000001E93887EDF8
+[2022-04-21 14:12:44,236:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnImageEventHandlerRegistered, cookie=000001E933267E58
+[2022-04-21 14:12:44,236:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnConfigurationRegistered, cookie=000001E933267E68
+[2022-04-21 14:12:52,950:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL created.
+[2022-04-21 14:12:52,960:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:12:52,961:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL destroyed.
+[2022-04-21 14:13:02,956:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL created.
+[2022-04-21 14:13:02,967:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:13:02,967:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL destroyed.
+[2022-04-21 14:13:12,945:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL created.
+[2022-04-21 14:13:12,954:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:13:12,954:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL destroyed.
+[2022-04-21 14:13:22,949:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL created.
+[2022-04-21 14:13:22,958:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:13:22,958:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL destroyed.
+[2022-04-21 14:13:32,951:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL created.
+[2022-04-21 14:13:32,960:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:13:32,961:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL destroyed.
+[2022-04-21 14:13:42,950:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL created.
+[2022-04-21 14:13:42,959:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:13:42,960:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL destroyed.
+[2022-04-21 14:13:52,948:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL created.
+[2022-04-21 14:13:52,958:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:13:52,959:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL destroyed.
+[2022-04-21 14:14:02,952:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL created.
+[2022-04-21 14:14:02,965:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:14:02,966:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL destroyed.
+[2022-04-21 14:14:12,948:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL created.
+[2022-04-21 14:14:12,964:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:14:12,965:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL destroyed.
+[2022-04-21 14:14:20,782:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL created.
+[2022-04-21 14:14:20,785:Pylon.USB.Stream] NOTICE: Creating stream grabber for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'.
+[2022-04-21 14:14:20,785:Pylon.USB.Stream] NOTICE: Created stream grabber for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' successfully.
+[2022-04-21 14:14:20,786:Pylon.USB.Stream] NOTICE: Creating event grabber for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'.
+[2022-04-21 14:14:20,786:Pylon.USB.Stream] NOTICE: Created event grabber for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'.
+[2022-04-21 14:14:20,786:Pylon.USB.Device] NOTICE: Creating device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' using 'BaslerUSB'
+[2022-04-21 14:14:20,787:Pylon.USB.Device] INFO: Migration mode for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' changed to 0
+[2022-04-21 14:14:20,787:Pylon.USB.Device] NOTICE: Created device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' successfully.
+[2022-04-21 14:14:20,820:Pylon.USB.TL] NOTICE: Pylon::CPylonUsbTL::ProvideXmlFileRaw: Successfully downloaded XML file from device: '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:14:20,821:pylon.base.TL] INFO: Downloaded XML from device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' length 54592
+[2022-04-21 14:14:21,272:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnAttach
+[2022-04-21 14:14:21,272:Pylon.USB.Device] INFO: Migration mode for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' changed to 0
+[2022-04-21 14:14:21,272:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: Device 000001E93938C6A8 attached, name=\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}, cleanupProcedure=1
+[2022-04-21 14:14:21,272:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnAttached
+[2022-04-21 14:14:21,272:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnOpen
+[2022-04-21 14:14:21,272:Pylon.USB.Device] INFO: Migration mode for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' changed to 0
+[2022-04-21 14:14:21,272:Pylon.USB.Device] NOTICE: Opening device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' accessMode: 0x1a
+[2022-04-21 14:14:21,283:Pylon.USB.Device] NOTICE: Opened device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' successfully
+[2022-04-21 14:14:21,283:Pylon.USB.Device] NOTICE: Invalidating node map for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'.
+[2022-04-21 14:14:21,284:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: Device removal forwarding thread started
+[2022-04-21 14:14:21,286:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnOpened
+[2022-04-21 14:14:22,949:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:14:27,504:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnClose
+[2022-04-21 14:14:27,504:Pylon.USB.Device] NOTICE: Closing device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:14:27,504:Pylon.USB.Stream] NOTICE: Closing stream grabber for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'.
+[2022-04-21 14:14:27,505:Pylon.USB.Stream] NOTICE: Closed stream grabber for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' successfully.
+[2022-04-21 14:14:27,505:Pylon.USB.Device] NOTICE: Closed device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' successfully.
+[2022-04-21 14:14:27,505:Pylon.USB.Device] NOTICE: Invalidating node map for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'.
+[2022-04-21 14:14:27,505:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnClosed
+[2022-04-21 14:14:27,505:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnDestroy
+[2022-04-21 14:14:27,506:Pylon.USB.Device] NOTICE: Destroying device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:14:27,506:Pylon.USB.Stream] NOTICE: Destroying stream grabber for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'.
+[2022-04-21 14:14:27,506:Pylon.USB.Stream] NOTICE: Destroyed stream grabber for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' successfully.
+[2022-04-21 14:14:27,506:Pylon.USB.Stream] NOTICE: Destroying event grabber for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'.
+[2022-04-21 14:14:27,506:Pylon.USB.Stream] NOTICE: Destroyed event grabber for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'.
+[2022-04-21 14:14:27,506:Pylon.USB.Device] NOTICE: Destroyed device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' successfully.
+[2022-04-21 14:14:27,517:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnDestroyed
+[2022-04-21 14:14:32,963:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:14:42,975:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:14:52,969:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:15:02,973:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:15:04,410:Pylon.USB.Stream] NOTICE: Creating stream grabber for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'.
+[2022-04-21 14:15:04,410:Pylon.USB.Stream] NOTICE: Created stream grabber for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' successfully.
+[2022-04-21 14:15:04,411:Pylon.USB.Stream] NOTICE: Creating event grabber for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'.
+[2022-04-21 14:15:04,411:Pylon.USB.Stream] NOTICE: Created event grabber for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'.
+[2022-04-21 14:15:04,412:Pylon.USB.Device] NOTICE: Creating device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' using 'BaslerUSB'
+[2022-04-21 14:15:04,412:Pylon.USB.Device] INFO: Migration mode for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' changed to 0
+[2022-04-21 14:15:04,412:Pylon.USB.Device] NOTICE: Created device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' successfully.
+[2022-04-21 14:15:04,452:Pylon.USB.TL] NOTICE: Pylon::CPylonUsbTL::ProvideXmlFileRaw: Successfully downloaded XML file from device: '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:15:04,452:pylon.base.TL] INFO: Downloaded XML from device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' length 54592
+[2022-04-21 14:15:04,913:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnAttach
+[2022-04-21 14:15:04,913:Pylon.USB.Device] INFO: Migration mode for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' changed to 0
+[2022-04-21 14:15:04,913:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: Device 000001E93052E838 attached, name=\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}, cleanupProcedure=1
+[2022-04-21 14:15:04,914:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnAttached
+[2022-04-21 14:15:04,914:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnOpen
+[2022-04-21 14:15:04,914:Pylon.USB.Device] INFO: Migration mode for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' changed to 0
+[2022-04-21 14:15:04,914:Pylon.USB.Device] NOTICE: Opening device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' accessMode: 0x1a
+[2022-04-21 14:15:04,923:Pylon.USB.Device] NOTICE: Opened device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' successfully
+[2022-04-21 14:15:04,923:Pylon.USB.Device] NOTICE: Invalidating node map for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'.
+[2022-04-21 14:15:04,925:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnOpened
+[2022-04-21 14:15:12,968:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:15:22,967:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:15:32,971:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:15:42,981:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:15:52,974:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:16:02,980:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:16:12,986:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:16:22,990:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:16:32,991:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:16:42,986:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:16:52,997:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:17:03,006:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:17:12,984:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:17:22,993:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:17:32,989:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:17:42,981:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:17:52,996:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:18:02,995:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:18:12,994:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:18:22,992:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:18:32,992:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:18:42,995:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:18:52,990:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:19:02,999:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:19:12,989:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:19:22,988:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:19:32,992:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:19:42,998:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:19:52,983:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:20:02,997:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:20:12,991:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:20:23,002:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:20:32,994:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:20:42,989:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:20:52,995:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:21:02,987:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:21:13,007:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:21:22,988:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:21:32,993:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:21:42,986:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:21:52,998:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:22:02,986:Pylon.USB.TL] DEBUG: Adding discovered device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:22:07,161:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnClose
+[2022-04-21 14:22:07,161:Pylon.USB.Device] NOTICE: Closing device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:22:07,161:Pylon.USB.Stream] NOTICE: Closing stream grabber for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'.
+[2022-04-21 14:22:07,162:Pylon.USB.Stream] NOTICE: Closed stream grabber for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' successfully.
+[2022-04-21 14:22:07,162:Pylon.USB.Device] NOTICE: Closed device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' successfully.
+[2022-04-21 14:22:07,162:Pylon.USB.Device] NOTICE: Invalidating node map for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'.
+[2022-04-21 14:22:07,163:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnClosed
+[2022-04-21 14:22:07,163:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnDestroy
+[2022-04-21 14:22:07,163:Pylon.USB.Device] NOTICE: Destroying device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'
+[2022-04-21 14:22:07,163:Pylon.USB.Stream] NOTICE: Destroying stream grabber for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'.
+[2022-04-21 14:22:07,163:Pylon.USB.Stream] NOTICE: Destroyed stream grabber for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' successfully.
+[2022-04-21 14:22:07,163:Pylon.USB.Stream] NOTICE: Destroying event grabber for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'.
+[2022-04-21 14:22:07,163:Pylon.USB.Stream] NOTICE: Destroyed event grabber for device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}'.
+[2022-04-21 14:22:07,164:Pylon.USB.Device] NOTICE: Destroyed device '\\?\usb#vid_2676&pid_ba02&mi_00#6&73dc2d0&0&0000#{79bfeeca-947f-11e1-bc58-001b2163ef96}' successfully.
+[2022-04-21 14:22:07,171:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnDestroyed
+[2022-04-21 14:22:12,273:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3A10: Destroying CInstantCamera
+[2022-04-21 14:22:12,273:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3A10: Clearing configuration event handler registry.
+[2022-04-21 14:22:12,273:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3A10: OnConfigurationDeregistered, cookie=000001E93887EBD8
+[2022-04-21 14:22:12,273:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3A10: OnConfigurationDeregistered, cookie=000001E933267EC8
+[2022-04-21 14:22:12,273:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3A10: Clearing image event handler registry.
+[2022-04-21 14:22:12,273:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3A10: OnImageEventHandlerDeregistered, cookie=000001E93887EBC8
+[2022-04-21 14:22:12,273:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3A10: OnImageEventHandlerDeregistered, cookie=000001E933267EB8
+[2022-04-21 14:22:12,274:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: Destroying CInstantCamera
+[2022-04-21 14:22:12,274:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: Device removal forwarding thread stopped
+[2022-04-21 14:22:12,275:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: Device removal forwarding thread joined
+[2022-04-21 14:22:12,275:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: Clearing configuration event handler registry.
+[2022-04-21 14:22:12,275:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnConfigurationDeregistered, cookie=000001E93887EDF8
+[2022-04-21 14:22:12,275:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnConfigurationDeregistered, cookie=000001E933267E68
+[2022-04-21 14:22:12,275:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: Clearing image event handler registry.
+[2022-04-21 14:22:12,275:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnImageEventHandlerDeregistered, cookie=000001E93887EDE8
+[2022-04-21 14:22:12,275:pylon.base.InstantCamera] NOTICE: Camera 000001E938EE3DD0: OnImageEventHandlerDeregistered, cookie=000001E933267E58
+[2022-04-21 14:22:12,276:Pylon.USB.TL] NOTICE: 'BaslerUsb' TL destroyed.
+[2022-04-21 14:22:12,279:pylon.base] NOTICE: Terminated Pylon. processID = 9272; threadID = 14456

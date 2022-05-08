@@ -15,6 +15,7 @@
 #include<opencv2/calib3d/calib3d.hpp>
 
 #include <QThread>
+#include <QMutex>
 #include <QApplication>
 
 #include "filesystem.h"
@@ -43,7 +44,7 @@ public:
     Q_ENUM(StateVideoStream)
 
    ImageProcessor(int indexCam,int numCam);
-   ImageProcessor(FileSystem *fs, QString current);
+   ImageProcessor(FileSystem *fs, QString current,QMutex *lock);
    ImageProcessor(cv::Mat img);
 
    void setOutFrame(cv::Mat frame);
@@ -64,15 +65,13 @@ public:
    cv::Mat getOutFrame();
    void undistort(cv::Mat input,cv::Mat output,cv::Mat cameraMatrix,cv::Mat distCoeffs);
    void stopedThread();
-   void undistirtedStream();
-
    void initCamera();
 
 signals:
     void outDisplay(QPixmap pixmap);
     void outDisplayFirst(QPixmap pixmap);
     void outDisplaySecond(QPixmap pixmap);
-    void setItem(QTableWidgetItem* item, QTableWidgetItem* item1, QTableWidgetItem* item2);
+    void setItem(QTableWidgetItem* item1, QTableWidgetItem* item2);
     void andStream();
 
 public slots:
@@ -104,5 +103,6 @@ private:
     CalibrationProcessor calibProcessor_;
 
     StateVideoStream state_video_stream;
+    QMutex* lock;
 };
 #endif // IMAGEPROCESSOR_H

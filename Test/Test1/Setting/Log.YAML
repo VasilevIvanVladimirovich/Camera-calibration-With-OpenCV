@@ -1,0 +1,52 @@
+%YAML:1.0
+---
+FirstCameraName: "USB2.0 VGA UVC WebCam"
+FirstCameraIndex: 0
+SecondCameraName: NULL
+SecondCameraIndex: -1
+Pattern: Chessboard
+Row: 5
+Col: 6
+CheckerSize: 0.
+MarkerSize: 0.
+DictionaryName: NULL
+ImageInfoCamera1:
+   -
+      - "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/Test1/Camera1/Accumulated/1.png"
+      - ""
+      - ""
+      - ""
+      - ""
+   -
+      - "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/Test1/Camera1/Accumulated/2.png"
+      - ""
+      - ""
+      - ""
+      - ""
+   -
+      - "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/Test1/Camera1/Accumulated/3.png"
+      - ""
+      - ""
+      - ""
+      - ""
+   -
+      - "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/Test1/Camera1/Accumulated/4.png"
+      - ""
+      - ""
+      - ""
+      - ""
+   -
+      - "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/Test1/Camera1/Accumulated/5.png"
+      - ""
+      - ""
+      - ""
+      - ""
+ImageInfoCamera2:
+   []
+isCalibration: 1
+isStereoCalibration: 1
+SubPixIter: 2147483647
+intFlagsFirst: 2147483647
+FlagsNameFirst: none
+intFlagsSecond: 2147483647
+FlagsNameSecond: none

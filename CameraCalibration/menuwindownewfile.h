@@ -23,6 +23,14 @@
 #include <QCameraDevice>
 #include <QMediaDevices>
 
+#include <pylon/PylonIncludes.h>
+#include <pylon/ImageEventHandler.h>
+#include <pylon/ConfigurationEventHandler.h>
+#include <pylon/PylonGUIIncludes.h>
+#include <pylon/GrabResultPtr.h>
+#include <pylon/PylonGUI.h>
+#include <pylon/PylonBase.h>
+#include <pylon/BaslerUniversalInstantCamera.h>
 #include "filesystem.h"
 
 class MenuWindowNewFile :public QWidget
@@ -43,6 +51,7 @@ private slots:
     void on_btnSetFolderPath_clicked();
     void on_tree_inputPatern_clicked(QTreeWidgetItem* item, int col);
     void on_box_cameraFirst_IndexChanged(int index);
+    void on_box_cameraInput_IndexChanged(int index);
 private:
     FileSystem fileSystem_;
 
@@ -57,8 +66,9 @@ private:
     QSpinBox* spinBox_checkerSize;
     QSpinBox* spinBox_markerSize;
 
-    QComboBox *box_cameraFirst;
-    QComboBox *box_cameraSecond;
+    QComboBox* box_cameraInput;
+    QComboBox* box_cameraFirst;
+    QComboBox* box_cameraSecond;
 
     QPushButton* btnSetOk;
     QPushButton* btnSetCancel;

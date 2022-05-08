@@ -1,0 +1,57 @@
+%YAML:1.0
+---
+FirstCameraName: "Microsoft® LifeCam Studio(TM)"
+FirstCameraIndex: 0
+SecondCameraName: "Microsoft® LifeCam Cinema(TM)"
+SecondCameraIndex: 2
+Pattern: Chessboard
+Row: 5
+Col: 6
+CheckerSize: 0.
+MarkerSize: 0.
+DictionaryName: NULL
+ImageInfoCamera1:
+   -
+      - "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/test5/Camera1/Accumulated/1.png"
+      - ""
+      - ""
+      - ""
+      - ""
+   -
+      - "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/test5/Camera1/Accumulated/2.png"
+      - ""
+      - ""
+      - ""
+      - ""
+   -
+      - "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/test5/Camera1/Accumulated/3.png"
+      - ""
+      - ""
+      - ""
+      - ""
+ImageInfoCamera2:
+   -
+      - "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/test5/Camera2/Accumulated/1.png"
+      - ""
+      - ""
+      - ""
+      - ""
+   -
+      - "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/test5/Camera2/Accumulated/2.png"
+      - ""
+      - ""
+      - ""
+      - ""
+   -
+      - "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/test5/Camera2/Accumulated/3.png"
+      - ""
+      - ""
+      - ""
+      - ""
+isCalibration: 0
+isStereoCalibration: 0
+SubPixIter: 0
+intFlagsFirst: 0
+FlagsNameFirst: none
+intFlagsSecond: 0
+FlagsNameSecond: none

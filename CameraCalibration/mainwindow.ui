@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1313</width>
-    <height>793</height>
+    <height>901</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -130,6 +130,78 @@
       </item>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <widget class="QTabWidget" name="tabWidget_2">
+          <property name="currentIndex">
+           <number>1</number>
+          </property>
+          <widget class="QWidget" name="tab">
+           <attribute name="title">
+            <string>Tab 1</string>
+           </attribute>
+          </widget>
+          <widget class="QWidget" name="tab_2">
+           <attribute name="title">
+            <string>Tab 2</string>
+           </attribute>
+           <widget class="QToolBox" name="toolBox">
+            <property name="geometry">
+             <rect>
+              <x>60</x>
+              <y>10</y>
+              <width>381</width>
+              <height>171</height>
+             </rect>
+            </property>
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <widget class="QWidget" name="page_3">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>381</width>
+               <height>101</height>
+              </rect>
+             </property>
+             <attribute name="label">
+              <string>Page 1</string>
+             </attribute>
+            </widget>
+            <widget class="QWidget" name="page_4">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>100</width>
+               <height>30</height>
+              </rect>
+             </property>
+             <attribute name="label">
+              <string>Page 2</string>
+             </attribute>
+            </widget>
+           </widget>
+           <widget class="QTextBrowser" name="textBrowser">
+            <property name="geometry">
+             <rect>
+              <x>30</x>
+              <y>0</y>
+              <width>256</width>
+              <height>192</height>
+             </rect>
+            </property>
+           </widget>
+          </widget>
+         </widget>
+        </item>
+        <item>
+         <widget class="QStackedWidget" name="stackedWidget">
+          <widget class="QWidget" name="page"/>
+          <widget class="QWidget" name="page_2"/>
+         </widget>
+        </item>
         <item>
          <widget class="QLabel" name="widget_img">
           <property name="minimumSize">

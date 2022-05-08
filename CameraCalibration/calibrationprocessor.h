@@ -7,6 +7,7 @@
 #include <QDate>
 #include <string>
 #include <QMessageBox>
+#include <string>
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
@@ -21,7 +22,6 @@
 
 #include <QThread>
 #include "filesystem.h"
-
 
 class CalibrationProcessor :public QThread
 {
@@ -39,25 +39,33 @@ public:
     void setCalibrationFlags(int calibrationFlags);
     bool getFrameFromTable(int row);
     void reloadVectors();
-    void cameraCalibration();
+    void cameraCalibration(std::vector<FileSystem::InformationImageSaved>& imageInfo);
     void stereoCalibration();
-    void singleCalibration();
-    void charucoAccumulation(int i);
+    void singleCalibration(std::vector<FileSystem::InformationImageSaved>& imageInfo);
+    void charucoAccumulation(int i,std::vector<FileSystem::InformationImageSaved>& imageInfo);
     void chessboardAccumulation(int i, bool isSuccess,
                                 std::vector<cv::Point3f> objp,
-                                std::vector<cv::Point2f> corner_pts);
+                                std::vector<cv::Point2f> corner_pts,
+                                std::vector<FileSystem::InformationImageSaved>& imageInfo);
     void circleAccumulation(int i, bool isSuccess,
                             std::vector<cv::Point3f> objp,
-                            std::vector<cv::Point2f> corner_pts);
+                            std::vector<cv::Point2f> corner_pts,
+                            std::vector<FileSystem::InformationImageSaved>& imageInfo);
     void aCircleAccumulation(int i, bool isSuccess,
                              std::vector<cv::Point3f> objp,
-                             std::vector<cv::Point2f> corner_pts);
+                             std::vector<cv::Point2f> corner_pts,
+                             std::vector<FileSystem::InformationImageSaved>& imageInfo);
     bool isFramePattern(cv::Mat* frame,QString pattern,int row, int col,
                         double icheckerSize, double imarkerSize, int idictionary);
-    double Rmse();
+    void createImgUndistorted(std::vector<FileSystem::InformationImageSaved>& imageInfo);
+
+    void saveInImgDrawing(QPixmap qpixmap, QString fileName,int i,
+                          std::vector<FileSystem::InformationImageSaved>& imageInfo);
+
+    double Rmse(std::vector<FileSystem::InformationImageSaved>& imageInfo);
 signals:
     void sendStatusImg(QString status, int row);
-    void sendOpenFileInViewYamlCalib(QString filepath);
+    void sendCalibBrowser();
 public slots:
     void run() override;
     void setTargetType(QString qstring);
@@ -89,8 +97,10 @@ private:
     std::vector< cv::Mat > allImgs;
     std::vector<cv::Mat> R_;
     std::vector<cv::Mat> T_;
-    QVector<QString> vectorPathImg_;
     FileSystem* fs_;
+
+    std::vector<FileSystem::InformationImageSaved> imageInfo1;
+    std::vector<FileSystem::InformationImageSaved> imageInfo2;
 };
 
 #endif // CALIBRATIONPROCESSOR_H

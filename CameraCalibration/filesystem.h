@@ -8,6 +8,8 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
 
+#include <QDebug>
+
 #include <QObject>
 #include <QDir>
 #include <QPixmap>
@@ -16,19 +18,53 @@
 #include <QCheckBox>
 #include <QTableWidget>
 #include <QDebug>
+#include <map>
 
 class FileSystem : public QObject
 {
     Q_OBJECT
+
+public:
+    class InformationImageSaved{
+    public:
+        InformationImageSaved(){
+            cameraPath = "NONE";
+            drawPath = "NONE";
+            undistortedPath = "NONE";
+            state = "NONE";
+            err = 0;
+        }
+
+        void write(cv::FileStorage& fs) const                        //Write serialization for this class
+        {
+            fs << "{" << "cameraPath" << cameraPath << "drawPath" << drawPath << "undistortedPath" << undistortedPath
+                      <<"state" << state << "err" << err <<"}";
+        }
+
+        void read(const cv::FileNode& node)                          //Read serialization for this class
+        {
+            cameraPath = (std::string)node["cameraPath"];
+            drawPath = (std::string)node["drawPath"];
+            undistortedPath = (std::string)node["undistortedPath"];
+            state = (std::string)node["state"];
+            err = (double)node["err"];
+        }
+    public:
+        std::string cameraPath;
+        std::string drawPath;
+        std::string undistortedPath;
+        std::string state;
+        double err;
+    };
 public:
     FileSystem();
     QString getFilePath();
 
     void createWorkDir(int countCam);
     void copyDirImgInWorkDir(QString path);
-    void openFileInView(QString filePath);
-    void openDrawImgInView(QString name);
-    void openUndistImgInView(QString name);
+    void openFileInView(int);
+    void openDrawImgInView(int);
+    void openUndistImgInView(int);
 
     void readYamlMatrixFirst(cv::Mat* cameraMatrix);
     void readYamlMatrixSecond(cv::Mat* cameraMatrix);
@@ -52,9 +88,15 @@ public:
                                  int flagsIntSecond, QString flagsNameSecond, bool isCalibration,bool isStereo);
     void saveInImg(QPixmap qpixmap, QString name);
     void saveInImgDrawing(QPixmap qpixmap, QString fileName,int numCam);
-    void createImgUndistorted(cv::Mat cameraMatrix, cv::Mat distCoeffs,int numCam);
-    void getOneTableItemsinTableCompare();//+
+    void getOneTableItemsinTableCompare();
     void getTableItemsinTableCompare();
+
+    std::vector<InformationImageSaved> getInfoCamera1();
+    std::vector<InformationImageSaved> getInfoCamera2();
+
+    void saveInfoCamera1(std::vector<InformationImageSaved> imageInfo1);
+    void saveInfoCamera2(std::vector<InformationImageSaved> imageInfo2);
+
 
     QString getPattern();
     int getRow();
@@ -75,7 +117,8 @@ public:
     void setPath(QString path);//+
     void writeSettingCalibInYaml(int numCamFirst, QString nameCumFirst, int numCamSecond,QString nameCumSecond,
                                  QString pattern, int row, int col,
-                                 double checkerSize, double markerSize, QString dictionaryName);
+                                 double checkerSize, double markerSize, QString dictionaryName,
+                                 bool isWebCamera, bool isBaslerCamera);
     int getIndexCameraFirst();
     int getIndexCameraSecond();
     int isCalibration();
@@ -90,11 +133,14 @@ public:
     bool isFirstCameraResul();
     bool isSecondCameraResul();
     bool isStereoCameraResul();
+
+    static void write(cv::FileStorage& fs, const std::string&, const InformationImageSaved& x);
+    static void read(const cv::FileNode& node, InformationImageSaved& x, const InformationImageSaved& default_value = InformationImageSaved());
+
 signals:
     void outImgDisplayFirst(QPixmap pixmap);
     void outImgDisplaySecond(QPixmap pixmap);
-    void outTextDisplayYamlCalib(QString qstring);
-    void outTableItems(QTableWidgetItem *item, QTableWidgetItem *item1, QTableWidgetItem *item2);
+    void outTableItems(QTableWidgetItem *item1, QTableWidgetItem *item2);
     void outTableItemsCompare(QTableWidgetItem* itemFile,QTableWidgetItem* itemDate,
                               QTableWidgetItem* itemCount,QTableWidgetItem* itemPattern,
                               QTableWidgetItem* itemSizePattern, QTableWidgetItem* itemRmse,
@@ -102,7 +148,8 @@ signals:
 public slots:
 
     void getTableItems();
-    void openFileInViewYamlCalib(QString path);//+
+    QString openProjectSetting();
+    QString openCalibSetting(int numCam);//+
 
 private:
     QString filePath_;

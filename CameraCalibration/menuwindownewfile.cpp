@@ -33,6 +33,14 @@ MenuWindowNewFile::MenuWindowNewFile(QWidget* parent): QWidget(parent)
 
     QFormLayout *layout_importCameras = new QFormLayout;
 
+    box_cameraInput = new QComboBox();
+    box_cameraInput->addItem("WebCamera");
+    box_cameraInput->addItem("Basler");
+
+    connect(box_cameraInput,SIGNAL(currentIndexChanged(int)),this,SLOT(on_box_cameraInput_IndexChanged(int)));
+
+    layout_importCameras->addRow("Select input camera", box_cameraInput);
+
     box_cameraFirst = new QComboBox();
     layout_importCameras->addRow("Camera Number first:", box_cameraFirst);
 
@@ -76,6 +84,7 @@ MenuWindowNewFile::MenuWindowNewFile(QWidget* parent): QWidget(parent)
     label_row->setText("Row");
 
     spinBox_rowCount = new QSpinBox;
+    spinBox_rowCount->setMinimum(1);
     layout_rowPatternSetting->addWidget(label_row);
     layout_rowPatternSetting->addWidget(spinBox_rowCount);
 
@@ -84,6 +93,7 @@ MenuWindowNewFile::MenuWindowNewFile(QWidget* parent): QWidget(parent)
     label_col->setText("Column");
 
     spinBox_colCount = new QSpinBox;
+    spinBox_colCount->setMinimum(1);
     layout_colPatternSetting->addWidget(label_col);
     layout_colPatternSetting->addWidget(spinBox_colCount);
 
@@ -199,6 +209,13 @@ void MenuWindowNewFile::on_btnSetOk_clicked()
     else {
         dictionaryName = item_tree_inputDictionaryName->text(0);
     }
+
+    bool isBaslerCamera = false;
+    bool isWebCamera = false;
+    if(box_cameraInput->currentIndex() == 1)
+        isBaslerCamera = true;
+    else if(box_cameraInput->currentIndex() == 0)
+        isWebCamera = true;
     fileSystem_.writeSettingCalibInYaml(numCamFirst,
                                         nameCumFirst,
                                         numCamSecond,
@@ -208,7 +225,9 @@ void MenuWindowNewFile::on_btnSetOk_clicked()
                                         spinBox_colCount->value(),
                                         spinBox_checkerSize->value(),
                                         spinBox_markerSize->value(),
-                                        dictionaryName);
+                                        dictionaryName,
+                                        isWebCamera,
+                                        isBaslerCamera);
     close();
 }
 
@@ -257,4 +276,68 @@ void MenuWindowNewFile::on_box_cameraFirst_IndexChanged(int index)
 {
     if(index ==-1 || index ==0) box_cameraSecond->setEnabled(false);
     else box_cameraSecond->setEnabled(true);
+}
+
+void MenuWindowNewFile::on_box_cameraInput_IndexChanged(int index)
+{
+    //вывод списка баслер камер
+    if(index == 1)
+    {
+        box_cameraFirst->clear();
+        box_cameraSecond->clear();
+
+        box_cameraFirst->addItem("NULL");
+        box_cameraSecond->addItem("NULL");
+
+
+        Pylon::PylonInitialize();
+
+
+//        Pylon::CTlFactory &TlFactory = Pylon::CTlFactory::GetInstance();
+//        Pylon::TlInfoList_t lstInfo;
+//        int n = TlFactory.EnumerateTls(lstInfo);
+//        Pylon::TlInfoList_t::const_iterator it;
+//        for ( it = lstInfo.begin(); it != lstInfo.end(); ++it )
+//        {
+//            qDebug() << "FriendlyName: " << it->GetFriendlyName ();
+//            qDebug() << "FullName: " << it->GetFullName();
+//            qDebug() << "VendorName: " << it->GetVendorName() ;
+//            qDebug() << "DeviceClass: " << it->GetDeviceClass() ;
+//            qDebug() << "";
+//        }
+
+
+        Pylon::CTlFactory &TlFactory = Pylon::CTlFactory::GetInstance();
+        Pylon::ITransportLayer * pTl = TlFactory.CreateTl("BaslerUsb");
+        Pylon::DeviceInfoList_t lstDevices;
+        pTl->EnumerateDevices(lstDevices);
+        int n = pTl->EnumerateDevices(lstDevices,true);
+        if(n == 0)
+        {
+            qDebug() << "Cannot find any camera!";
+            return;
+        }
+        Pylon::DeviceInfoList_t::const_iterator it;
+        QString name;
+        for( it = lstDevices.begin(); it != lstDevices.end(); ++it )
+        {
+            name = it->GetFriendlyName();
+            box_cameraFirst->addItem(name);
+            box_cameraSecond->addItem(name);
+        }
+
+        Pylon::PylonTerminate();
+    }else if(index == 0) // вывод списка вебкамер
+    {
+        box_cameraFirst->clear();
+        box_cameraSecond->clear();
+
+        box_cameraFirst->addItem("NULL");
+        box_cameraSecond->addItem("NULL");
+        QList<QCameraDevice> cameras = QMediaDevices::videoInputs();
+        for (const QCameraDevice &cameraDevice : cameras) {
+            box_cameraFirst->addItem(cameraDevice.description());
+            box_cameraSecond->addItem(cameraDevice.description());
+        }
+    }
 }
