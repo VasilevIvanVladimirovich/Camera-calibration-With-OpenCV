@@ -71,8 +71,9 @@ signals:
     void outDisplay(QPixmap pixmap);
     void outDisplayFirst(QPixmap pixmap);
     void outDisplaySecond(QPixmap pixmap);
-    void setItem(QTableWidgetItem* item1, QTableWidgetItem* item2);
+    void setItem(QTableWidgetItem* item0,QTableWidgetItem* item1, QTableWidgetItem* item2);
     void andStream();
+    void sendTerminal(QString);
 
 public slots:
     void run() override;

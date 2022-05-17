@@ -2,66 +2,93 @@
 
 DialogWindowImportImage::DialogWindowImportImage(QWidget* parent): QWidget(parent)
 {
-    resize(500,600);
-    btnStartVideoStream = new QPushButton("StartVideoStream");
-    btnSetFolderPath = new QPushButton("...");
-    btnSetOk = new QPushButton("Ok");
-    btnSetCancel = new QPushButton("Cancel");
-
-    connect(btnStartVideoStream, SIGNAL(clicked()), this, SLOT(on_btnStartVideoStream_clicked()));
-    connect(btnSetFolderPath, SIGNAL(clicked()), this, SLOT(on_btnSetFolderPath_clicked()));
-    connect(btnSetOk, SIGNAL(clicked()), this, SLOT(on_btnSetOk_clicked()));
-    connect(btnSetCancel, SIGNAL(clicked()), this, SLOT(on_btnSetCancel_clicked()));
-
-    QVBoxLayout* layout_menu = new QVBoxLayout;
-    QFormLayout *layout_importVideoStreamSetting = new QFormLayout;
-
-    spinBox_frameRate = new QSpinBox();
-    layout_importVideoStreamSetting->addRow("Frame rate of file saving:", spinBox_frameRate);
-
-    spinBox_countFrame = new QSpinBox();
-    layout_importVideoStreamSetting->addRow("Count frame:", spinBox_countFrame);
-    QFormLayout *layout_chekingPatternSetting = new QFormLayout;
-    checkBox_isSnapShoot = new QCheckBox;
-    layout_chekingPatternSetting->addRow(tr("&frame by button:"), checkBox_isSnapShoot);
-    QVBoxLayout* layout_selectFolder = new QVBoxLayout;
-    label_headerSelectFolder = new QLabel;
-    label_headerSelectFolder->setText("Select image from a folder");
-    layout_selectFolder->addWidget(label_headerSelectFolder);
-
-    QHBoxLayout* layout_inputSelectFolder = new QHBoxLayout;
-
-    label_folderPath = new QLabel;
-    label_folderPath->setText("Folder path");
-
-    line_folderPath = new QLineEdit;
-
-    layout_inputSelectFolder->addWidget(label_folderPath);
-    layout_inputSelectFolder->addWidget(line_folderPath);
-    layout_inputSelectFolder->addWidget(btnSetFolderPath);
-
-    layout_selectFolder->addLayout(layout_inputSelectFolder);
-
-    QHBoxLayout* layout_okCancel = new QHBoxLayout;
-
-    layout_okCancel->addWidget(btnSetOk);
-    layout_okCancel->addWidget(btnSetCancel);
-
-    layout_menu->addLayout(layout_importVideoStreamSetting);
-    layout_menu->addLayout(layout_chekingPatternSetting);
-    layout_menu->addWidget(btnStartVideoStream);
-    layout_menu->addLayout(layout_selectFolder);
-    layout_menu->addLayout(layout_okCancel);
-
-    QHBoxLayout* layout_main = new QHBoxLayout;   //Горизонтальный
-    layout_main->addLayout(layout_menu);
-
-    setLayout(layout_main);
+    initUi();
 }
 
 DialogWindowImportImage::~DialogWindowImportImage()
 {
 
+}
+
+void DialogWindowImportImage::initUi()
+{
+    resize(500,200);
+    btnStartVideoStream = new QPushButton("StartVideoStream");
+    btnSetFolderPath1 = new QPushButton("...");
+    btnSetFolderPath2 = new QPushButton("...");
+    btnSetOk = new QPushButton("Ok");
+
+    connect(btnStartVideoStream, SIGNAL(clicked()), this, SLOT(on_btnStartVideoStream_clicked()));
+    connect(btnSetFolderPath1, SIGNAL(clicked()), this, SLOT(on_btnSetFolderPath1_clicked()));
+    connect(btnSetFolderPath2, SIGNAL(clicked()), this, SLOT(on_btnSetFolderPath2_clicked()));
+    connect(btnSetOk, SIGNAL(clicked()), this, SLOT(on_btnSetOk_clicked()));
+
+    QGroupBox *groupBoxPath= new QGroupBox(tr("Input from path"));
+    groupBoxPath->setAlignment(Qt::AlignCenter);
+
+    QGroupBox *groupBoxCamera= new QGroupBox(tr("Input from camera"));
+    groupBoxCamera->setAlignment(Qt::AlignCenter);
+
+    QVBoxLayout* layout_selectFolder = new QVBoxLayout;
+    QHBoxLayout* layout_inputSelectFolder1 = new QHBoxLayout;
+
+    label_folderPath1 = new QLabel;
+    label_folderPath1->setText("Camera1");
+
+    line_folderPath1 = new QLineEdit;
+    line_folderPath1->isReadOnly();
+
+    layout_inputSelectFolder1->addWidget(label_folderPath1);
+    layout_inputSelectFolder1->addWidget(line_folderPath1);
+    layout_inputSelectFolder1->addWidget(btnSetFolderPath1);
+
+    layout_selectFolder->addLayout(layout_inputSelectFolder1);
+
+    QHBoxLayout* layout_inputSelectFolder2 = new QHBoxLayout;
+
+    label_folderPath2 = new QLabel;
+    label_folderPath2->setText("Camera2");
+
+    line_folderPath2 = new QLineEdit;
+    line_folderPath2->isReadOnly();
+
+    layout_inputSelectFolder2->addWidget(label_folderPath2);
+    layout_inputSelectFolder2->addWidget(line_folderPath2);
+    layout_inputSelectFolder2->addWidget(btnSetFolderPath2);
+
+    layout_selectFolder->addLayout(layout_inputSelectFolder2);
+
+    layout_selectFolder->addWidget(btnSetOk);
+
+    groupBoxPath->setLayout(layout_selectFolder);
+
+    QFormLayout *layout_importVideoStreamSetting = new QFormLayout;
+
+    isCamera1 = new QCheckBox();
+    label_cam1 = new QLabel("Camera 1");
+
+    layout_importVideoStreamSetting->addRow(isCamera1, label_cam1);
+
+    isCamera2 = new QCheckBox();
+    label_cam2 = new QLabel("Camera 2");
+
+    layout_importVideoStreamSetting->addRow(isCamera2, label_cam2);
+
+    spinBox_countFrame = new QSpinBox();
+    layout_importVideoStreamSetting->addRow("Count frame:", spinBox_countFrame);
+    spinBox_countFrame->setMinimum(1);
+    spinBox_countFrame->setMaximum(1000);
+
+    layout_importVideoStreamSetting->addRow(btnStartVideoStream);
+
+    groupBoxCamera->setLayout(layout_importVideoStreamSetting);
+
+
+    QHBoxLayout* layout_main = new QHBoxLayout;   //Горизонтальный
+    layout_main->addWidget(groupBoxPath);
+    layout_main->addWidget(groupBoxCamera);
+
+    setLayout(layout_main);
 }
 
 void DialogWindowImportImage::setFileSystem(FileSystem *fs)
@@ -71,32 +98,45 @@ void DialogWindowImportImage::setFileSystem(FileSystem *fs)
 
 void DialogWindowImportImage::on_btnStartVideoStream_clicked()
 {
-    emit signalVideoStream(spinBox_frameRate->value(),
-                           spinBox_countFrame->value(),
-                           checkBox_isSnapShoot->checkState());
-    close();
+    if((fs->getIndexCameraFirst()!=-1 && isCamera1->checkState())||
+       (fs->getIndexCameraSecond()!=-1 && isCamera2->checkState()))
+    {
+        emit signalVideoStream(spinBox_countFrame->value());
+        close();
+    }
+    else if(fs->getIndexCameraFirst()==-1 && isCamera1->checkState())
+        QMessageBox::warning(this, tr("Warning"),tr("No selected Camera1"));
+    else if(fs->getIndexCameraSecond()==1 && isCamera2->checkState())
+        QMessageBox::warning(this, tr("Warning"),tr("No selected Camera2"));
+
 }
 
-void DialogWindowImportImage::on_btnSetFolderPath_clicked()
+void DialogWindowImportImage::on_btnSetFolderPath1_clicked()
 {
-    pathName = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+    pathName1 = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
                                                          "/home",
                                                          QFileDialog::ShowDirsOnly
-                                                         |QFileDialog::DontResolveSymlinks);
-    line_folderPath->setText(pathName);
+                                                         |QFileDialog::DontResolveSymlinks
+                                                         |QFileDialog::DontUseNativeDialog);
+    line_folderPath1->setText(pathName1);
+}
+
+void DialogWindowImportImage::on_btnSetFolderPath2_clicked()
+{
+    pathName2 = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+                                                         "/home",
+                                                         QFileDialog::ShowDirsOnly
+                                                         |QFileDialog::DontResolveSymlinks
+                                                         |QFileDialog::DontUseNativeDialog);
+    line_folderPath2->setText(pathName2);
 }
 
 void DialogWindowImportImage::on_btnSetOk_clicked()
 {
-    fs->copyDirImgInWorkDir(pathName);
-    fs->getTableItems();
+    fs->copyDirImgInWorkDir(pathName1,pathName2);
     close();
 }
 
-void DialogWindowImportImage::on_btnSetCancel_clicked()
-{
-    close();
-}
 
 
 

@@ -10,11 +10,24 @@ MyBaslerCamera::~MyBaslerCamera()
      Pylon::PylonTerminate();
 }
 
-void MyBaslerCamera::init()
+void MyBaslerCamera::init(int i)
 {
     qDebug()<<"init";
     // Создайте объект мгновенной камеры для устройства камеры, найденного первым.
-    baslerCamera_ = new Pylon::CBaslerUniversalInstantCamera(Pylon::CTlFactory::GetInstance().CreateFirstDevice());
+    Pylon::CTlFactory &TlFactory = Pylon::CTlFactory::GetInstance();
+    Pylon::ITransportLayer * pTl = TlFactory.CreateTl("BaslerUsb");
+    Pylon::DeviceInfoList_t lstDevices;
+    pTl->EnumerateDevices(lstDevices);
+    Pylon::CInstantCameraArray cameras(min(lstDevices.size(),2));
+    for (size_t i = 0; i < cameras.GetSize(); ++i)
+    {
+        cameras[i].Attach( Pylon::CTlFactory::GetInstance().CreateDevice(lstDevices[i]));
+
+        // Print the model name of the camera.
+        qDebug()<<"Using device " << cameras[i].GetDeviceInfo().GetModelName();
+    }
+
+    //baslerCamera_ = new Pylon::CBaslerUniversalInstantCamera(Pylon::CTlFactory::GetInstance().CreateDevice(lstDevices[i]));
     qDebug()<<baslerCamera_->GetDeviceInfo().GetFriendlyName();
     qDebug()<<baslerCamera_->GetDeviceInfo().GetModelName();
 
@@ -218,6 +231,7 @@ void MyBaslerCamera::run()
         qDebug()<< "Gain          : " << baslerCamera_->GainRaw.GetValue();
         qDebug()<< "Exposure time : " << baslerCamera_->ExposureTimeRaw.GetValue();
     }
+
     // Можно ли запросить устройство камеры, готово ли оно принять триггер следующего кадра?
     if (baslerCamera_->CanWaitForFrameTriggerReady())
     {
@@ -244,27 +258,34 @@ void MyBaslerCamera::run()
     {
         try{
             baslerCamera_->TriggerSelector.SetValue(Basler_UniversalCameraParams::TriggerSelector_FrameStart);
-            baslerCamera_->TriggerMode.SetValue(Basler_UniversalCameraParams::TriggerMode_On);
-            baslerCamera_->TriggerSelector.SetValue(Basler_UniversalCameraParams::TriggerSelector_FrameBurstStart);
-            baslerCamera_->TriggerMode.SetValue(Basler_UniversalCameraParams::TriggerMode_On);
+            baslerCamera_->TriggerSource.SetValue(Basler_UniversalCameraParams::TriggerSource_Line1);
+            baslerCamera_->TriggerActivation.SetValue(Basler_UniversalCameraParams::TriggerActivation_RisingEdge);
+            baslerCamera_->AcquisitionMode.SetValue(Basler_UniversalCameraParams::AcquisitionMode_Continuous);
+            baslerCamera_->TriggerMode.SetValue(Basler_UniversalCameraParams::TriggerMode_Off);
+            baslerCamera_->TriggerSoftware.Execute();
 
-            baslerCamera_->AcquisitionBurstFrameCount.SetValue(3);
+            //baslerCamera_->AcquisitionStart.Execute();
 
-        qDebug()<<"else";
-        Pylon::CGrabResultPtr ptrGrabResult;
-        qDebug()<<"CGrabResultPtr";
-        baslerCamera_->StartGrabbing();
-        qDebug()<<"StartGrabbing";
-        while(baslerCamera_->IsGrabbing()){
-            qDebug()<<"IsGrabbing";
-            baslerCamera_->RetrieveResult(5000, ptrGrabResult, Pylon::TimeoutHandling_ThrowException);
-            if (ptrGrabResult->GrabSucceeded()){
-                qDebug()<<"GrabSucceeded";
-                Pylon::CPylonImage image;
-                image.AttachGrabResultBuffer(ptrGrabResult);
-                QImage img((uchar *)image.GetBuffer(),image.GetWidth(),image.GetHeight(),QImage::Format_Grayscale8);
-                emit sendGrabb(img);
-            }
+            qDebug()<<"else";
+            Pylon::CGrabResultPtr ptrGrabResult;
+            qDebug()<<"CGrabResultPtr";
+            baslerCamera_->StartGrabbing(Pylon::GrabStrategy_OneByOne);
+            qDebug()<<"StartGrabbing";
+            while(baslerCamera_->IsGrabbing()){
+                baslerCamera_->RetrieveResult(100, ptrGrabResult, Pylon::TimeoutHandling_ThrowException);
+//                if (ptrGrabResult->GrabSucceeded())
+//                {
+//                    Pylon::CPylonImage image;
+//                    image.AttachGrabResultBuffer(ptrGrabResult);
+//                    QImage img((uchar *)image.GetBuffer(),image.GetWidth(),image.GetHeight(),QImage::Format_Grayscale8);
+//                    emit sendGrabb(img);
+//                }
+
+            //baslerCamera_->AcquisitionStop.Execute();
+
+            //baslerCamera_->AcquisitionFrameRate();
+
+
         }
         }catch (GenICam::GenericException &e)
         {

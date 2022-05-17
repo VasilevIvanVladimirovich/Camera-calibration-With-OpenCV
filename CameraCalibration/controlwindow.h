@@ -37,6 +37,9 @@
 #include "dialogwindowdetectcalibration.h"
 #include "menuwindownewfile.h"
 #include "streamsetting.h"
+#include "settingcamerawindow.h"
+#include "settingpatternwindow.h"
+#include "customgraphicsview.h"
 
 class ControlWindow: public QMainWindow
 {
@@ -46,7 +49,6 @@ public:
 
     enum ViewState{
         DEFAULT_IMAGE,
-        DRAW_IMAGE,
         UNDISTORTED_IMAGE
     };
 
@@ -55,16 +57,17 @@ private:
     void initUi();
     void initImageTable();
     void createAction();
-    void setupShortcuts();
 
     void replot();
 
     void getTableItems();
-    void updateUi();
+    void setStateTable();
+
 public slots:
-    void addItem(QTableWidgetItem *Item1, QTableWidgetItem *Item2);
+    void addItem(QTableWidgetItem *Item0, QTableWidgetItem *Item1, QTableWidgetItem *Item2);
     void videoStream(QString);
     void addStringTerminalBrowser(QString);
+    void updateUi();
 private slots:
     void openProject();
     void createProject();
@@ -75,16 +78,17 @@ private slots:
     void saveImage();
     void stopVideo();
     void setPath(QString);
-    void videoStream(int frameRate, int countframe,bool isSnapShoot);
+    void videoStream(int countframe);
     void updateFrameFirst(QPixmap);
     void updateFrameSecond(QPixmap);
+    void updateFrameFirst(QPixmap, std::vector<cv::Point2f> imgpoint,bool isActive);
+    void updateFrameSecond(QPixmap, std::vector<cv::Point2f> imgpoint,bool isActive);
     void on_imageTable_cellClicked(int row,int col);
     void andStream();
     void runCalibration();
     void openSettingStream();
-
-    void zoomIn();
-    void zoomOut();
+    void openSettingCamera();
+    void openSettingPattern();
 
     void changeDefault();
     void changeDraw();
@@ -92,6 +96,8 @@ private slots:
 private:
     QAction *openProjectAction;
     QAction *createProjectAction;
+    QAction *settingCameraAction;
+    QAction *settingPatternAction;
     QAction *exitAction;
     QAction *importImageAction;
     QAction *detectAction;
@@ -101,13 +107,9 @@ private:
     QAction *stopVideoAction;
     QAction *streamAction;
 
-
     QAction *defaultImageAction;
     QAction *drawImageAction;
     QAction *undistortImageAction;
-
-    QAction* zoomInAction;
-    QAction* zoomOutAction;
 
     QMenu *fileMenu;
     QMenu *viewMenu;
@@ -126,8 +128,8 @@ private:
     QGraphicsScene *imageSceneFirst;
     QGraphicsScene *imageSceneSecond;
 
-    QGraphicsView *imageViewFirst;
-    QGraphicsView *imageViewSecond;
+    CustomGraphicsView *imageViewFirst;
+    CustomGraphicsView *imageViewSecond;
 
     QTableWidget *imageTable;
 
@@ -136,6 +138,8 @@ private:
     FileSystem fileSystem_;
 
     StreamSetting* streamSetting;
+    SettingCameraWindow* settingCameraWindow;
+    SettingPatternWindow* settingPatternWindow;
 
     ImageProcessor *imgprocessorFirst_;
     ImageProcessor *imgprocessorSecond_;

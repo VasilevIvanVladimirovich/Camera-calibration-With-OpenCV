@@ -6,8 +6,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    isStart = false;
     capturer = new CaptureThread();
+    capturer->setIdDevice(0);
     connect(capturer,&CaptureThread::outputImg,this,&MainWindow::updateFrameLabel);
 }
 
@@ -32,6 +32,12 @@ void MainWindow::updateFrameLabel(QImage img)
 {
     QPixmap pix = QPixmap::fromImage(img);
     ui->label_3->setPixmap(pix);
+}
+
+void MainWindow::updateFrameLabelTwo(QImage img)
+{
+    QPixmap pix = QPixmap::fromImage(img);
+    ui->label_6->setPixmap(pix);
 }
 
 

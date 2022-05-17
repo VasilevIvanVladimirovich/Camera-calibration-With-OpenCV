@@ -27,59 +27,6 @@ class FileSystem : public QObject
     Q_OBJECT
 
 public:
-    class settingSingleCalibration{
-        public:
-        settingSingleCalibration()
-        {
-            isUseParametr = false;
-            isFixedFocal = false;
-            isFixedAspectRatio = false;
-            isFixedPrincipalPoint = false;
-            isfixedK1 = false;
-            isfixedK2 = false;
-            isfixedK3 = false;
-            isfixedK4 = false;
-            numCamera = 0;
-            cameraModel = NONE;
-            fx = 0;
-            fy = 0;
-            cx = 0;
-            cy = 0;
-            k1 = 0;
-            k2 = 0;
-            k3 = 0;
-            k4 = 0;
-        }
-
-        enum CameraModel{
-            NONE,
-            OPENCV,
-            OPENCV_FISHEYE
-        };
-
-
-        public:
-            bool isUseParametr;
-            bool isFixedFocal;
-            bool isFixedAspectRatio;
-            bool isFixedPrincipalPoint;
-            bool isfixedK1;
-            bool isfixedK2;
-            bool isfixedK3;
-            bool isfixedK4;
-            bool iszeroTangent;
-            unsigned short int numCamera;
-            CameraModel cameraModel;
-            double fx;
-            double fy;
-            double cx;
-            double cy;
-            double k1;
-            double k2;
-            double k3;
-            double k4;
-    };
-
     class InformationImageSaved{
     public:
         InformationImageSaved(){
@@ -89,10 +36,6 @@ public:
             state = "NONE";
             err = 0;
             isActive = 1;
-            cv::Point2f point;
-            point.x = 0;
-            point.y = 0;
-            imgpoint.push_back(point);
         }
 
         void write(cv::FileStorage& fs) const                        //Write serialization for this class
@@ -124,6 +67,7 @@ public:
             std::vector<cv::Point2f> temp;
             for(cv::FileNodeIterator itPts = node["imgpoint"].begin();itPts!=node["imgpoint"].end();++itPts)
             {
+                qDebug()<<"iter";
                 cv::FileNode pt = *itPts;
                 cv::Point2f point;
                 cv::FileNodeIterator itPt = pt.begin();
@@ -184,7 +128,7 @@ public:
 
     void createWorkDir(int countCam);
     void copyDirImgInWorkDir(QString path1,QString path2);
-    void openFileInView(int, bool isChecked);
+    void openFileInView(int);
     void openDrawImgInView(int);
     void openUndistImgInView(int);
 
@@ -277,8 +221,6 @@ public:
 signals:
     void outImgDisplayFirst(QPixmap pixmap);
     void outImgDisplaySecond(QPixmap pixmap);
-    void outImgDisplayFirst(QPixmap pixmap, std::vector<cv::Point2f> imgpoint,bool isActive);
-    void outImgDisplaySecond(QPixmap pixmap, std::vector<cv::Point2f> imgpoint,bool isActive);
     void outTableItems(QTableWidgetItem *item0,QTableWidgetItem *item1, QTableWidgetItem *item2);
     void outTableItemsCompare(QTableWidgetItem* itemFile,QTableWidgetItem* itemDate,
                               QTableWidgetItem* itemCount,QTableWidgetItem* itemPattern,

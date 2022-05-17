@@ -16,6 +16,8 @@ public:
     double getGain();
 
     void setSetting(double,double);
+    void setIdDevice(int id);
+
 
 
 public slots:
@@ -28,6 +30,8 @@ public slots:
     void inputImage(QImage);
 private:
     MyBaslerCamera* camera;
+
+    int idDevice=0;
 
 };
 

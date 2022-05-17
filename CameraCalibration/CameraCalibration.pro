@@ -10,6 +10,7 @@ CONFIG += c++11
 SOURCES += \
     calibrationprocessor.cpp \
     controlwindow.cpp \
+    customgraphicsview.cpp \
     dialogwindowdetectcalibration.cpp \
     dialogwindowimportimage.cpp \
     filesystem.cpp \
@@ -17,18 +18,23 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     menuwindownewfile.cpp \
+    settingcamerawindow.cpp \
+    settingpatternwindow.cpp \
     streamsetting.cpp \
     tablecompare.cpp
 
 HEADERS += \
     calibrationprocessor.h \
     controlwindow.h \
+    customgraphicsview.h \
     dialogwindowdetectcalibration.h \
     dialogwindowimportimage.h \
     filesystem.h \
     imageprocessor.h \
     mainwindow.h \
     menuwindownewfile.h \
+    settingcamerawindow.h \
+    settingpatternwindow.h \
     streamsetting.h \
     tablecompare.h
 

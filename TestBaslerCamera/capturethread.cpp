@@ -4,7 +4,7 @@ CaptureThread::CaptureThread()
 {
     camera = new MyBaslerCamera();
     connect(camera,&MyBaslerCamera::sendGrabb,this,&CaptureThread::inputImage);
-    camera->init();
+    camera->init(idDevice);
 }
 
 double CaptureThread::getExposureTime()
@@ -20,6 +20,11 @@ double CaptureThread::getGain()
 void CaptureThread::setSetting(double ex, double ga)
 {
     camera->setSetting(ex, ga);
+}
+
+void CaptureThread::setIdDevice(int id)
+{
+    idDevice = id;
 }
 
 

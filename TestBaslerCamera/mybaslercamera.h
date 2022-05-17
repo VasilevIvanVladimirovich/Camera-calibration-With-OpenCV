@@ -25,7 +25,7 @@ public:
     MyBaslerCamera();
     ~MyBaslerCamera();
 
-    void init();
+    void init(int idDevice);
 
     double getExposureTime();
 

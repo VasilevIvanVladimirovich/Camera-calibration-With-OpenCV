@@ -34,37 +34,45 @@ public:
     void setFileSystem(FileSystem* fs);
 
 signals:
-    void signalVideoStream(int frameRate, int countframe, bool isSnapshoot);
+    void signalVideoStream(int countframe);
 
 private slots:
     void on_btnStartVideoStream_clicked();
-    void on_btnSetFolderPath_clicked();
+    void on_btnSetFolderPath1_clicked();
+    void on_btnSetFolderPath2_clicked();
     void on_btnSetOk_clicked();
-    void on_btnSetCancel_clicked();
+
+private:
+    void initUi();
 
 private:
     FileSystem* fs;
-    QString pathName;
+    QString pathName1;
+    QString pathName2;
+
+    QCheckBox* isCamera1;
+    QCheckBox* isCamera2;
 
     QPushButton* btnStartVideoStream;
-    QPushButton* btnSetFolderPath;
+    QPushButton* btnSetFolderPath1;
+    QPushButton* btnSetFolderPath2;
     QPushButton* btnSetOk;
-    QPushButton* btnSetCancel;
 
-//    QSpinBox* spinBox_numCameraFirst;
-//    QSpinBox* spinBox_numCameraSecond;
     QComboBox *box_cameraFirst;
     QComboBox *box_cameraSecond;
 
-    QSpinBox* spinBox_frameRate;
     QSpinBox* spinBox_countFrame;
 
     QCheckBox* checkBox_isSnapShoot;
 
-    QLineEdit* line_folderPath;
+    QLineEdit* line_folderPath1;
+    QLineEdit* line_folderPath2;
 
-    QLabel* label_headerSelectFolder;
-    QLabel* label_folderPath;
+    QLabel* label_folderPath1;
+    QLabel* label_folderPath2;
+    QLabel* label_cam1;
+    QLabel* label_cam2;
+
 };
 
 #endif // DIALOGWINDOWIMPORTIMAGE_H

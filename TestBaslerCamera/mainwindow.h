@@ -28,11 +28,11 @@ private slots:
 
 public slots:
     void updateFrameLabel(QImage);
+    void updateFrameLabelTwo(QImage);
 
 private:
     Ui::MainWindow *ui;
     CaptureThread* capturer;
-    bool isStart;
 };
 
 #endif // MAINWINDOW_H

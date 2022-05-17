@@ -30,29 +30,32 @@ public:
     CalibrationProcessor(FileSystem* fs);
     CalibrationProcessor();
 
+    enum State{
+        ACCUMULATION,
+        CALIBRATION
+    };
+
+    void setState(State state);
+
     void setPattern(QString Pattern);
     void setRowCol(int row, int col);
     void setMarkerSize(double markerSize);
     void setCheckerSize(double checkerSize);
     void setDictionaryName(QString dictionaryName);
-    void setSubPixelIter(int iter);
     void setCalibrationFlags(int calibrationFlags);
     bool getFrameFromTable(int row);
     void reloadVectors();
     void cameraCalibration(std::vector<FileSystem::InformationImageSaved>& imageInfo);
     void stereoCalibration();
-    void singleCalibration(std::vector<FileSystem::InformationImageSaved>& imageInfo);
+    void accumulation(std::vector<FileSystem::InformationImageSaved>& imageInfo);
     void charucoAccumulation(int i,std::vector<FileSystem::InformationImageSaved>& imageInfo);
-    void chessboardAccumulation(int i, bool isSuccess,
-                                std::vector<cv::Point3f> objp,
+    void chessboardAccumulation(int i,cv::Mat gray,
                                 std::vector<cv::Point2f> corner_pts,
                                 std::vector<FileSystem::InformationImageSaved>& imageInfo);
-    void circleAccumulation(int i, bool isSuccess,
-                            std::vector<cv::Point3f> objp,
+    void circleAccumulation(int i,cv::Mat gray,
                             std::vector<cv::Point2f> corner_pts,
                             std::vector<FileSystem::InformationImageSaved>& imageInfo);
-    void aCircleAccumulation(int i, bool isSuccess,
-                             std::vector<cv::Point3f> objp,
+    void aCircleAccumulation(int i,cv::Mat gray,
                              std::vector<cv::Point2f> corner_pts,
                              std::vector<FileSystem::InformationImageSaved>& imageInfo);
     bool isFramePattern(cv::Mat* frame,QString pattern,int row, int col,
@@ -66,6 +69,7 @@ public:
 signals:
     void sendStatusImg(QString status, int row);
     void sendCalibBrowser();
+    void updateCantrolUi();
 public slots:
     void run() override;
     void setTargetType(QString qstring);
@@ -73,7 +77,6 @@ public slots:
 private:
     bool isRefindStrategy_;
     int numCam_;
-    int subPixelIter_;
     int calibrationFlags_;
     int intDictionary_;
     int CHECKERBOARD_[2]; //размер шахматной доски убрать автоэкспозицию!
@@ -84,7 +87,7 @@ private:
     QString dictionaryName_;
     cv::Size imgSizeCharuco_;
     cv::Mat inputFrame_;
-    cv::Mat gray;
+
     cv::Mat cameraMatrix_;
     cv::Mat distCoeffs_;
     cv::Ptr<cv::aruco::CharucoBoard> charucoboard_;
@@ -98,6 +101,8 @@ private:
     std::vector<cv::Mat> R_;
     std::vector<cv::Mat> T_;
     FileSystem* fs_;
+
+    State state_;
 
     std::vector<FileSystem::InformationImageSaved> imageInfo1;
     std::vector<FileSystem::InformationImageSaved> imageInfo2;

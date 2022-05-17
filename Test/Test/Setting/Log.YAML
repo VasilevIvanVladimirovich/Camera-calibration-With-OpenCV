@@ -1,19 +1,24 @@
 %YAML:1.0
 ---
-FirstCameraName: "Microsoft® LifeCam Studio(TM)"
-FirstCameraIndex: 0
-SecondCameraName: "Microsoft® LifeCam Cinema(TM)"
-SecondCameraIndex: 2
-Pattern: Chessboard
-Row: 5
-Col: 8
-CheckerSize: 0.
-MarkerSize: 0.
-DictionaryName: NULL
+FirstCameraName: None
+FirstCameraIndex: -1
+SecondCameraName: None
+SecondCameraIndex: -1
+Pattern: None
+Row: -1
+Col: -1
+CheckerSize: -1
+MarkerSize: -1
+DictionaryName: -1
+isWebCamera: 0
+isBaslerCamera: 0
 isCalibration: 0
-isStereoCalibration: 1
-SubPixIter: 0
+isStereoCalibration: 0
 intFlagsFirst: 0
-FlagsNameFirst: ""
+FlagsNameFirst: None
 intFlagsSecond: 0
-FlagsNameSecond: ""
+FlagsNameSecond: None
+ImageInfoCamera1:
+   []
+ImageInfoCamera2:
+   []

@@ -1,0 +1,24 @@
+%YAML:1.0
+---
+tempatesPattern:
+   -
+      pattern: Chessboard
+      dictionaryName: NULL
+      row: 5
+      col: 8
+      checker: 0.
+      marker: 0.
+   -
+      pattern: Circles
+      dictionaryName: NULL
+      row: 5
+      col: 8
+      checker: 0.
+      marker: 0.
+   -
+      pattern: ChArUco
+      dictionaryName: DICT_4X4_1000
+      row: 5
+      col: 8
+      checker: 77.
+      marker: 77.

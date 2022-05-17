@@ -8,6 +8,11 @@ CalibrationProcessor::CalibrationProcessor()
 {
 }
 
+void CalibrationProcessor::setState(State state)
+{
+    state_ = state;
+}
+
 
 void CalibrationProcessor::run()
 {
@@ -15,27 +20,49 @@ void CalibrationProcessor::run()
     CHECKERBOARD_[0] = fs_->getRow();
     CHECKERBOARD_[1] = fs_->getCol();
 
-    if(fs_->getIndexCameraFirst()!=-1 && fs_->isCalibration()==1)
+    switch (state_){
+        case ACCUMULATION:
     {
-        reloadVectors();
-        numCam_=1;
         imageInfo1 = fs_->getInfoCamera1();
-        singleCalibration(imageInfo1);
-        fs_->saveInfoCamera1(imageInfo1);
-    }
-    if(fs_->getIndexCameraSecond()!=-1 && fs_->isCalibration()==1)
-    {
-        reloadVectors();
-        numCam_ = 2;
         imageInfo2 = fs_->getInfoCamera2();
-        singleCalibration(imageInfo2);
+
+        numCam_ = 1;
+        accumulation(imageInfo1);
+        fs_->saveInfoCamera1(imageInfo1);
+
+        numCam_ = 2;
+        accumulation(imageInfo2);
         fs_->saveInfoCamera2(imageInfo2);
+
+        emit updateCantrolUi();
+        break;
+    }case CALIBRATION:
+
+        break;
     }
-    if(fs_->getIndexCameraFirst()!=-1 && fs_->getIndexCameraSecond()!=-1 && fs_->isStereoCalibration() == 1)
-    {
-        reloadVectors();
-        stereoCalibration();
-    }
+
+
+//    if(fs_->getIndexCameraFirst()!=-1 && fs_->isCalibration()==1)
+//    {
+//        reloadVectors();
+//        numCam_=1;
+//        imageInfo1 = fs_->getInfoCamera1();
+//        singleCalibration(imageInfo1);
+//        fs_->saveInfoCamera1(imageInfo1);
+//    }
+//    if(fs_->getIndexCameraSecond()!=-1 && fs_->isCalibration()==1)
+//    {
+//        reloadVectors();
+//        numCam_ = 2;
+//        imageInfo2 = fs_->getInfoCamera2();
+//        singleCalibration(imageInfo2);
+//        fs_->saveInfoCamera2(imageInfo2);
+//    }
+//    if(fs_->getIndexCameraFirst()!=-1 && fs_->getIndexCameraSecond()!=-1 && fs_->isStereoCalibration() == 1)
+//    {
+//        reloadVectors();
+//        stereoCalibration();
+//    }
 }
 
 void CalibrationProcessor::cameraCalibration(std::vector<FileSystem::InformationImageSaved>& imageInfo)
@@ -43,8 +70,8 @@ void CalibrationProcessor::cameraCalibration(std::vector<FileSystem::Information
 
     if(targetType_ == "Chessboard" || targetType_ == "Circles" || targetType_ == "Assymetric Circles")
     {
-        cv::calibrateCamera(objpoints_, imgpoints_, cv::Size(gray.rows, gray.cols),
-                            cameraMatrix_, distCoeffs_, R_, T_, calibrationFlags_);
+        //cv::calibrateCamera(objpoints_, imgpoints_, cv::Size(gray.rows, gray.cols),
+        //                    cameraMatrix_, distCoeffs_, R_, T_, calibrationFlags_);
         rmse_ = Rmse(imageInfo);
     }
     if(targetType_ == "ChArUco")
@@ -69,8 +96,8 @@ void CalibrationProcessor::cameraCalibration(std::vector<FileSystem::Information
                 "\n" + "MarkerSize:" + std::to_string(markerSize_) + "\n" + "CheckerSize:" + std::to_string(checkerSize_) +
                 "\n" + dictionaryName_.toStdString();
 
-    fs_->saveFileInYaml(objpoints_, imgpoints_, cameraMatrix_, distCoeffs_, R_, T_, countImg, date.toString("yyyy.dd.M--HH:mm:ss"),
-                        rmse_, targetType_, sizePatern, numCam_,cv::Size(gray.rows, gray.cols));
+    //fs_->saveFileInYaml(objpoints_, imgpoints_, cameraMatrix_, distCoeffs_, R_, T_, countImg, date.toString("yyyy.dd.M--HH:mm:ss"),
+    //                    rmse_, targetType_, sizePatern, numCam_,cv::Size(gray.rows, gray.cols));
 
     emit sendCalibBrowser();
 }
@@ -251,16 +278,14 @@ void CalibrationProcessor::stereoCalibration()
 
 }
 
-void CalibrationProcessor::singleCalibration(std::vector<FileSystem::InformationImageSaved>& imageInfo)
+void CalibrationProcessor::accumulation(std::vector<FileSystem::InformationImageSaved>& imageInfo)
 {
-    QString filename;
-
-    std::vector<cv::Point3f> objp;
-    for(int i{0};i<CHECKERBOARD_[1];i++)
-    {
-        for(int j{0}; j<CHECKERBOARD_[0]; j++)
-            objp.push_back(cv::Point3f(j,i,0));
-    }
+//    std::vector<cv::Point3f> objp;
+//    for(int i{0};i<CHECKERBOARD_[1];i++)
+//    {
+//        for(int j{0}; j<CHECKERBOARD_[0]; j++)
+//            objp.push_back(cv::Point3f(j,i,0));
+//    }
     std::vector<cv::Point2f> corner_pts; // Вектор для хранения пикселей координат углов шахматной доски
 
     if(targetType_ == "ChArUco")
@@ -269,25 +294,25 @@ void CalibrationProcessor::singleCalibration(std::vector<FileSystem::Information
         charucoboard_ = cv::aruco::CharucoBoard::create(CHECKERBOARD_[1], CHECKERBOARD_[0], checkerSize_, markerSize_, dictionary_);
         params_ = cv::aruco::DetectorParameters::create();
     }
-
-    bool isSuccess = false;
+    cv::Mat gray;
     for(int i = 0;i<imageInfo.size();i++)
     {
         inputFrame_ = cv::imread(static_cast<std::string>(imageInfo[i].cameraPath));
         cv::cvtColor(inputFrame_,gray,cv::COLOR_BGR2GRAY);
 
-        if(targetType_ == "ChArUco")
-            charucoAccumulation(i,imageInfo);
         if(targetType_ == "Chessboard")
-            chessboardAccumulation(i, isSuccess, objp, corner_pts,imageInfo);
-        if(targetType_ == "Circles")
-            circleAccumulation(i, isSuccess, objp, corner_pts,imageInfo);
-        if(targetType_ == "Assymetric Circles")
-            aCircleAccumulation(i, isSuccess, objp, corner_pts,imageInfo);
+            chessboardAccumulation(i, gray,corner_pts,imageInfo);
+        //if(targetType_ == "Circles")
+            //circleAccumulation(i, gray,corner_pts,imageInfo);
+        //if(targetType_ == "Assymetric Circles")
+            //aCircleAccumulation(i, gray,corner_pts,imageInfo);
+
+//        if(targetType_ == "ChArUco")
+//            charucoAccumulation(i,imageInfo);
     }
     if(targetType_ == "ChArUco")
             imgSizeCharuco_ = inputFrame_.size();
-    cameraCalibration(imageInfo);
+    //cameraCalibration(imageInfo);
     //emit sendOpenFileInViewYamlCalib(fs_->getFilePath());
 }
 
@@ -336,101 +361,62 @@ void CalibrationProcessor::charucoAccumulation(int i,std::vector<FileSystem::Inf
         imageInfo[i].state = "Bad";
 }
 
-void CalibrationProcessor::chessboardAccumulation(int i, bool isSuccess, std::vector<cv::Point3f> objp, std::vector<cv::Point2f> corner_pts,
+void CalibrationProcessor::chessboardAccumulation(int i,cv::Mat gray,std::vector<cv::Point2f> corner_pts,
                                                   std::vector<FileSystem::InformationImageSaved>& imageInfo)
 {
-    QString filename;
+    bool isSuccess = false;
     isSuccess = cv::findChessboardCorners(gray,cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]), corner_pts);
     if(isSuccess)
     {
         cv::TermCriteria criteria(cv::TermCriteria::EPS | cv::TermCriteria::MAX_ITER, 30, 0.001);
         cv::cornerSubPix(gray,corner_pts, cv::Size(11,11), cv::Size(-1,-1), criteria);
 
-        cv::drawChessboardCorners(inputFrame_, cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]), corner_pts, isSuccess);
-        objpoints_.push_back(objp);
-        imgpoints_.push_back(corner_pts);
-
-        //emit sendStatusImg("Success", i);
-
-        QPixmap saveImg = QPixmap::fromImage(
-                          QImage(inputFrame_.data,
-                                  inputFrame_.cols,
-                                  inputFrame_.rows,
-                                  inputFrame_.step,
-                         QImage::Format_RGB888).rgbSwapped());
-
-       filename = QString::number(i + 1) + ".png";
-       saveInImgDrawing(saveImg,filename,i,imageInfo);
+       imageInfo[i].imgpoint = corner_pts;
        imageInfo[i].state = "Succes";
     }else
-        imageInfo[i].state= "Bad";
+    {
+        imageInfo[i].state= "NoFind";
+        imageInfo[i].isActive = 0;
+    }
 }
 
-void CalibrationProcessor::circleAccumulation(int i, bool isSuccess, std::vector<cv::Point3f> objp, std::vector<cv::Point2f> corner_pts,
+void CalibrationProcessor::circleAccumulation(int i,cv::Mat gray,std::vector<cv::Point2f> corner_pts,
                                               std::vector<FileSystem::InformationImageSaved>& imageInfo)
 {
-    QString filename;
+    bool isSuccess = false;
     isSuccess = cv::findCirclesGrid(gray, cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]), corner_pts,
                 cv::CALIB_CB_SYMMETRIC_GRID, cv::SimpleBlobDetector::create());
     if(isSuccess)
     {
-        cv::drawChessboardCorners(inputFrame_, cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]), corner_pts, isSuccess);
-        objpoints_.push_back(objp);
-        imgpoints_.push_back(corner_pts);
-        QPixmap saveImg = QPixmap::fromImage(
-                          QImage(inputFrame_.data,
-                                  inputFrame_.cols,
-                                  inputFrame_.rows,
-                                  inputFrame_.step,
-                         QImage::Format_RGB888).rgbSwapped());
-
-       filename = QString::number(i + 1) + ".png";
-       saveInImgDrawing(saveImg,filename,i,imageInfo);
+       imageInfo[i].imgpoint = corner_pts;
        imageInfo[i].state = "Succes";
     }else
-        imageInfo[i].state = "Bad";
+    {
+        imageInfo[i].state= "NoFind";
+        imageInfo[i].isActive = 0;
+    }
 }
 
-void CalibrationProcessor::aCircleAccumulation(int i, bool isSuccess, std::vector<cv::Point3f> objp, std::vector<cv::Point2f> corner_pts,
+void CalibrationProcessor::aCircleAccumulation(int i,cv::Mat gray,std::vector<cv::Point2f> corner_pts,
                                                std::vector<FileSystem::InformationImageSaved>& imageInfo)
 {
-    QString filename;
+    bool isSuccess = false;
     isSuccess = cv::findCirclesGrid(gray, cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]), corner_pts,
                 cv::CALIB_CB_ASYMMETRIC_GRID, cv::SimpleBlobDetector::create());
     if(isSuccess)
     {
-        cv::drawChessboardCorners(inputFrame_, cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]), corner_pts, isSuccess);
-        objpoints_.push_back(objp);
-        imgpoints_.push_back(corner_pts);
-
-        //emit sendStatusImg("Success", i);
-
-        QPixmap saveImg = QPixmap::fromImage(
-                          QImage(inputFrame_.data,
-                                  inputFrame_.cols,
-                                  inputFrame_.rows,
-                                  inputFrame_.step,
-                         QImage::Format_RGB888).rgbSwapped());
-
-       filename = QString::number(i + 1) + ".png";
-       saveInImgDrawing(saveImg,filename,i,imageInfo);
-       imageInfo[i].state = "Succes";
+        imageInfo[i].imgpoint = corner_pts;
+        imageInfo[i].state = "Succes";
     }else
-        imageInfo[i].state = "Bad";
+    {
+        imageInfo[i].state= "NoFind";
+        imageInfo[i].isActive = 0;
+    }
 }
 
 void CalibrationProcessor::reloadVectors()
 {
-    objpoints_.clear();
-    imgpoints_.clear();
-    imgpoints_.clear();
-    allCharucoCorners.clear();
-    allCharucoIds.clear();
-    allImgs.clear();
-    R_.clear();
-    T_.clear();
-    imageInfo1.clear();
-    imageInfo2.clear();
+
 }
 
 
@@ -460,7 +446,6 @@ void CalibrationProcessor::setDictionaryName(QString dictionaryName)
     dictionaryName_ = dictionaryName;
 }
 
-
 void CalibrationProcessor::setCalibrationFlags(int calibrationFlags)
 {
     calibrationFlags_ = calibrationFlags;
@@ -489,6 +474,7 @@ double CalibrationProcessor::Rmse(std::vector<FileSystem::InformationImageSaved>
 bool CalibrationProcessor::isFramePattern(cv::Mat* frame, QString pattern, int row, int col,
                                           double icheckerSize, double imarkerSize, int idictionary)
 {
+    cv::Mat gray;
     cv::cvtColor(*frame, gray, cv::COLOR_BGR2GRAY);
     std::vector<cv::Point2f> corner_pts;
 

@@ -25,10 +25,8 @@ private:
 private slots:
     void on_btn_ok_clicked();
     void on_btn_cencel_clicked();
-
 signals:
     void sendState(QString current);
-
 private:
     QComboBox* box_setting;
 

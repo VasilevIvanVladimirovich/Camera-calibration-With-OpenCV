@@ -59,103 +59,36 @@ void ImageProcessor::run()
         count++;
         if(countImg - 1 == countFrame_)
             break;
-        //действие по нажатию кнопки
-        if(isSnapShoot_)
+
+        if(isPressSnap_) //если кнопка нажата
         {
-            if(isPressSnap_) //если кнопка нажата
+            //saved frame
+            if(isPattern_) //есть ли шаблон на экране (если есть, показываем на экране) и сохраняем его в таблицу
             {
-                //saved frame
-                if(isPattern_) //есть ли шаблон на экране (если есть, показываем на экране) и сохраняем его в таблицу
+                if (calibProcessor_.isFramePattern(&drawFrame, pattern_, CHECKERBOARD_[0], CHECKERBOARD_[1], checkerSize_, markerSize_, dictionary_))
                 {
-                    if (calibProcessor_.isFramePattern(&drawFrame, pattern_, CHECKERBOARD_[0], CHECKERBOARD_[1], checkerSize_, markerSize_, dictionary_))
+                    QPixmap imgInDisplay = toMatQpixmap(drawFrame);
+                    emit outDisplay(imgInDisplay);
+
+                    QPixmap imgInSave = toMatQpixmap(outFrame_);
+                    namepath = QString(path_ + "Camera%1/" + "Accumulated/" + QString::number(imageInfo.size() + 1) + ".png").arg(numCam_);
+
+                    filesystem->saveInImg(imgInSave,namepath);
+                    FileSystem::InformationImageSaved tmpInfo;
+                    tmpInfo.cameraPath = namepath.toStdString();
+                    imageInfo.push_back(tmpInfo);
+                    QTableWidgetItem *item1;
+                    QTableWidgetItem *item2;
+                    if(numCam_==1)
                     {
-                        QPixmap imgInDisplay = toMatQpixmap(drawFrame);
-                        emit outDisplay(imgInDisplay);
-
-                        QPixmap imgInSave = toMatQpixmap(outFrame_);
-                        namepath = QString(path_ + "Camera%1/" + "Accumulated/" + QString::number(imageInfo.size() + 1) + ".png").arg(numCam_);
-
-                        filesystem->saveInImg(imgInSave,namepath);
-                        FileSystem::InformationImageSaved tmpInfo;
-                        tmpInfo.cameraPath = namepath.toStdString();
-                        imageInfo.push_back(tmpInfo);
-                        QTableWidgetItem *item1;
-                        QTableWidgetItem *item2;
-                        if(numCam_==1)
-                        {
-                            item1 = new QTableWidgetItem("Camera");
-                            item2 = new QTableWidgetItem("save");
-                            emit setItem(item1, item2);
-                        }
-                        countImg++;
-                        isPressSnap_ = false;
-                   }else{
-                        QPixmap img = toMatQpixmap(outFrame_);
-                        emit outDisplay(img);
-                        QApplication::beep();
-                        namepath = QString(path_ + "Camera%1/" + "Accumulated/" + QString::number(imageInfo.size() + 1) + ".png").arg(numCam_);
-
-                        filesystem->saveInImg(img,namepath);
-                        FileSystem::InformationImageSaved tmpInfo;
-                        tmpInfo.cameraPath = namepath.toStdString();
-                        imageInfo.push_back(tmpInfo);
-                        QTableWidgetItem *item1;
-                        QTableWidgetItem *item2;
-                        if(numCam_==1)
-                        {
-                            item1 = new QTableWidgetItem("Camera");
-                            item2 = new QTableWidgetItem("save");
-                            emit setItem(item1, item2);
-                        }
-                        countImg++;
-                        isPressSnap_ = false;
-                  }
-                }
-               }else{ // если кнопка не была нажата
-                    if(isPattern_) //если шаблон был найден, показываем его на экране
-                    {
-                        if(calibProcessor_.isFramePattern(&drawFrame, pattern_, CHECKERBOARD_[0],CHECKERBOARD_[1], checkerSize_, markerSize_, dictionary_)){
-                            QPixmap imgInDisplay = toMatQpixmap(drawFrame);
-                            emit outDisplay(imgInDisplay);
-                        }else{
-                            QPixmap img = toMatQpixmap(outFrame_);
-                            emit outDisplay(img);
-                        }
-                   }else{ //если шаблона нету, показываем просто на экране
-                        QPixmap img = toMatQpixmap(outFrame_);
-                        emit outDisplay(img);
-                   }
-               }
-           }else{
-           //действие по таймеру
-           if(count % frameRate_ == 0){
-               //saved frame
-               if(isPattern_)  //есть ли шаблон на экране (если есть, показываем на экране) и сохраняем его в таблицу
-               {
-                    if (calibProcessor_.isFramePattern(&drawFrame, pattern_, CHECKERBOARD_[0], CHECKERBOARD_[1], checkerSize_, markerSize_, dictionary_))
-                    {
-                        QPixmap imgInDisplay = toMatQpixmap(drawFrame);
-                        emit outDisplay(imgInDisplay);
-
-                        QPixmap imgInSave = toMatQpixmap(outFrame_);
-                        namepath = QString(path_ + "Camera%1/" + "Accumulated/" + QString::number(imageInfo.size() + 1) + ".png").arg(numCam_);
-
-                        filesystem->saveInImg(imgInSave,namepath);
-                        FileSystem::InformationImageSaved tmpInfo;
-                        tmpInfo.cameraPath = namepath.toStdString();
-                        imageInfo.push_back(tmpInfo);
-                        QTableWidgetItem *item1;
-                        QTableWidgetItem *item2;
-                        if(numCam_==1)
-                        {
-                            item1 = new QTableWidgetItem("Camera");
-                            item2 = new QTableWidgetItem("save");
-                            emit setItem(item1, item2);
-                        }
-                        countImg++;
-                   }
+                        item1 = new QTableWidgetItem("Camera");
+                        item2 = new QTableWidgetItem("save");
+                        //emit setItem(item1, item2);
+                    }
+                    countImg++;
+                    isPressSnap_ = false;
                }else{
-                    QPixmap img= toMatQpixmap(outFrame_);
+                    QPixmap img = toMatQpixmap(outFrame_);
                     emit outDisplay(img);
                     QApplication::beep();
                     namepath = QString(path_ + "Camera%1/" + "Accumulated/" + QString::number(imageInfo.size() + 1) + ".png").arg(numCam_);
@@ -170,25 +103,26 @@ void ImageProcessor::run()
                     {
                         item1 = new QTableWidgetItem("Camera");
                         item2 = new QTableWidgetItem("save");
-                        emit setItem(item1, item2);
+                        //emit setItem(item1, item2);
                     }
                     countImg++;
+                    isPressSnap_ = false;
               }
-           }else{
-               if(isPattern_)
-               {
-                   if(calibProcessor_.isFramePattern(&drawFrame,pattern_,CHECKERBOARD_[0],CHECKERBOARD_[1], checkerSize_, markerSize_, dictionary_)){
-                       QPixmap imgInDisplay = toMatQpixmap(drawFrame);
-                       emit outDisplay(imgInDisplay);
-                   }else{
-                       QPixmap img = toMatQpixmap(outFrame_);
-                       emit outDisplay(img);
-                   }
-               }else{
-                   QPixmap img= toMatQpixmap(outFrame_);
-                   emit outDisplay(img);
+            }
+           }else{ // если кнопка не была нажата
+                if(isPattern_) //если шаблон был найден, показываем его на экране
+                {
+                    if(calibProcessor_.isFramePattern(&drawFrame, pattern_, CHECKERBOARD_[0],CHECKERBOARD_[1], checkerSize_, markerSize_, dictionary_)){
+                        QPixmap imgInDisplay = toMatQpixmap(drawFrame);
+                        emit outDisplay(imgInDisplay);
+                    }else{
+                        QPixmap img = toMatQpixmap(outFrame_);
+                        emit outDisplay(img);
+                    }
+               }else{ //если шаблона нету, показываем просто на экране
+                    QPixmap img = toMatQpixmap(outFrame_);
+                    emit outDisplay(img);
                }
-           }
            }
     }
         if(state_video_stream == FIND_FIRST_STREAM)
@@ -402,6 +336,11 @@ void ImageProcessor::initCamera()
         web_cam_.set(cv::CAP_PROP_AUTO_EXPOSURE, 0.75);
         web_cam_.set(cv::CAP_PROP_FRAME_WIDTH, 1280);
         web_cam_.set(cv::CAP_PROP_FRAME_HEIGHT, 720);
+        if(web_cam_.isOpened()==false)
+        {
+            emit sendTerminal("Camera 1 is not open!");
+            deleteLater();
+        }
     }
     if(state_video_stream == FIND_SECOND_STREAM)
     {
@@ -411,6 +350,11 @@ void ImageProcessor::initCamera()
         web_cam_.set(cv::CAP_PROP_AUTO_EXPOSURE, 0.75);
         web_cam_.set(cv::CAP_PROP_FRAME_WIDTH, 1280);
         web_cam_.set(cv::CAP_PROP_FRAME_HEIGHT, 720);
+        if(web_cam_.isOpened()==false)
+        {
+            emit sendTerminal("Camera 2 is not open!");
+            deleteLater();
+        }
     }
     if(state_video_stream == FIRST_STREAM || state_video_stream == FIRST_SECOND_STREAM || state_video_stream == FIRST_SECOND_STREAM_WHITHLINE ||
        state_video_stream == FIRST_CALIBRATED_STREAM || state_video_stream == FIRST_SECOND_CALIBRATED_STREAM ||
@@ -421,6 +365,11 @@ void ImageProcessor::initCamera()
         web_camFirst_.set(cv::CAP_PROP_AUTO_EXPOSURE, 0.75);
         web_camFirst_.set(cv::CAP_PROP_FRAME_WIDTH, 1280);
         web_camFirst_.set(cv::CAP_PROP_FRAME_HEIGHT, 720);
+        if(web_cam_.isOpened()==false)
+        {
+            emit sendTerminal("Camera 1 is not open!");
+            deleteLater();
+        }
     }
 
     if(state_video_stream == SECOND_STREAM || state_video_stream == FIRST_SECOND_STREAM || state_video_stream == FIRST_SECOND_STREAM_WHITHLINE ||
@@ -432,6 +381,11 @@ void ImageProcessor::initCamera()
         web_camSecond_.set(cv::CAP_PROP_AUTO_EXPOSURE, 0.75);
         web_camSecond_.set(cv::CAP_PROP_FRAME_WIDTH, 1280);
         web_camSecond_.set(cv::CAP_PROP_FRAME_HEIGHT, 720);
+        if(web_cam_.isOpened()==false)
+        {
+            emit sendTerminal("Camera 2 is not open!");
+            deleteLater();
+        }
     }
 }
 

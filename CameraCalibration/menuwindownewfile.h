@@ -23,14 +23,7 @@
 #include <QCameraDevice>
 #include <QMediaDevices>
 
-#include <pylon/PylonIncludes.h>
-#include <pylon/ImageEventHandler.h>
-#include <pylon/ConfigurationEventHandler.h>
-#include <pylon/PylonGUIIncludes.h>
-#include <pylon/GrabResultPtr.h>
-#include <pylon/PylonGUI.h>
-#include <pylon/PylonBase.h>
-#include <pylon/BaslerUniversalInstantCamera.h>
+
 #include "filesystem.h"
 
 class MenuWindowNewFile :public QWidget
@@ -52,10 +45,13 @@ private slots:
     void on_tree_inputPatern_clicked(QTreeWidgetItem* item, int col);
     void on_box_cameraFirst_IndexChanged(int index);
     void on_box_cameraInput_IndexChanged(int index);
+
+private:
+    void initUi();
 private:
     FileSystem fileSystem_;
 
-    QString pathName;
+    QString pathfolder;
     QString pattern;
 
     QTreeWidget* tree_inputDictionaryName;
@@ -76,14 +72,15 @@ private:
 
     QLineEdit* line_path;
     QLineEdit* line_folderPath;
+    QLineEdit* line_nameFolder;
 
     QLabel* label_headerSelectFolder;
     QLabel* label_folderPath;
+    QLabel* label_folderName;
     QLabel* label_row;
     QLabel* label_col;
     QLabel* label_checkerSize;
     QLabel* label_markerSize;
-
 };
 
 #endif // MENUWINDOWNEWFILE_H
