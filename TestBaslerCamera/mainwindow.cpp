@@ -7,8 +7,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     capturer = new CaptureThread();
-    capturer->setIdDevice(0);
-    connect(capturer,&CaptureThread::outputImg,this,&MainWindow::updateFrameLabel);
+    connect(capturer,&CaptureThread::outputImg1,this,&MainWindow::updateFrameLabel);
+    connect(capturer,&CaptureThread::outputImg2,this,&MainWindow::updateFrameLabelTwo);
 }
 
 MainWindow::~MainWindow()

@@ -23,21 +23,35 @@ void CalibrationProcessor::run()
     switch (state_){
         case ACCUMULATION:
     {
-        imageInfo1 = fs_->getInfoCamera1();
-        imageInfo2 = fs_->getInfoCamera2();
+        std::vector<FileSystem::InformationImageSaved> imageInfo1 = fs_->getInfoCamera1();
+        std::vector<FileSystem::InformationImageSaved> imageInfo2 = fs_->getInfoCamera2();
 
-        numCam_ = 1;
         accumulation(imageInfo1);
         fs_->saveInfoCamera1(imageInfo1);
 
-        numCam_ = 2;
         accumulation(imageInfo2);
         fs_->saveInfoCamera2(imageInfo2);
 
         emit updateCantrolUi();
         break;
     }case CALIBRATION:
-
+        qDebug()<<"case CALIBRATION";
+        FileSystem::SettingCalibration setting = fs_->getCalibrationSetting();
+        qDebug()<<"fs_->getCalibrationSetting()";
+        if(setting.isCaibration)
+        {
+            if(setting.numCamera == 1)
+            {
+                qDebug()<<"setting.numCamera == 1";
+                std::vector<FileSystem::InformationImageSaved> imageInfo1 = fs_->getInfoCamera1();
+                cameraCalibration(imageInfo1, setting);
+            }else if(setting.numCamera == 1)
+            {
+                std::vector<FileSystem::InformationImageSaved> imageInfo2 = fs_->getInfoCamera2();
+                cameraCalibration(imageInfo2, setting);
+            }
+            emit updateCantrolUi();
+        }
         break;
     }
 
@@ -65,41 +79,150 @@ void CalibrationProcessor::run()
 //    }
 }
 
-void CalibrationProcessor::cameraCalibration(std::vector<FileSystem::InformationImageSaved>& imageInfo)
+void CalibrationProcessor::cameraCalibration(std::vector<FileSystem::InformationImageSaved>& imageInfo, FileSystem::SettingCalibration& setting)
 {
-
-    if(targetType_ == "Chessboard" || targetType_ == "Circles" || targetType_ == "Assymetric Circles")
+    qDebug()<<"cameraCalibration";
+    std::vector<std::vector<cv::Point3f>> objpoints;
+    std::vector<std::vector<cv::Point2f>> imgpoints;
+    std::vector<cv::Point3f> objp;
+    std::vector<int> indexImages;
+    for(int i{0}; i<CHECKERBOARD_[1]; i++)
     {
-        //cv::calibrateCamera(objpoints_, imgpoints_, cv::Size(gray.rows, gray.cols),
-        //                    cameraMatrix_, distCoeffs_, R_, T_, calibrationFlags_);
-        rmse_ = Rmse(imageInfo);
+      for(int j{0}; j<CHECKERBOARD_[0]; j++)
+        objp.push_back(cv::Point3f(j,i,0));
     }
-    if(targetType_ == "ChArUco")
+    qDebug()<<"objp";
+    int countImage = 0;
+    for(int i = 0;imageInfo.size() > i;i++)
     {
-        rmse_ = cv::aruco::calibrateCameraCharuco(allCharucoCorners, allCharucoIds,
-                                                  charucoboard_, imgSizeCharuco_, cameraMatrix_, distCoeffs_,
-                                                  R_, T_, calibrationFlags_);
+        if(imageInfo[i].isActive == 1)
+        {
+            countImage++;
+            objpoints.push_back(objp);
+            qDebug()<<"objpoints.push_back(objp);";
+            imgpoints.push_back(imageInfo[i].imgpoint);
+            qDebug()<<"imgpoints.push_back(imageInfo[i].imgpoint);";
+            indexImages.push_back(i);
+        }
+    }
+   qDebug()<<"imageInfo";
+
+    switch (setting.cameraModel)
+    {
+    case FileSystem::SettingCalibration::OPENCV:
+    {
+        qDebug()<<"FileSystem::SettingCalibration::OPENCV";
+
+        int calibrationFlags = 0;
+        if(setting.isUseParametr)
+            calibrationFlags = calibrationFlags | translateFlagsOpencv("CV_CALIB_USE_INTRINSIC_GUESS");
+        if(setting.isFixedFocal)
+            calibrationFlags = calibrationFlags | translateFlagsOpencv("CV_CALIB_FIX_FOCAL_LENGTH");
+        if(setting.isFixedFocal)
+            calibrationFlags = calibrationFlags | translateFlagsOpencv("CV_CALIB_FIX_ASPECT_RATIO");
+        if(setting.isFixedPrincipalPoint)
+            calibrationFlags = calibrationFlags | translateFlagsOpencv("CV_CALIB_FIX_PRINCIPAL_POINT");
+        if(setting.iszeroTangent)
+            calibrationFlags = calibrationFlags | translateFlagsOpencv("CV_CALIB_FIX_FOCAL_LENGTH");
+        if(setting.isfixedK1)
+            calibrationFlags = calibrationFlags | translateFlagsOpencv("CV_CALIB_FIX_K1");
+        if(setting.isfixedK2)
+            calibrationFlags = calibrationFlags | translateFlagsOpencv("CV_CALIB_FIX_K2");
+        if(setting.isfixedK3)
+            calibrationFlags = calibrationFlags | translateFlagsOpencv("CV_CALIB_FIX_K3");
+        if(setting.isfixedK4)
+            calibrationFlags = calibrationFlags | translateFlagsOpencv("CV_CALIB_FIX_K4");
+
+        qDebug()<<"calibrationFlags";
+
+        cv::Mat cameraMatrix(3, 3, cv::DataType<double>::type);
+        cameraMatrix.at<double>(0) = setting.fx;
+        cameraMatrix.at<double>(1) = 0;
+        cameraMatrix.at<double>(2) = setting.cx;
+        cameraMatrix.at<double>(3) = 0;
+        cameraMatrix.at<double>(4) = setting.fy;
+        cameraMatrix.at<double>(5) = setting.cy;
+        cameraMatrix.at<double>(6) = 0;
+        cameraMatrix.at<double>(7) = 0;
+        cameraMatrix.at<double>(8) = 1;
+
+        cv::Mat disCoeffs(1, 5, cv::DataType<double>::type);
+        disCoeffs.at<double>(0) = setting.k1;//k1
+        disCoeffs.at<double>(1) = setting.k2;//k2
+        disCoeffs.at<double>(2) = 0;//p1
+        disCoeffs.at<double>(3) = 0;//p2
+        disCoeffs.at<double>(4) = setting.k1;//k3
+
+        std::vector<cv::Mat> R, T;
+
+        cv::Mat img = cv::imread(static_cast<std::string>(imageInfo[0].cameraPath));
+
+        double rmse;
+        if(targetType_ == "Chessboard" || targetType_ == "Circles" || targetType_ == "Assymetric Circles")
+        {
+            cv::calibrateCamera(objpoints, imgpoints, cv::Size(img.rows, img.cols),
+                                cameraMatrix, disCoeffs, R, T, calibrationFlags_);
+            rmse = Rmse(imageInfo,imgpoints, objpoints, cameraMatrix, disCoeffs,R,T,indexImages);
+            createImgUndistorted(imageInfo,cameraMatrix, disCoeffs, setting.numCamera);
+        }
+
+        QDateTime date;
+        date = QDateTime::currentDateTime();
+        std::string sizePatern;
+        if(targetType_ == "Chessboard" || targetType_ == "Circles" || targetType_ == "Assymetric Circles")
+            sizePatern = std::to_string(CHECKERBOARD_[0]) + " x " + std::to_string(CHECKERBOARD_[1]);
+        else if(targetType_ == "ChArUco")
+            sizePatern = std::to_string(CHECKERBOARD_[0]) + " x " + std::to_string(CHECKERBOARD_[1]) +
+                    "\n" + "MarkerSize:" + std::to_string(markerSize_) + "\n" + "CheckerSize:" + std::to_string(checkerSize_) +
+                    "\n" + dictionaryName_.toStdString();
+
+        fs_->saveFileInYaml(objpoints,imgpoints, cameraMatrix, disCoeffs, R, T, countImage, date.toString("yyyy.dd.M--HH:mm:ss"), rmse, targetType_,
+                            sizePatern, setting.numCamera, cv::Size(img.rows, img.cols));
+        emit updateCantrolUi();
+
+
+        break;
+    }
+    case FileSystem::SettingCalibration::OPENCV_FISHEYE:
+    {
+        break;
+    }
     }
 
-    createImgUndistorted(imageInfo);
 
-    QDateTime date;
-    date = QDateTime::currentDateTime();
-    int countImg;
-    countImg = imageInfo.size();
 
-    std::string sizePatern;
-    if(targetType_ == "Chessboard" || targetType_ == "Circles" || targetType_ == "Assymetric Circles")
-        sizePatern = std::to_string(CHECKERBOARD_[0]) + " x " + std::to_string(CHECKERBOARD_[1]);
-    else if(targetType_ == "ChArUco")
-        sizePatern = std::to_string(CHECKERBOARD_[0]) + " x " + std::to_string(CHECKERBOARD_[1]) +
-                "\n" + "MarkerSize:" + std::to_string(markerSize_) + "\n" + "CheckerSize:" + std::to_string(checkerSize_) +
-                "\n" + dictionaryName_.toStdString();
+//    if(targetType_ == "Chessboard" || targetType_ == "Circles" || targetType_ == "Assymetric Circles")
+//    {
+//        //cv::calibrateCamera(objpoints_, imgpoints_, cv::Size(gray.rows, gray.cols),
+//        //                    cameraMatrix_, distCoeffs_, R_, T_, calibrationFlags_);
+//        //rmse_ = Rmse(imageInfo);
+//    }
+//    if(targetType_ == "ChArUco")
+//    {
+//        rmse_ = cv::aruco::calibrateCameraCharuco(allCharucoCorners, allCharucoIds,
+//                                                  charucoboard_, imgSizeCharuco_, cameraMatrix_, distCoeffs_,
+//                                                  R_, T_, calibrationFlags_);
+//    }
+
+
+
+//    QDateTime date;
+//    date = QDateTime::currentDateTime();
+//    int countImg;
+//    countImg = imageInfo.size();
+
+//    std::string sizePatern;
+//    if(targetType_ == "Chessboard" || targetType_ == "Circles" || targetType_ == "Assymetric Circles")
+//        sizePatern = std::to_string(CHECKERBOARD_[0]) + " x " + std::to_string(CHECKERBOARD_[1]);
+//    else if(targetType_ == "ChArUco")
+//        sizePatern = std::to_string(CHECKERBOARD_[0]) + " x " + std::to_string(CHECKERBOARD_[1]) +
+//                "\n" + "MarkerSize:" + std::to_string(markerSize_) + "\n" + "CheckerSize:" + std::to_string(checkerSize_) +
+//                "\n" + dictionaryName_.toStdString();
 
     //fs_->saveFileInYaml(objpoints_, imgpoints_, cameraMatrix_, distCoeffs_, R_, T_, countImg, date.toString("yyyy.dd.M--HH:mm:ss"),
     //                    rmse_, targetType_, sizePatern, numCam_,cv::Size(gray.rows, gray.cols));
 
-    emit sendCalibBrowser();
+//    emit sendCalibBrowser();
 }
 
 void CalibrationProcessor::stereoCalibration()
@@ -419,6 +542,33 @@ void CalibrationProcessor::reloadVectors()
 
 }
 
+int CalibrationProcessor::translateFlagsOpencv(QString textFlag)
+{
+    if(textFlag == "CV_CALIB_USE_INTRINSIC_GUESS") return 0x00001;
+    if(textFlag == "CV_CALIB_FIX_ASPECT_RATIO") return 0x00002;
+    if(textFlag == "CV_CALIB_FIX_PRINCIPAL_POINT") return 0x00004;
+    if(textFlag == "CV_CALIB_ZERO_TANGENT_DIST") return 0x00008;
+    if(textFlag == "CV_CALIB_FIX_FOCAL_LENGTH") return 0x00010;
+    if(textFlag == "CV_CALIB_FIX_K1") return 0x00020;
+    if(textFlag == "CV_CALIB_FIX_K2") return 0x00040;
+    if(textFlag == "CV_CALIB_FIX_K3") return 0x00080;
+    if(textFlag == "CV_CALIB_FIX_K4") return 0x00800;
+    else return 0;
+}
+
+int CalibrationProcessor::translateFlagsFisheye(QString textFlag)
+{
+//    if(textFlag == "CV_CALIB_USE_INTRINSIC_GUESS") return 1 << 0;
+//    if(textFlag == "CV_CALIB_FIX_ASPECT_RATIO") return 0x00002;
+//    if(textFlag == "CV_CALIB_FIX_PRINCIPAL_POINT") return 1 << 9;
+//    if(textFlag == "CV_CALIB_ZERO_TANGENT_DIST") return 0x00008;
+//    if(textFlag == "CV_CALIB_FIX_K1") return 0x00020;
+//    if(textFlag == "CV_CALIB_FIX_K2") return 0x00040;
+//    if(textFlag == "CV_CALIB_FIX_K3") return 0x00080;
+//    if(textFlag == "CV_CALIB_FIX_K4") return 0x00800;
+    return 0;
+}
+
 
 void CalibrationProcessor::setPattern(QString Pattern)
 {
@@ -451,19 +601,25 @@ void CalibrationProcessor::setCalibrationFlags(int calibrationFlags)
     calibrationFlags_ = calibrationFlags;
 }
 
-double CalibrationProcessor::Rmse(std::vector<FileSystem::InformationImageSaved>& imageInfo)
+double CalibrationProcessor::Rmse(std::vector<FileSystem::InformationImageSaved>& imageInfo,
+                                  std::vector<std::vector<cv::Point2f>> imgpoints,
+                                  std::vector<std::vector<cv::Point3f>> objpoints,
+                                  cv::Mat cameraMatrix,cv::Mat disCoeffs,
+                                  std::vector<cv::Mat> R,std::vector<cv::Mat> T,
+                                  std::vector<int> indexImages)
 {
 
     std::vector<cv::Point2f> imagePoints2;
     double totalErr = 0;
     double err;
     size_t totalPoints=0;
-    for(size_t i = 0; i < objpoints_.size(); ++i )
+    for(size_t i = 0; i < objpoints.size(); ++i )
     {
-         projectPoints(objpoints_[i], R_[i], T_[i], cameraMatrix_, distCoeffs_, imagePoints2);
-         err = norm(imgpoints_[i], imagePoints2, cv::NORM_L2);
-         imageInfo[i].err = err;
-         size_t n = objpoints_[i].size();
+         projectPoints(objpoints[i], R[i], T[i], cameraMatrix, disCoeffs, imagePoints2);
+         err = norm(imgpoints[i], imagePoints2, cv::NORM_L2);
+         imageInfo[indexImages[i]].err = err;
+         imageInfo[indexImages[i]].reprojectPoint = imagePoints2;
+         size_t n = objpoints[i].size();
          totalErr        += err*err;
          totalPoints     += n;
     }
@@ -532,14 +688,16 @@ bool CalibrationProcessor::isFramePattern(cv::Mat* frame, QString pattern, int r
     return false;
 }
 
-void CalibrationProcessor::createImgUndistorted(std::vector<FileSystem::InformationImageSaved>& imageInfo)
+void CalibrationProcessor::createImgUndistorted(std::vector<FileSystem::InformationImageSaved>& imageInfo,
+                                                cv::Mat cameraMatrix,cv::Mat disCoeffs,
+                                                int numCam)
 {
     cv::Mat undist, frame;
 
     for(int i = 0; i < imageInfo.size(); i++){
 
         frame = cv::imread(static_cast<std::string>(imageInfo[i].cameraPath));
-        cv::undistort(frame, undist, cameraMatrix_, distCoeffs_);
+        cv::undistort(frame, undist, cameraMatrix, disCoeffs);
 
         QPixmap saveImg = QPixmap::fromImage(
                            QImage(undist.data,
@@ -549,10 +707,11 @@ void CalibrationProcessor::createImgUndistorted(std::vector<FileSystem::Informat
                            QImage::Format_RGB888).rgbSwapped());
 
         QString undistDir;
-        if(numCam_ == 1)
+        if(numCam == 1)
             undistDir = fs_->getFilePath() + "Camera1/" + "Undistorted/" + QString::number(i+1) + ".png";
-        else if(numCam_ == 2)
+        else if(numCam == 2)
             undistDir = fs_->getFilePath() + "Camera2/" + "Undistorted/" + QString::number(i+1) + ".png";
+
         QFile file(undistDir);
 
         file.open(QIODevice::WriteOnly);
@@ -560,21 +719,27 @@ void CalibrationProcessor::createImgUndistorted(std::vector<FileSystem::Informat
         imageInfo[i].undistortedPath = undistDir.toStdString();
         file.close();
     }
+
+    if(numCam == 1)
+        fs_->saveInfoCamera1(imageInfo);
+    else if(numCam == 2)
+        fs_->saveInfoCamera2(imageInfo);
+
 }
 
 void CalibrationProcessor::saveInImgDrawing(QPixmap qpixmap, QString fileName,int i,
                                             std::vector<FileSystem::InformationImageSaved>& imageInfo)
 {
-    QString path;
-    if(numCam_ == 1)
-        path = fs_->getFilePath() + "Camera1/" + "Drawnable/" + fileName;
-    else if(numCam_ == 2)
-        path = fs_->getFilePath() + "Camera2/" + "Drawnable/" + fileName;
-    QFile file(path);
-    file.open(QIODevice::WriteOnly);
-    qpixmap.save(&file, "png");
-    imageInfo[i].drawPath = path.toStdString();
-    file.close();
+//    QString path;
+//    if(numCam_ == 1)
+//        path = fs_->getFilePath() + "Camera1/" + "Drawnable/" + fileName;
+//    else if(numCam_ == 2)
+//        path = fs_->getFilePath() + "Camera2/" + "Drawnable/" + fileName;
+//    QFile file(path);
+//    file.open(QIODevice::WriteOnly);
+//    qpixmap.save(&file, "png");
+//    imageInfo[i].drawPath = path.toStdString();
+//    file.close();
 }
 
 void CalibrationProcessor::setTargetType(QString qstring)

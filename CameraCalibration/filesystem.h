@@ -27,9 +27,9 @@ class FileSystem : public QObject
     Q_OBJECT
 
 public:
-    class settingSingleCalibration{
+    class SettingCalibration{
         public:
-        settingSingleCalibration()
+        SettingCalibration()
         {
             isUseParametr = false;
             isFixedFocal = false;
@@ -39,8 +39,12 @@ public:
             isfixedK2 = false;
             isfixedK3 = false;
             isfixedK4 = false;
+            iszeroTangent = false;
+            isCaibration = false;
+            isStereoCaibration = false;
+            isUseSingleCalibratedInStereo = false;
             numCamera = 0;
-            cameraModel = NONE;
+            cameraModel = OPENCV;
             fx = 0;
             fy = 0;
             cx = 0;
@@ -52,12 +56,79 @@ public:
         }
 
         enum CameraModel{
-            NONE,
             OPENCV,
             OPENCV_FISHEYE
         };
 
+        void write(cv::FileStorage& fs) const                        //Write serialization for this class
+        {
+            fs << "{"
+               << "isUseParametr" << isUseParametr
+               << "isFixedFocal" << isFixedFocal
+               << "isFixedAspectRatio" << isFixedAspectRatio
+               << "isFixedPrincipalPoint" << isFixedPrincipalPoint
+               << "isfixedK1" << isfixedK1
+               << "isfixedK2" << isfixedK2
+               << "isfixedK3" << isfixedK3
+               << "isfixedK4" << isfixedK4
+               << "iszeroTangent" << iszeroTangent
+               << "isCaibration" << isCaibration
+               << "isStereoCaibration" << isStereoCaibration
+               << "isUseSingleCalibratedInStereo" << isUseSingleCalibratedInStereo
+               << "numCamera" << numCamera
+               << "cameraModel" << cameraModel
+               << "fx" << fx
+               << "fy" << fy
+               << "cx" << cx
+               << "cy" << cy
+               << "k1" << k1
+               << "k2" << k2
+               << "k3" << k3
+               << "k4" << k4
+               << "}";
+        }
 
+        void read(const cv::FileNode& node)                          //Read serialization for this class
+        {
+            isUseParametr = (int)node["isUseParametr"];
+            isFixedFocal = (int)node["isFixedFocal"];
+            isFixedAspectRatio = (int)node["isFixedAspectRatio"];
+            isFixedPrincipalPoint = (int)node["isFixedPrincipalPoint"];
+            isfixedK1 = (int)node["isActive"];
+            isfixedK2 = (int)node["isfixedK2"];
+            isfixedK3 = (int)node["isfixedK3"];
+            isfixedK4 = (int)node["isfixedK4"];
+            iszeroTangent = (int)node["iszeroTangent"];
+            isCaibration = (int)node["isCaibration"];
+            isStereoCaibration = (int)node["isStereoCaibration"];
+
+            numCamera = (int)node["numCamera"];
+
+            int intCameraModel;
+            intCameraModel = (int)node["cameraModel"];
+            switch (intCameraModel)
+            {
+            case 0:
+            {
+                cameraModel = OPENCV;
+                break;
+            }
+            case 1:
+            {
+                cameraModel = OPENCV_FISHEYE;
+                break;
+            }
+            }
+
+            fx = (double)node["fx"];
+            fy = (double)node["fy"];
+            cx = (double)node["cx"];
+            cy = (double)node["cy"];
+            k1 = (double)node["k1"];
+            k2 = (double)node["k2"];
+            k3 = (double)node["k3"];
+            k4 = (double)node["k4"];
+        }
         public:
             bool isUseParametr;
             bool isFixedFocal;
@@ -68,6 +139,9 @@ public:
             bool isfixedK3;
             bool isfixedK4;
             bool iszeroTangent;
+            bool isCaibration;
+            bool isStereoCaibration;
+            bool isUseSingleCalibratedInStereo;
             unsigned short int numCamera;
             CameraModel cameraModel;
             double fx;
@@ -93,6 +167,7 @@ public:
             point.x = 0;
             point.y = 0;
             imgpoint.push_back(point);
+            reprojectPoint.push_back(point);
         }
 
         void write(cv::FileStorage& fs) const                        //Write serialization for this class
@@ -103,7 +178,13 @@ public:
                       << "imgpoint" <<"[";
                       for(unsigned short int i = 0; i < imgpoint.size(); ++i)
                       {
-                        fs<<"[:" <<(double)imgpoint[i].x << (double)imgpoint[i].y << "]";
+                        fs<<"[:" <<(float)imgpoint[i].x << (float)imgpoint[i].y << "]";
+                      }
+                      fs << "]";
+                      fs << "reprojectPoint" <<"[";
+                      for(unsigned short int i = 0; i < reprojectPoint.size(); ++i)
+                      {
+                        fs<<"[:" <<(float)reprojectPoint[i].x << (float)reprojectPoint[i].y << "]";
                       }
                       fs << "]" ;
                       fs << "}";
@@ -132,6 +213,20 @@ public:
                 temp.push_back(point);
             }
             imgpoint = temp;
+
+            std::vector<cv::Point2f> temp2;
+            for(cv::FileNodeIterator itPts = node["reprojectPoint"].begin();itPts!=node["reprojectPoint"].end();++itPts)
+            {
+                cv::FileNode pt = *itPts;
+                cv::Point2f point;
+                cv::FileNodeIterator itPt = pt.begin();
+                point.x = *itPt; ++itPt;
+                point.y = *itPt; ++itPt;
+                temp2.push_back(point);
+            }
+            reprojectPoint = temp2;
+
+
         }
     public:
         int isActive;
@@ -141,6 +236,7 @@ public:
         std::string state;
         double err;
         std::vector<cv::Point2f> imgpoint;
+        std::vector<cv::Point2f> reprojectPoint;
         std::vector<int> charucoIds;
     };
 
@@ -218,14 +314,16 @@ public:
     std::vector<InformationImageSaved> getInfoCamera2();
     std::vector<TempatesPattern> getTempatesPattern();
 
+    bool isWebCamera();
+    bool isBaslerCamera();
 
     void saveInfoCamera1(std::vector<InformationImageSaved> imageInfo1);
     void saveInfoCamera2(std::vector<InformationImageSaved> imageInfo2);
     void saveTempatesPattern(std::vector<TempatesPattern>);
+    void saveCalibrationSetting(SettingCalibration setting);
+    SettingCalibration getCalibrationSetting();
 
     void removeTemplates(int);
-
-
 
     QString getPattern();
     int getRow();
@@ -255,6 +353,9 @@ public:
     void addTemplates(QString, int,int,double,double,QString);
     int getIndexCameraFirst();
     int getIndexCameraSecond();
+    std::string getNameCameraFirst();
+    std::string getNameCameraSecond();
+
     int isCalibration();
     int isStereoCalibration();
 
@@ -274,11 +375,18 @@ public:
     static void write(cv::FileStorage& fs, const std::string&, const TempatesPattern& x);
     static void read(const cv::FileNode& node, TempatesPattern& x, const TempatesPattern& default_value = TempatesPattern());
 
+    static void write(cv::FileStorage& fs, const std::string&, const SettingCalibration& x);
+    static void read(const cv::FileNode& node, SettingCalibration& x, const SettingCalibration& default_value = SettingCalibration());
+
 signals:
     void outImgDisplayFirst(QPixmap pixmap);
     void outImgDisplaySecond(QPixmap pixmap);
     void outImgDisplayFirst(QPixmap pixmap, std::vector<cv::Point2f> imgpoint,bool isActive);
     void outImgDisplaySecond(QPixmap pixmap, std::vector<cv::Point2f> imgpoint,bool isActive);
+    void outImgDisplayFirst(QPixmap pixmap, std::vector<cv::Point2f> imgpoint,
+                            std::vector<cv::Point2f> reprojpoint,double err, bool isActive);
+    void outImgDisplaySecond(QPixmap pixmap, std::vector<cv::Point2f> imgpoint,
+                             std::vector<cv::Point2f> reprojpoint,double err, bool isActive);
     void outTableItems(QTableWidgetItem *item0,QTableWidgetItem *item1, QTableWidgetItem *item2);
     void outTableItemsCompare(QTableWidgetItem* itemFile,QTableWidgetItem* itemDate,
                               QTableWidgetItem* itemCount,QTableWidgetItem* itemPattern,

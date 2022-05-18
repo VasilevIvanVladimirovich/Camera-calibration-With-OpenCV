@@ -83,6 +83,10 @@ private slots:
     void updateFrameSecond(QPixmap);
     void updateFrameFirst(QPixmap, std::vector<cv::Point2f> imgpoint,bool isActive);
     void updateFrameSecond(QPixmap, std::vector<cv::Point2f> imgpoint,bool isActive);
+    void updateFrameFirst(QPixmap pixmap, std::vector<cv::Point2f> imgpoint,
+                          std::vector<cv::Point2f> reprojpoint,double err, bool isActive);
+    void updateFrameSecond(QPixmap pixmap, std::vector<cv::Point2f> imgpoint,
+                           std::vector<cv::Point2f> reprojpoint,double err, bool isActive);
     void on_imageTable_cellClicked(int row,int col);
     void andStream();
     void runCalibration();
@@ -93,6 +97,8 @@ private slots:
     void changeDefault();
     void changeDraw();
     void changeUndistort();
+
+    void hideSecondView();
 private:
     QAction *openProjectAction;
     QAction *createProjectAction;
@@ -110,6 +116,7 @@ private:
     QAction *defaultImageAction;
     QAction *drawImageAction;
     QAction *undistortImageAction;
+    QAction *hideSecondViewAction;
 
     QMenu *fileMenu;
     QMenu *viewMenu;

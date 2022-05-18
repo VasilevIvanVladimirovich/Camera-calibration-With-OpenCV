@@ -4,13 +4,12 @@
 #include <QObject>
 
 #include <pylon/PylonIncludes.h>
+#include <pylon/usb/BaslerUsbInstantCameraArray.h>
 #include <pylon/ImageEventHandler.h>
 #include <pylon/ConfigurationEventHandler.h>
 #include <pylon/PylonGUIIncludes.h>
 #include <pylon/GrabResultPtr.h>
-#include <pylon/PylonGUI.h>
 #include <pylon/PylonBase.h>
-#include <pylon/BaslerUniversalInstantCamera.h>
 
 #include <QImage>
 #include <QThread>
@@ -18,14 +17,14 @@
 
 #include <QDebug>
 
-class MyBaslerCamera : public QObject, public Pylon::CImageEventHandler
+class MyBaslerCamera : public QObject
 {
     Q_OBJECT
 public:
     MyBaslerCamera();
     ~MyBaslerCamera();
 
-    void init(int idDevice);
+    void init();
 
     double getExposureTime();
 
@@ -33,17 +32,13 @@ public:
 
     void setSetting(double,double);
 
-    virtual void OnImageGrabbed(Pylon::CInstantCamera& camera, const Pylon::CGrabResultPtr& ptrGrab);
-
     void run();
 signals:
-    void sendGrabb(QImage);
+    void sendGrabb1(QImage);
+    void sendGrabb2(QImage);
 
 private:
-    Pylon::CBaslerUniversalInstantCamera* baslerCamera_;
 
-    Basler_UniversalCameraParams::UserSetDefaultEnums oldDefaultUserSet;
-    Basler_UniversalCameraParams::UserSetDefaultSelectorEnums oldDefaultUserSetSelector;
 };
 
 #endif // MYBASLERCAMERA_H

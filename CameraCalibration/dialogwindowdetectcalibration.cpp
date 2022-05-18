@@ -99,32 +99,74 @@ DialogWindowDetectCalibration::~DialogWindowDetectCalibration()
 
 }
 
+void DialogWindowDetectCalibration::updateUi()
+{
+//    FileSystem::SettingCalibration setting = fs_->getCalibrationSetting();
+//    groupBoxSingleCalib->setChecked(setting.isCaibration);
+//    groupBoxStereCalib->setChecked(setting.isStereoCaibration);
+//    check_useParametr1->setChecked(setting.isUseParametr);
+//    isfixedFocal1->setChecked(setting.isFixedFocal);
+//    isfixedAspectRatio->setChecked(setting.isFixedAspectRatio);
+//    isfixedPrincipalPoint1->setChecked(setting.isFixedPrincipalPoint);
+//    isfixedK1->setChecked(setting.isfixedK1);
+//    isfixedK2->setChecked(setting.isfixedK2);
+//    isfixedK3->setChecked(setting.isfixedK3);
+//    isfixedK4->setChecked(setting.isfixedK4);
+//    iszeroTangent->setChecked(setting.iszeroTangent);
+//    isUseSingleCalibratedInStereo->setChecked(setting.isUseSingleCalibratedInStereo);
+//    box_numCamera->setCurrentIndex(setting.numCamera-1);
+
+//    if(setting.cameraModel == FileSystem::SettingCalibration::OPENCV)
+//        box_cameraModel->setCurrentIndex(0);
+//    else if(setting.cameraModel == FileSystem::SettingCalibration::OPENCV_FISHEYE)
+//        box_cameraModel->setCurrentIndex(1);
+
+//    spin_fx->setValue(setting.fx);
+//    spin_fy->setValue(setting.fy);
+//    spin_cx->setValue(setting.cx);
+//    spin_cy->setValue(setting.cy);
+//    spin_K1->setValue(setting.k1);
+//    spin_K2->setValue(setting.k2);
+//    spin_K3->setValue(setting.k3);
+//    spin_K4->setValue(setting.k4);
+}
+
 void DialogWindowDetectCalibration::on_btnSetOk_clicked()
 {
-    QList<QListWidgetItem *> selected_itemsFirst ;
-    selected_itemsFirst  = list_inputFlags->selectedItems();
-    int flagsFirst = 0;
-    QString flagsNameFirst = "";
-    for(int i = 0; i < selected_itemsFirst .size(); i ++)
-    {
-        flagsNameFirst += selected_itemsFirst[i]->text() + "/n";
-        flagsFirst = flagsFirst | translateFlags(selected_itemsFirst[i]->text());
-    }
+    FileSystem::SettingCalibration setting;
 
-    QList<QListWidgetItem *> selected_itemsSecond ;
-    selected_itemsSecond  = list_inputFlags->selectedItems();
-    int flagsSecond = 0;
-    QString flagsNameSecond = "";
-    for(int i = 0; i < selected_itemsSecond .size(); i ++)
-    {
-        flagsNameSecond += selected_itemsSecond[i]->text() + "/n";
-        //flags = flags | translateFlags(selected_itemsSecond[i]->text());
-    }
+    setting.isCaibration = groupBoxSingleCalib->isChecked();
+    setting.isStereoCaibration = groupBoxStereCalib->isChecked();
+    setting.isUseParametr = check_useParametr1->isChecked();
+    setting.isFixedFocal = isfixedFocal1->isChecked();
+    setting.isFixedAspectRatio = isfixedAspectRatio->isChecked();
+    setting.isFixedPrincipalPoint = isfixedPrincipalPoint1->isChecked();
+    setting.isfixedK1 = isfixedK1->isChecked();
+    setting.isfixedK2 = isfixedK2->isChecked();
+    setting.isfixedK3 = isfixedK3->isChecked();
+    setting.isfixedK4 = isfixedK4->isChecked();
+    setting.iszeroTangent = iszeroTangent->isChecked();
+    setting.isUseSingleCalibratedInStereo = isUseSingleCalibratedInStereo->isChecked();
 
-    bool isCalibration = isCalib->checkState();
-    bool isStereoCalibration = isStereoCalib->checkState();
-    ///fs_->writeSettingCalibInYaml(spinBox_iterationSub->value(), flagsFirst, flagsNameFirst,
-     //                            flagsSecond, flagsNameSecond,isCalibration,isStereoCalibration);
+    setting.numCamera = box_numCamera->currentIndex()+1;
+
+    if(box_cameraModel->currentIndex() == 0)
+         setting.cameraModel = FileSystem::SettingCalibration::OPENCV;
+    else if(box_cameraModel->currentIndex() == 1)
+        setting.cameraModel = FileSystem::SettingCalibration::OPENCV_FISHEYE;
+
+    setting.fx = spin_fx->value();
+    setting.fy = spin_fy->value();
+    setting.cx = spin_cx->value();
+    setting.cy = spin_cy->value();
+    setting.k1 = spin_K1->value();
+    setting.k2 = spin_K2->value();
+    setting.k3 = spin_K3->value();
+    setting.k4 = spin_K4->value();
+
+    fs_->saveCalibrationSetting(setting);
+
+
     emit goCalib();
     close();
 }
@@ -140,6 +182,7 @@ int DialogWindowDetectCalibration::translateFlags(QString textFlag)
     if(textFlag == "CV_CALIB_FIX_ASPECT_RATIO") return 0x00002;
     if(textFlag == "CV_CALIB_FIX_PRINCIPAL_POINT") return 0x00004;
     if(textFlag == "CV_CALIB_ZERO_TANGENT_DIST") return 0x00008;
+    if(textFlag == "CV_CALIB_FIX_FOCAL_LENGTH") return 0x00010;
     if(textFlag == "CV_CALIB_FIX_K1") return 0x00020;
     if(textFlag == "CV_CALIB_FIX_K2") return 0x00040;
     if(textFlag == "CV_CALIB_FIX_K3") return 0x00080;
@@ -161,14 +204,23 @@ void DialogWindowDetectCalibration::setFileSystem(FileSystem *fs)
 
 void DialogWindowDetectCalibration::initUi()
 {
-    resize(1280, 800);
+    resize(1280, 700);
+    QVBoxLayout* layout_Vertical = new QVBoxLayout;
+
     QHBoxLayout* layout_main = new QHBoxLayout;
 
-    QGroupBox *groupBoxSingleCalib= new QGroupBox(tr("Single calibration"));
-    groupBoxSingleCalib->setAlignment(Qt::AlignCenter);
+    layout_Vertical->addLayout(layout_main);
 
-    QGroupBox *groupBoxStereCalib = new QGroupBox(tr("Stereo calibration"));
-    groupBoxStereCalib->setAlignment(Qt::AlignCenter);
+    groupBoxSingleCalib= new QGroupBox(tr("Single calibration"));
+    groupBoxSingleCalib->setAlignment(Qt::AlignLeft);
+    groupBoxSingleCalib->setCheckable(true);
+    groupBoxSingleCalib->setChecked(false);
+
+
+    groupBoxStereCalib = new QGroupBox(tr("Stereo calibration"));
+    groupBoxStereCalib->setAlignment(Qt::AlignLeft);
+    groupBoxStereCalib->setCheckable(true);
+    groupBoxStereCalib->setChecked(false);
 
     layout_main->addWidget(groupBoxSingleCalib);
     layout_main->addWidget(groupBoxStereCalib);
@@ -186,7 +238,7 @@ void DialogWindowDetectCalibration::initUi()
 
     box_cameraModel = new QComboBox();
     box_cameraModel->addItem("Opencv");
-    box_cameraModel->addItem("Opencv Fisheye");
+    //box_cameraModel->addItem("Opencv Fisheye");
     layout_CameraModel->addRow(label_cameraModel,box_cameraModel);
 
     layout_SingleCalib->addLayout(layout_CameraModel);
@@ -304,7 +356,7 @@ void DialogWindowDetectCalibration::initUi()
 
 
     QGridLayout *layout_Stereo = new QGridLayout;
-    isUseSingleCalibrated = new QCheckBox("Use a ready-made single calibration");
+    isUseSingleCalibratedInStereo = new QCheckBox("Use a ready-made single calibration");
 //    isfixIntrinsic = new QCheckBox();
 //    isfixExtrinsic = new QCheckBox();
 //    isfixPrincipalPoint = new QCheckBox();
@@ -313,11 +365,24 @@ void DialogWindowDetectCalibration::initUi()
 //    isSameFocalLeng = new QCheckBox();
 //    iszeroTangentStereo = new QCheckBox();
 
-    layout_Stereo->addWidget(isUseSingleCalibrated, 0,0);
+    layout_Stereo->addWidget(isUseSingleCalibratedInStereo, 0,0);
 
     groupBoxStereCalib->setLayout(layout_Stereo);
 
-    setLayout(layout_main);
+    btnSetOk = new QPushButton("Ok");
+    connect(btnSetOk, SIGNAL(clicked()), this, SLOT(on_btnSetOk_clicked()));
+    btnCancel = new QPushButton("Cancel");
+    connect(btnCancel, SIGNAL(clicked()), this, SLOT(on_btnCancel_clicked()));
+
+    QHBoxLayout* layout_Button = new QHBoxLayout;
+    layout_Button->addWidget(btnSetOk);
+    layout_Button->addWidget(btnCancel);
+
+    QWidget* buttonWidget = new QWidget();
+    buttonWidget->setLayout(layout_Button);
+    layout_Vertical->addWidget(buttonWidget,0, Qt::AlignRight);
+
+    setLayout(layout_Vertical);
 }
 
 void DialogWindowDetectCalibration::on_tree_inputPatern_clicked(QTreeWidgetItem *item, int col)
@@ -354,14 +419,4 @@ void DialogWindowDetectCalibration::on_tree_inputPatern_clicked(QTreeWidgetItem 
 //        spinBox_checkerSize->show();
 //        tree_inputDictionaryName->show();
     }
-}
-
-void DialogWindowDetectCalibration::on_isCalib_stateChanged(int state)
-{
-    list_inputFlags->setEnabled(state);
-}
-
-void DialogWindowDetectCalibration::on_isStereoCalib_stateChanged(int state)
-{
-    list_inputFlagsStereo->setEnabled(state);
 }

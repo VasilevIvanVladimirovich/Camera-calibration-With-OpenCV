@@ -24,10 +24,13 @@ public slots:
     void run() override;
 
 signals:
-    void outputImg(QImage);
+    void outputImg1(QImage);
+    void outputImg2(QImage);
 
 public slots:
-    void inputImage(QImage);
+    void inputImage1(QImage);
+    void inputImage2(QImage);
+
 private:
     MyBaslerCamera* camera;
 

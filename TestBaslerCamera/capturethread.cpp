@@ -3,8 +3,8 @@
 CaptureThread::CaptureThread()
 {
     camera = new MyBaslerCamera();
-    connect(camera,&MyBaslerCamera::sendGrabb,this,&CaptureThread::inputImage);
-    camera->init(idDevice);
+    connect(camera,&MyBaslerCamera::sendGrabb1,this,&CaptureThread::inputImage1);
+    connect(camera,&MyBaslerCamera::sendGrabb2,this,&CaptureThread::inputImage2);
 }
 
 double CaptureThread::getExposureTime()
@@ -30,10 +30,15 @@ void CaptureThread::setIdDevice(int id)
 
 void CaptureThread::run()
 {
-    camera->run();
+    camera->init();
 }
 
-void CaptureThread::inputImage(QImage img)
+void CaptureThread::inputImage1(QImage img)
 {
-    emit outputImg(img);
+    emit outputImg1(img);
+}
+
+void CaptureThread::inputImage2(QImage img)
+{
+    emit outputImg2(img);
 }

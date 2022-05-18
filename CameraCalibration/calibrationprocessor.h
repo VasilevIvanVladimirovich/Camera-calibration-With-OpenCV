@@ -45,7 +45,9 @@ public:
     void setCalibrationFlags(int calibrationFlags);
     bool getFrameFromTable(int row);
     void reloadVectors();
-    void cameraCalibration(std::vector<FileSystem::InformationImageSaved>& imageInfo);
+    int translateFlagsOpencv(QString textFlag);
+    int translateFlagsFisheye(QString textFlag);
+    void cameraCalibration(std::vector<FileSystem::InformationImageSaved>& imageInfo, FileSystem::SettingCalibration&);
     void stereoCalibration();
     void accumulation(std::vector<FileSystem::InformationImageSaved>& imageInfo);
     void charucoAccumulation(int i,std::vector<FileSystem::InformationImageSaved>& imageInfo);
@@ -60,12 +62,19 @@ public:
                              std::vector<FileSystem::InformationImageSaved>& imageInfo);
     bool isFramePattern(cv::Mat* frame,QString pattern,int row, int col,
                         double icheckerSize, double imarkerSize, int idictionary);
-    void createImgUndistorted(std::vector<FileSystem::InformationImageSaved>& imageInfo);
+    void createImgUndistorted(std::vector<FileSystem::InformationImageSaved>& imageInfo,
+                              cv::Mat cameraMatrix,cv::Mat disCoeffs,
+                              int numCam);
 
     void saveInImgDrawing(QPixmap qpixmap, QString fileName,int i,
                           std::vector<FileSystem::InformationImageSaved>& imageInfo);
 
-    double Rmse(std::vector<FileSystem::InformationImageSaved>& imageInfo);
+    double Rmse(std::vector<FileSystem::InformationImageSaved>& imageInfo,
+                std::vector<std::vector<cv::Point2f>> imgpoints,
+                std::vector<std::vector<cv::Point3f>> objpoints,
+                cv::Mat cameraMatrix,cv::Mat disCoeffs,
+                std::vector<cv::Mat> R,std::vector<cv::Mat> T,
+                std::vector<int> indexImages);
 signals:
     void sendStatusImg(QString status, int row);
     void sendCalibBrowser();
@@ -76,7 +85,6 @@ public slots:
     void setTargetSize(int row,int col, double markerSize, double checkerSize, QString dictionaryName);
 private:
     bool isRefindStrategy_;
-    int numCam_;
     int calibrationFlags_;
     int intDictionary_;
     int CHECKERBOARD_[2]; //размер шахматной доски убрать автоэкспозицию!
@@ -88,24 +96,15 @@ private:
     cv::Size imgSizeCharuco_;
     cv::Mat inputFrame_;
 
-    cv::Mat cameraMatrix_;
-    cv::Mat distCoeffs_;
     cv::Ptr<cv::aruco::CharucoBoard> charucoboard_;
     cv::Ptr<cv::aruco::Dictionary> dictionary_;
     cv::Ptr<cv::aruco::DetectorParameters> params_;
-    std::vector<std::vector<cv::Point3f>> objpoints_; //Вектор, для хранения векторов 3d точек для каждого изображения шахматной доски
-    std::vector<std::vector<cv::Point2f>> imgpoints_; //Вектор, для хранения векторов 2d точек для каждого изображения шахматной доски
     std::vector<std::vector<cv::Point2f>>  allCharucoCorners;
     std::vector<std::vector<int>> allCharucoIds;
     std::vector< cv::Mat > allImgs;
-    std::vector<cv::Mat> R_;
-    std::vector<cv::Mat> T_;
     FileSystem* fs_;
 
     State state_;
-
-    std::vector<FileSystem::InformationImageSaved> imageInfo1;
-    std::vector<FileSystem::InformationImageSaved> imageInfo2;
 };
 
 #endif // CALIBRATIONPROCESSOR_H

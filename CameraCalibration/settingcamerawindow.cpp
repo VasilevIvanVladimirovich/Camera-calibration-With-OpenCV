@@ -91,7 +91,7 @@ void SettingCameraWindow::on_box_cameraInput_IndexChanged(int index)
         Pylon::ITransportLayer * pTl = TlFactory.CreateTl("BaslerUsb");
         Pylon::DeviceInfoList_t lstDevices;
         pTl->EnumerateDevices(lstDevices);
-        int n = pTl->EnumerateDevices(lstDevices,true);
+        int n = pTl->EnumerateDevices(lstDevices);
         if(n == 0)
         {
             qDebug() << "Cannot find any camera!";
@@ -99,9 +99,11 @@ void SettingCameraWindow::on_box_cameraInput_IndexChanged(int index)
         }
         Pylon::DeviceInfoList_t::const_iterator it;
         QString name;
-        for( it = lstDevices.begin(); it != lstDevices.end(); ++it )
+        for( it = lstDevices.begin(); it != lstDevices.end(); it++)
         {
+
             name = it->GetFriendlyName();
+            qDebug()<<name.toStdString().c_str();
             box_cameraFirst->addItem(name);
             box_cameraSecond->addItem(name);
         }

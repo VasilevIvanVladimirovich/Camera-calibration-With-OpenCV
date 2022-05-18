@@ -97,6 +97,15 @@ void ControlWindow::initUi()
            SLOT(updateFrameSecond(QPixmap, std::vector<cv::Point2f>,bool)));
 
    connect(&fileSystem_,
+           SIGNAL(outImgDisplayFirst(QPixmap, std::vector<cv::Point2f>,std::vector<cv::Point2f>,double,bool)),
+           this,
+           SLOT(updateFrameFirst(QPixmap, std::vector<cv::Point2f>,std::vector<cv::Point2f>,double ,bool)));
+   connect(&fileSystem_,
+           SIGNAL(outImgDisplaySecond(QPixmap, std::vector<cv::Point2f>,std::vector<cv::Point2f>,double ,bool)),
+           this,
+           SLOT(updateFrameSecond(QPixmap, std::vector<cv::Point2f>,std::vector<cv::Point2f>,double ,bool)));
+
+   connect(&fileSystem_,
            SIGNAL(sendTerminalStr(QString)),
            this,
            SLOT(addStringTerminalBrowser(QString)));
@@ -197,6 +206,10 @@ void ControlWindow::createAction()
     viewMenu->addAction(undistortImageAction);
     viewToolBar->addAction(undistortImageAction);
 
+    hideSecondViewAction = new QAction("&Hide/show second image",this);
+    connect(hideSecondViewAction, SIGNAL(triggered(bool)), this, SLOT(hideSecondView()));
+    viewMenu->addAction(hideSecondViewAction);
+
     importImageAction = new QAction("&Import image", this);
     connect(importImageAction, SIGNAL(triggered(bool)), this, SLOT(importImage()));
     imageMenu->addAction(importImageAction);
@@ -258,6 +271,14 @@ void ControlWindow::changeUndistort()
     defaultImageAction->setEnabled(true);
     drawImageAction->setEnabled(true);
 
+}
+
+void ControlWindow::hideSecondView()
+{
+    if(imageViewSecond->isHidden())
+        imageViewSecond->show();
+    else
+        imageViewSecond->hide();
 }
 
 
@@ -411,7 +432,6 @@ void ControlWindow::detect()
             this,
             SLOT(updateUi()));
 
-
     calibrationProcessor_->setState(CalibrationProcessor::State::ACCUMULATION);
     calibrationProcessor_->run();
 }
@@ -419,13 +439,12 @@ void ControlWindow::detect()
 void ControlWindow::calibration()
 {
     WindowDetectCalibration = new DialogWindowDetectCalibration();
-    WindowDetectCalibration->setFileSystem(&fileSystem_);
-    WindowDetectCalibration->show();
-
     connect(WindowDetectCalibration,
             SIGNAL(goCalib()),
             this,
             SLOT(runCalibration()));
+    WindowDetectCalibration->setFileSystem(&fileSystem_);
+    WindowDetectCalibration->show();
 }
 
 void ControlWindow::openCompareWindow()
@@ -465,77 +484,85 @@ void ControlWindow::setPath(QString path)
 
 void ControlWindow::videoStream(int countframe)
 {
+
     int camFirst,camSecond;
     camFirst = fileSystem_.getIndexCameraFirst();
     camSecond = fileSystem_.getIndexCameraSecond();
     saveImageAction->setEnabled(true);
     stopVideoAction->setEnabled(true);
-    if(camFirst!=-1){
-        isRunningFirstCamera = true;
-        saveImageAction->setEnabled(true);
-        stopVideoAction->setEnabled(true);
 
-        imgprocessorFirst_ = new ImageProcessor(&fileSystem_, "FindFirstCameraStream",data_lock);
-
-        connect(imgprocessorFirst_,
-                SIGNAL(outDisplay(QPixmap)),
-                this,
-                SLOT(updateFrameFirst(QPixmap)));
-
-        connect(imgprocessorFirst_,
-                SIGNAL(finished()),
-                imgprocessorFirst_,
-                SLOT(deleteLater()));
-
-        connect(imgprocessorFirst_,
-                SIGNAL(setItem(QTableWidgetItem*,QTableWidgetItem*, QTableWidgetItem*)),
-                this,
-                SLOT(addItem(QTableWidgetItem*,QTableWidgetItem*, QTableWidgetItem*)));
-
-        connect(imgprocessorFirst_,
-                SIGNAL(andStream()),
-                this,
-                SLOT(andStream()));
-
-        connect(imgprocessorFirst_,
-                SIGNAL(sendTerminal(QString)),
-                this,
-                SLOT(addStringTerminalBrowser(QString)));
-
-        imgprocessorFirst_->setFileSystem(&fileSystem_);
-        imgprocessorFirst_->setCountFrame(countframe);
-        imgprocessorFirst_->start();
-    }
-    if(camSecond!=-1)
+    if(fileSystem_.isWebCamera())
     {
-        isRunningSecondCamera = true;
-        saveImageAction->setEnabled(true);
-        stopVideoAction->setEnabled(true);
-        imgprocessorSecond_ = new ImageProcessor(&fileSystem_, "FindSecondCameraStream",data_lock);
+        if(camFirst!=-1){
+            isRunningFirstCamera = true;
+            saveImageAction->setEnabled(true);
+            stopVideoAction->setEnabled(true);
 
-        connect(imgprocessorSecond_,
-                SIGNAL(outDisplay(QPixmap)),
-                this,
-                SLOT(updateFrameSecond(QPixmap)));
+            imgprocessorFirst_ = new ImageProcessor(&fileSystem_, "FindFirstCameraStream",data_lock);
 
-        connect(imgprocessorSecond_,
-                SIGNAL(finished()),
-                imgprocessorSecond_,
-                SLOT(deleteLater()));
-        connect(imgprocessorSecond_,
-                SIGNAL(setItem(QTableWidgetItem*,QTableWidgetItem*, QTableWidgetItem*)),
-                this,
-                SLOT(addItem(QTableWidgetItem*,QTableWidgetItem*, QTableWidgetItem*)));
+            connect(imgprocessorFirst_,
+                    SIGNAL(outDisplay(QPixmap)),
+                    this,
+                    SLOT(updateFrameFirst(QPixmap)));
 
-        connect(imgprocessorFirst_,
-                SIGNAL(andStream()),
-                this,
-                SLOT(andStream()));
+            connect(imgprocessorFirst_,
+                    SIGNAL(finished()),
+                    imgprocessorFirst_,
+                    SLOT(deleteLater()));
 
-        imgprocessorSecond_->setFileSystem(&fileSystem_);
-        imgprocessorSecond_->setCountFrame(countframe);
-        imgprocessorSecond_->setTransformImg(false);
-        imgprocessorSecond_->start();
+            connect(imgprocessorFirst_,
+                    SIGNAL(setItem(QTableWidgetItem*,QTableWidgetItem*, QTableWidgetItem*)),
+                    this,
+                    SLOT(addItem(QTableWidgetItem*,QTableWidgetItem*, QTableWidgetItem*)));
+
+            connect(imgprocessorFirst_,
+                    SIGNAL(andStream()),
+                    this,
+                    SLOT(andStream()));
+
+            connect(imgprocessorFirst_,
+                    SIGNAL(sendTerminal(QString)),
+                    this,
+                    SLOT(addStringTerminalBrowser(QString)));
+
+            imgprocessorFirst_->setFileSystem(&fileSystem_);
+            imgprocessorFirst_->setCountFrame(countframe);
+            imgprocessorFirst_->start();
+        }
+        if(camSecond!=-1)
+        {
+            isRunningSecondCamera = true;
+            saveImageAction->setEnabled(true);
+            stopVideoAction->setEnabled(true);
+            imgprocessorSecond_ = new ImageProcessor(&fileSystem_, "FindSecondCameraStream",data_lock);
+
+            connect(imgprocessorSecond_,
+                    SIGNAL(outDisplay(QPixmap)),
+                    this,
+                    SLOT(updateFrameSecond(QPixmap)));
+
+            connect(imgprocessorSecond_,
+                    SIGNAL(finished()),
+                    imgprocessorSecond_,
+                    SLOT(deleteLater()));
+            connect(imgprocessorSecond_,
+                    SIGNAL(setItem(QTableWidgetItem*,QTableWidgetItem*, QTableWidgetItem*)),
+                    this,
+                    SLOT(addItem(QTableWidgetItem*,QTableWidgetItem*, QTableWidgetItem*)));
+
+            connect(imgprocessorFirst_,
+                    SIGNAL(andStream()),
+                    this,
+                    SLOT(andStream()));
+
+            imgprocessorSecond_->setFileSystem(&fileSystem_);
+            imgprocessorSecond_->setCountFrame(countframe);
+            imgprocessorSecond_->setTransformImg(false);
+            imgprocessorSecond_->start();
+        }else if(fileSystem_.isBaslerCamera())
+        {
+
+        }
     }
 }
 
@@ -622,6 +649,84 @@ void ControlWindow::updateFrameSecond(QPixmap pix, std::vector<cv::Point2f> imgp
 
 }
 
+void ControlWindow::updateFrameFirst(QPixmap pix, std::vector<cv::Point2f> imgpoint, std::vector<cv::Point2f> reprojpoint,double err, bool isActive)
+{
+    imageSceneFirst->clear();
+    imageSceneFirst->addPixmap(pix);
+
+    QPen pen;
+    if(isActive)
+        pen.setColor(Qt::green);
+    else
+        pen.setColor(Qt::gray);
+    pen.setWidth(0);
+    for(unsigned short int i = 0; imgpoint.size() > i;i++)
+    {
+        imageSceneFirst->addLine(imgpoint[i].x-5,imgpoint[i].y,imgpoint[i].x+5,imgpoint[i].y,pen);
+        imageSceneFirst->addLine(imgpoint[i].x,imgpoint[i].y-5,imgpoint[i].x,imgpoint[i].y+5,pen);
+    }
+
+    if(isActive)
+        pen.setColor(Qt::blue);
+    else
+        pen.setColor(Qt::gray);
+    for(unsigned short int i = 0; imgpoint.size() > i;i++)
+    {
+        double dx,dy;
+        double r;
+        double xx,yy;
+        dx = reprojpoint[i].x - imgpoint[i].x;
+        dy = reprojpoint[i].y - imgpoint[i].y;
+        r = qSqrt(qPow(dx,2) + qPow(dy,2));
+        xx = dx * (err/r);
+        yy = dy * (err/r);
+        imageSceneFirst->addLine(imgpoint[i].x,imgpoint[i].y,imgpoint[i].x+xx,imgpoint[i].y+yy,pen);
+    }
+
+    if(isActive)
+        pen.setColor(Qt::red);
+    else
+        pen.setColor(Qt::gray);
+
+    for(unsigned short int i = 0; imgpoint.size() > i;i++)
+    {
+        imageSceneFirst->addEllipse(QRectF(reprojpoint[i].x-1,reprojpoint[i].y-1,2,2),pen);
+    }
+
+    imageSceneFirst->update();
+    imageViewFirst->setSceneRect(pix.rect());
+}
+
+void ControlWindow::updateFrameSecond(QPixmap pix, std::vector<cv::Point2f> imgpoint, std::vector<cv::Point2f> reprojpoint,double err, bool isActive)
+{
+    imageSceneSecond->clear();
+    imageSceneSecond->addPixmap(pix);
+
+    QPen pen;
+    if(isActive)
+        pen.setColor(Qt::green);
+    else
+        pen.setColor(Qt::gray);
+    pen.setWidth(0);
+    for(unsigned short int i = 0; imgpoint.size() > i;i++)
+    {
+        imageSceneSecond->addLine(imgpoint[i].x-5,imgpoint[i].y,imgpoint[i].x+5,imgpoint[i].y,pen);
+        imageSceneSecond->addLine(imgpoint[i].x,imgpoint[i].y-5,imgpoint[i].x,imgpoint[i].y+5,pen);
+    }
+
+    if(isActive)
+        pen.setColor(Qt::red);
+    else
+        pen.setColor(Qt::gray);
+
+    for(unsigned short int i = 0; imgpoint.size() > i;i++)
+    {
+        imageSceneFirst->addEllipse(QRectF(reprojpoint[i].x-1,reprojpoint[i].y-1,2,2),pen);
+    }
+    imageSceneSecond->update();
+    imageViewSecond->setSceneRect(pix.rect());
+}
+
 void ControlWindow::on_imageTable_cellClicked(int row,int col)
 {
     if(col == 0)
@@ -692,10 +797,11 @@ void ControlWindow::runCalibration()
     calibrationProcessor_ = new CalibrationProcessor(&fileSystem_);
 
     connect(calibrationProcessor_,
-            SIGNAL(sendCalibBrowser()),
-            &fileSystem_,
+            SIGNAL(updateCantrolUi()),
+            this,
             SLOT(updateUi()));
 
+    calibrationProcessor_->setState(CalibrationProcessor::CALIBRATION);
     calibrationProcessor_->run();
 }
 

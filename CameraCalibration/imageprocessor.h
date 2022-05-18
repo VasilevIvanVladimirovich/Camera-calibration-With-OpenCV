@@ -14,6 +14,14 @@
 #include<opencv2/imgproc.hpp>
 #include<opencv2/calib3d/calib3d.hpp>
 
+#include <pylon/PylonIncludes.h>
+#include <pylon/usb/BaslerUsbInstantCameraArray.h>
+#include <pylon/ImageEventHandler.h>
+#include <pylon/ConfigurationEventHandler.h>
+#include <pylon/PylonGUIIncludes.h>
+#include <pylon/GrabResultPtr.h>
+#include <pylon/PylonBase.h>
+
 #include <QThread>
 #include <QMutex>
 #include <QApplication>
@@ -29,6 +37,7 @@ public:
     enum StateVideoStream{
         FIND_FIRST_STREAM,
         FIND_SECOND_STREAM,
+        FIND_STEREO_STREAM,
 
         FIRST_STREAM,
         SECOND_STREAM,
@@ -39,6 +48,11 @@ public:
         FIRST_SECOND_CALIBRATED_STREAM,
         STEREO_STREAM,
         STEREO_DEPTH_STREAM
+    };
+
+    enum DeviceState{
+        WEB_CAMERA,
+        BASLER_CAMERA
     };
 
     Q_ENUM(StateVideoStream)
@@ -66,6 +80,8 @@ public:
    void undistort(cv::Mat input,cv::Mat output,cv::Mat cameraMatrix,cv::Mat distCoeffs);
    void stopedThread();
    void initCamera();
+
+   void setDeviceState(DeviceState state);
 
 signals:
     void outDisplay(QPixmap pixmap);
@@ -104,6 +120,7 @@ private:
     CalibrationProcessor calibProcessor_;
 
     StateVideoStream state_video_stream;
+    DeviceState state_device;
     QMutex* lock;
 };
 #endif // IMAGEPROCESSOR_H
