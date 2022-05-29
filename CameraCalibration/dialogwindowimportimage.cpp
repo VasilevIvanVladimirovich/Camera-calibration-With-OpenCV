@@ -12,11 +12,10 @@ DialogWindowImportImage::~DialogWindowImportImage()
 
 void DialogWindowImportImage::initUi()
 {
-    resize(500,200);
-    btnStartVideoStream = new QPushButton("StartVideoStream");
+    btnStartVideoStream = new QPushButton("Start");
     btnSetFolderPath1 = new QPushButton("...");
     btnSetFolderPath2 = new QPushButton("...");
-    btnSetOk = new QPushButton("Ok");
+    btnSetOk = new QPushButton("Apply");
 
     connect(btnStartVideoStream, SIGNAL(clicked()), this, SLOT(on_btnStartVideoStream_clicked()));
     connect(btnSetFolderPath1, SIGNAL(clicked()), this, SLOT(on_btnSetFolderPath1_clicked()));
@@ -25,9 +24,11 @@ void DialogWindowImportImage::initUi()
 
     QGroupBox *groupBoxPath= new QGroupBox(tr("Input from path"));
     groupBoxPath->setAlignment(Qt::AlignCenter);
+    groupBoxPath->setFixedSize(500,200);
 
     QGroupBox *groupBoxCamera= new QGroupBox(tr("Input from camera"));
     groupBoxCamera->setAlignment(Qt::AlignCenter);
+    groupBoxCamera->setFixedSize(300,200);
 
     QVBoxLayout* layout_selectFolder = new QVBoxLayout;
     QHBoxLayout* layout_inputSelectFolder1 = new QHBoxLayout;
@@ -58,35 +59,40 @@ void DialogWindowImportImage::initUi()
 
     layout_selectFolder->addLayout(layout_inputSelectFolder2);
 
-    layout_selectFolder->addWidget(btnSetOk);
+    layout_selectFolder->addWidget(btnSetOk,0,Qt::AlignRight);
 
     groupBoxPath->setLayout(layout_selectFolder);
 
-    QFormLayout *layout_importVideoStreamSetting = new QFormLayout;
+    QVBoxLayout *layout_importVideoStreamSetting = new QVBoxLayout;
 
-    isCamera1 = new QCheckBox();
-    label_cam1 = new QLabel("Camera 1");
+    isCamera1 = new QCheckBox("Cam1");
+    layout_importVideoStreamSetting->addWidget(isCamera1);
 
-    layout_importVideoStreamSetting->addRow(isCamera1, label_cam1);
+    isCamera2 = new QCheckBox("Cam2");
+    layout_importVideoStreamSetting->addWidget(isCamera2);
 
-    isCamera2 = new QCheckBox();
-    label_cam2 = new QLabel("Camera 2");
 
-    layout_importVideoStreamSetting->addRow(isCamera2, label_cam2);
-
+    QHBoxLayout *layout_count = new QHBoxLayout;
     spinBox_countFrame = new QSpinBox();
-    layout_importVideoStreamSetting->addRow("Count frame:", spinBox_countFrame);
+    QLabel* label_frame = new QLabel("Quantity of images:");
+    layout_count->addWidget(label_frame);
+    layout_count->addWidget(spinBox_countFrame);
     spinBox_countFrame->setMinimum(1);
     spinBox_countFrame->setMaximum(1000);
+    layout_importVideoStreamSetting ->addLayout(layout_count);
 
-    layout_importVideoStreamSetting->addRow(btnStartVideoStream);
+    isDrawing = new QCheckBox("Drawing a template");
+    layout_importVideoStreamSetting->addWidget(isDrawing);
+
+    layout_importVideoStreamSetting->addWidget(btnStartVideoStream,0,Qt::AlignRight);
 
     groupBoxCamera->setLayout(layout_importVideoStreamSetting);
-
 
     QHBoxLayout* layout_main = new QHBoxLayout;   //Горизонтальный
     layout_main->addWidget(groupBoxPath);
     layout_main->addWidget(groupBoxCamera);
+
+    layout_main->setSizeConstraint(QLayout::SetFixedSize);
 
     setLayout(layout_main);
 }
@@ -101,7 +107,8 @@ void DialogWindowImportImage::on_btnStartVideoStream_clicked()
     if((fs->getIndexCameraFirst()!=-1 && isCamera1->checkState())||
        (fs->getIndexCameraSecond()!=-1 && isCamera2->checkState()))
     {
-        emit signalVideoStream(spinBox_countFrame->value());
+        emit signalVideoStream(spinBox_countFrame->value(),
+                               isDrawing->checkState(),isCamera1->checkState(),isCamera2->checkState());
         close();
     }
     else if(fs->getIndexCameraFirst()==-1 && isCamera1->checkState())

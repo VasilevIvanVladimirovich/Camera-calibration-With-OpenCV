@@ -42,6 +42,8 @@ private:
 private slots:
     void on_btnSetOk_clicked();
     void on_btnCancel_clicked();
+
+    void on_box_numCamera_change(int);
     void on_tree_inputPatern_clicked(QTreeWidgetItem* item, int col);
 private:
     FileSystem* fs_;
@@ -54,12 +56,31 @@ private:
     QDoubleSpinBox* spin_cx;
     QDoubleSpinBox* spin_cy;
 
+    QDoubleSpinBox* spin_Fx1;
+    QDoubleSpinBox* spin_Cx1;
+    QDoubleSpinBox* spin_Fx2;
+    QDoubleSpinBox* spin_Cx2;
+    QDoubleSpinBox* spin_Fy1;
+    QDoubleSpinBox* spin_Cy1;
+    QDoubleSpinBox* spin_Fy2;
+    QDoubleSpinBox* spin_Cy2;
+
     QWidget* parametr;
+
+    FileSystem::SettingCalibration setting;
 
     QDoubleSpinBox* spin_K1;
     QDoubleSpinBox* spin_K2;
     QDoubleSpinBox* spin_K3;
     QDoubleSpinBox* spin_K4;
+
+    QDoubleSpinBox* spin_K1S1;
+    QDoubleSpinBox* spin_K2S1;
+    QDoubleSpinBox* spin_K3S1;
+    QDoubleSpinBox* spin_K1S2;
+    QDoubleSpinBox* spin_K2S2;
+    QDoubleSpinBox* spin_K3S2;
+    QCheckBox* iszeroTangentS;
 
     QGroupBox *groupBoxSingleCalib;
     QGroupBox *groupBoxStereCalib;
@@ -78,15 +99,15 @@ private:
     QCheckBox* isfixedK3;
     QCheckBox* isfixedK4;
     QCheckBox* iszeroTangent;
+    QCheckBox* isfixedK1S;
+    QCheckBox* isfixedK2S;
+    QCheckBox* isfixedK3S;
 
     QCheckBox* isUseSingleCalibratedInStereo;
-//    QCheckBox* isfixIntrinsic;
-//    QCheckBox* isfixExtrinsic;
-//    QCheckBox* isfixPrincipalPoint;
-//    QCheckBox* isfixFocalLength;
-//    QCheckBox* isfixAspectRatio;
-//    QCheckBox* isSameFocalLeng;
-//    QCheckBox* iszeroTangentStereo;
+    QCheckBox* isfixPrincipalPointStereo;
+    QCheckBox* isfixFocalLengthStereo;
+    QCheckBox* isfixAspectRatioStereo;
+    QCheckBox* isSameFocalLengStereo;
 
     QTabWidget* tab_cameraSingleCalibration;
 

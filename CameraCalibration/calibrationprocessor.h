@@ -36,7 +36,6 @@ public:
     };
 
     void setState(State state);
-
     void setPattern(QString Pattern);
     void setRowCol(int row, int col);
     void setMarkerSize(double markerSize);
@@ -48,9 +47,9 @@ public:
     int translateFlagsOpencv(QString textFlag);
     int translateFlagsFisheye(QString textFlag);
     void cameraCalibration(std::vector<FileSystem::InformationImageSaved>& imageInfo, FileSystem::SettingCalibration&);
-    void stereoCalibration();
+    void stereoCalibration(FileSystem::SettingCalibration setting);
     void accumulation(std::vector<FileSystem::InformationImageSaved>& imageInfo);
-    void charucoAccumulation(int i,std::vector<FileSystem::InformationImageSaved>& imageInfo);
+    void charucoAccumulation(int i,cv::Mat gray,std::vector<cv::Point2f> corner_pts, std::vector<FileSystem::InformationImageSaved>& imageInfo);
     void chessboardAccumulation(int i,cv::Mat gray,
                                 std::vector<cv::Point2f> corner_pts,
                                 std::vector<FileSystem::InformationImageSaved>& imageInfo);
@@ -74,9 +73,12 @@ public:
                 std::vector<std::vector<cv::Point3f>> objpoints,
                 cv::Mat cameraMatrix,cv::Mat disCoeffs,
                 std::vector<cv::Mat> R,std::vector<cv::Mat> T,
-                std::vector<int> indexImages);
+                std::vector<int> indexImages,double& meanErr);
+
+    int getDictionary(QString);
 signals:
     void sendStatusImg(QString status, int row);
+    void sendTerminalMessage(QString);
     void sendCalibBrowser();
     void updateCantrolUi();
 public slots:
@@ -84,9 +86,10 @@ public slots:
     void setTargetType(QString qstring);
     void setTargetSize(int row,int col, double markerSize, double checkerSize, QString dictionaryName);
 private:
+    int succes;
+    int bad;
     bool isRefindStrategy_;
     int calibrationFlags_;
-    int intDictionary_;
     int CHECKERBOARD_[2]; //размер шахматной доски убрать автоэкспозицию!
     double markerSize_;
     double checkerSize_;
@@ -95,7 +98,6 @@ private:
     QString dictionaryName_;
     cv::Size imgSizeCharuco_;
     cv::Mat inputFrame_;
-
     cv::Ptr<cv::aruco::CharucoBoard> charucoboard_;
     cv::Ptr<cv::aruco::Dictionary> dictionary_;
     cv::Ptr<cv::aruco::DetectorParameters> params_;

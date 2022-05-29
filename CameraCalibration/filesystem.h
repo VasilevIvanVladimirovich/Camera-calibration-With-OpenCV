@@ -42,7 +42,6 @@ public:
             iszeroTangent = false;
             isCaibration = false;
             isStereoCaibration = false;
-            isUseSingleCalibratedInStereo = false;
             numCamera = 0;
             cameraModel = OPENCV;
             fx = 0;
@@ -53,6 +52,30 @@ public:
             k2 = 0;
             k3 = 0;
             k4 = 0;
+
+            isSameFocalLengStereo = false;
+            isfixAspectRatioStereo = false;
+            isfixFocalLengthStereo = false;
+            isfixPrincipalPointStereo = false;
+            isUseSingleCalibratedInStereo = false;
+            iszeroTangentS = false;
+            isfixedK1S= false;
+            isfixedK2S= false;
+            isfixedK3S= false;
+            fx1 = 0;
+            fy1 = 0;
+            fx2 = 0;
+            fy2 = 0;
+            cx1 = 0;
+            cy1 = 0;
+            cx2 = 0;
+            cy2 = 0;
+            k1S1 = 0;
+            k2S1 = 0;
+            k3S1 = 0;
+            k1S2 = 0;
+            k2S2 = 0;
+            k3S2 = 0;
         }
 
         enum CameraModel{
@@ -74,7 +97,6 @@ public:
                << "iszeroTangent" << iszeroTangent
                << "isCaibration" << isCaibration
                << "isStereoCaibration" << isStereoCaibration
-               << "isUseSingleCalibratedInStereo" << isUseSingleCalibratedInStereo
                << "numCamera" << numCamera
                << "cameraModel" << cameraModel
                << "fx" << fx
@@ -85,6 +107,31 @@ public:
                << "k2" << k2
                << "k3" << k3
                << "k4" << k4
+
+               << "isSameFocalLengStereo" << isSameFocalLengStereo
+               << "isfixAspectRatioStereo" << isfixAspectRatioStereo
+               << "isfixFocalLengthStereo" << isfixFocalLengthStereo
+               << "isfixPrincipalPointStereo" << isfixPrincipalPointStereo
+               << "isUseSingleCalibratedInStereo" << isUseSingleCalibratedInStereo
+               << "iszeroTangentS" << iszeroTangentS
+               << "isfixedK1S" << isfixedK1S
+               << "isfixedK2S" << isfixedK2S
+               << "isfixedK3S" << isfixedK3S
+               << "fx1" << fx1
+               << "fy1" << fy1
+               << "fx2" << fx2
+               << "fy2" << fy2
+               << "cx1" << cx1
+               << "cy1" << cy1
+               << "cx1" << cx1
+               << "cx2" << cx2
+               << "cy2" << cy2
+               << "k1S1" << k1S1
+               << "k2S1" << k2S1
+               << "k3S1" << k3S1
+               << "k1S2" << k1S2
+               << "k2S2" << k2S2
+               << "k3S2" << k3S2
                << "}";
         }
 
@@ -128,6 +175,31 @@ public:
             k2 = (double)node["k2"];
             k3 = (double)node["k3"];
             k4 = (double)node["k4"];
+
+            isUseSingleCalibratedInStereo = (int)node["isUseSingleCalibratedInStereo"];
+            isSameFocalLengStereo = (int)node["isSameFocalLengStereo"];
+            isfixAspectRatioStereo = (int)node["isfixAspectRatioStereo"];
+            isfixPrincipalPointStereo = (int)node["isfixPrincipalPointStereo"];
+            iszeroTangentS = (int)node["iszeroTangentS"];
+            isfixedK1S = (int)node["isfixedK1S"];
+            isfixedK2S = (int)node["isfixedK2S"];
+            isfixedK3S = (int)node["isfixedK3S"];
+
+            fx1 = (double)node["fx1"];
+            fy1 = (double)node["fy1"];
+            fx2 = (double)node["fx2"];
+            fy2 = (double)node["fy2"];
+            cx1 = (double)node["cx1"];
+            cy1 = (double)node["cy1"];
+            cx2 = (double)node["cx2"];
+            cy2 = (double)node["cy2"];
+
+            k1S1 = (double)node["k1S1"];
+            k2S1 = (double)node["k2S1"];
+            k3S1 = (double)node["k3S1"];
+            k1S2 = (double)node["k1S2"];
+            k2S2 = (double)node["k2S2"];
+            k3S2 = (double)node["k3S2"];
         }
         public:
             bool isUseParametr;
@@ -141,7 +213,6 @@ public:
             bool iszeroTangent;
             bool isCaibration;
             bool isStereoCaibration;
-            bool isUseSingleCalibratedInStereo;
             unsigned short int numCamera;
             CameraModel cameraModel;
             double fx;
@@ -152,6 +223,30 @@ public:
             double k2;
             double k3;
             double k4;
+
+            bool isSameFocalLengStereo;
+            bool isfixAspectRatioStereo;
+            bool isfixFocalLengthStereo;
+            bool isfixPrincipalPointStereo;
+            bool isUseSingleCalibratedInStereo;
+            bool iszeroTangentS;
+            bool isfixedK1S;
+            bool isfixedK2S;
+            bool isfixedK3S;
+            double fx1;
+            double fy1;
+            double fx2;
+            double fy2;
+            double cx1;
+            double cy1;
+            double cx2;
+            double cy2;
+            double k1S1;
+            double k2S1;
+            double k3S1;
+            double k1S2;
+            double k2S2;
+            double k3S2;
     };
 
     class InformationImageSaved{
@@ -163,6 +258,7 @@ public:
             state = "NONE";
             err = 0;
             isActive = 1;
+            isCalib = 0;
             cv::Point2f point;
             point.x = 0;
             point.y = 0;
@@ -172,7 +268,9 @@ public:
 
         void write(cv::FileStorage& fs) const                        //Write serialization for this class
         {
-            fs << "{" <<"isActive" << isActive << "cameraPath" << cameraPath << "drawPath" << drawPath
+            fs << "{" << "isActive" << isActive
+                      << "isCalib" << isCalib
+                      << "cameraPath" << cameraPath << "drawPath" << drawPath
                       << "undistortedPath" << undistortedPath
                       <<"state" << state << "err" << err
                       << "imgpoint" <<"[";
@@ -187,14 +285,15 @@ public:
                         fs<<"[:" <<(float)reprojectPoint[i].x << (float)reprojectPoint[i].y << "]";
                       }
                       fs << "]" ;
-                      fs << "}";
 
-                      //imgpoint << "charucoIds" << charucoIds << "}";
+                      fs << "charucoIds" << charucoIds;
+                      fs << "}";
         }
 
         void read(const cv::FileNode& node)                          //Read serialization for this class
         {
             isActive = (int)node["isActive"];
+            isCalib = (int)node["isCalib"];
             cameraPath = (std::string)node["cameraPath"];
             drawPath = (std::string)node["drawPath"];
             undistortedPath = (std::string)node["undistortedPath"];
@@ -226,10 +325,20 @@ public:
             }
             reprojectPoint = temp2;
 
-
+            std::vector<int> temp3;
+            for(cv::FileNodeIterator itPts = node["charucoIds"].begin();itPts!=node["charucoIds"].end();++itPts)
+            {
+                cv::FileNode pt = *itPts;
+                int id;
+                cv::FileNodeIterator itPt = pt.begin();
+                id = *itPt;
+                temp3.push_back(id);
+            }
+            charucoIds = temp3;
         }
     public:
         int isActive;
+        int isCalib;
         std::string cameraPath;
         std::string drawPath;
         std::string undistortedPath;
@@ -293,13 +402,12 @@ public:
     void readYamldistCoef(QString path, cv::Mat* distCoeffs);
     void saveFileInYaml(std::vector<std::vector<cv::Point3f>> objpoints, std::vector<std::vector<cv::Point2f>> imgpoints,
                         cv::Mat cameraMatrix,cv::Mat distCoeffs, std::vector<cv::Mat> R, std::vector<cv::Mat> T,
-                        int countImg, QString date, double rmse, QString pattern, std::string sizePatern, int numCam, cv::Size size);
+                        int countImg, QString date, double rmse, double meanErr,QString pattern, std::string sizePatern, int numCam, cv::Size size);
 
     void saveFileInYamlStereo(cv::Mat cameraMatrix0,cv::Mat cameraMatrix1,cv::Mat distCoeffs0, cv::Mat distCoeffs1,
                             cv::Mat R, cv::Mat T, cv::Mat E, cv::Mat F,
                             cv::Mat R1, cv::Mat R2, cv::Mat P1,cv::Mat P2, cv::Mat Q,
-                            cv::Size imageSize, cv::Rect validRoi0,cv::Rect validRoi1,
-                            cv::Mat rmap00,cv::Mat rmap01,cv::Mat rmap10,cv::Mat rmap11, double rms,double ReprojErr,
+                            cv::Size imageSize,double rms,double ReprojErr,
                             QString date, QString pattern,std::string sizePatern, int countPair);
 
     void writeSettingCalibInYaml(int subIter, int flagsIntFirst, QString lagsNameFirst,
@@ -307,23 +415,46 @@ public:
     void createSettingDefault();
     void saveInImg(QPixmap qpixmap, QString name);
     void saveInImgDrawing(QPixmap qpixmap, QString fileName,int numCam);
-    void getOneTableItemsinTableCompare();
+    void getOneTableItemsinTableCompare(QString localPath);
     void getTableItemsinTableCompare();
 
     std::vector<InformationImageSaved> getInfoCamera1();
     std::vector<InformationImageSaved> getInfoCamera2();
     std::vector<TempatesPattern> getTempatesPattern();
 
+    double getExpose();
+    double getGain();
+    double getRmse(int numCam);
+    double getStereoRmse();
+    std::vector<cv::Mat>getRvec(int numCam);
+    std::vector<cv::Mat>getTvec(int numCam);
+    cv::Mat getR1();
+    cv::Mat getR2();
+    cv::Mat getP1();
+    cv::Mat getP2();
+
+
+
+    double getMeanErr(int numCam);
+    double getCountImg(int numCam);
+    //double getRmseStereo();
+
     bool isWebCamera();
     bool isBaslerCamera();
 
     void saveInfoCamera1(std::vector<InformationImageSaved> imageInfo1);
     void saveInfoCamera2(std::vector<InformationImageSaved> imageInfo2);
+
+    void zeroingCalibInfoCamera1();
+    void zeroingCalibInfoCamera2();
+
     void saveTempatesPattern(std::vector<TempatesPattern>);
     void saveCalibrationSetting(SettingCalibration setting);
     SettingCalibration getCalibrationSetting();
 
     void removeTemplates(int);
+
+    void parseResultCalibr(int);
 
     QString getPattern();
     int getRow();
@@ -331,6 +462,7 @@ public:
     std::vector<std::vector<cv::Point3f>> getObjPoints();
     std::vector<std::vector<cv::Point2f>> getImgPoints(int numCam);
     cv::Mat getCameraMatrix(int numCam);
+    bool isCalibResult(int numCam);
     cv::Mat getDistMatrix(int numCam);
     cv::Size getSizeImg();
     double getCheckerSize();
@@ -341,6 +473,7 @@ public:
     int  countImgInDir(QString path);
     bool isSelectedDir();
     bool isValidOpenDir();//+
+    bool isValidOpenDir(QString);
     void setPath(QString path);//+
     void writeSettingCalibInYaml(int numCamFirst, QString nameCumFirst, int numCamSecond,QString nameCumSecond,
                                  QString pattern, int row, int col,
@@ -348,7 +481,7 @@ public:
                                  bool isWebCamera, bool isBaslerCamera);
     void cameraSettingSave(QString nameCumFirst, int numCamFirst,
                            QString nameCumSecond,int numCamSecond,
-                           bool isWebCamera, bool isBaslerCamera);
+                           bool isWebCamera, bool isBaslerCamera,double,double);
     void patternSettingSave(QString, int,int,double,double,QString);
     void addTemplates(QString, int,int,double,double,QString);
     int getIndexCameraFirst();
@@ -388,16 +521,17 @@ signals:
     void outImgDisplaySecond(QPixmap pixmap, std::vector<cv::Point2f> imgpoint,
                              std::vector<cv::Point2f> reprojpoint,double err, bool isActive);
     void outTableItems(QTableWidgetItem *item0,QTableWidgetItem *item1, QTableWidgetItem *item2);
-    void outTableItemsCompare(QTableWidgetItem* itemFile,QTableWidgetItem* itemDate,
-                              QTableWidgetItem* itemCount,QTableWidgetItem* itemPattern,
-                              QTableWidgetItem* itemSizePattern, QTableWidgetItem* itemRmse,
-                              QTableWidgetItem* itemFlags);
+    void outTableItemsCompare(QTableWidgetItem* itemFile,
+                              QTableWidgetItem* SettingCam1,QTableWidgetItem* itemCamera1Rmse,
+                              QTableWidgetItem* SettingCam2, QTableWidgetItem* itemCamera2Rmse,
+                              QTableWidgetItem* itemStereoRmse);
     void sendTerminalStr(QString);
     void updateCantrolUi();
 public slots:
     void getTableItems();
     QString openProjectSetting();
     QString openCalibSetting(int numCam);//+
+    QString openStereoSetting();
 
 private:
     QString filePath_;

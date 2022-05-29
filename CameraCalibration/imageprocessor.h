@@ -58,8 +58,10 @@ public:
     Q_ENUM(StateVideoStream)
 
    ImageProcessor(int indexCam,int numCam);
-   ImageProcessor(FileSystem *fs, QString current,QMutex *lock);
+   ImageProcessor(FileSystem *fs, StateVideoStream stVideo,DeviceState stDevice,QMutex *data_lock);
    ImageProcessor(cv::Mat img);
+
+   std::vector<FileSystem::InformationImageSaved> getInfoCamera();
 
    void setOutFrame(cv::Mat frame);
    void setPath(QString qstring);
@@ -74,8 +76,10 @@ public:
    void setMarkerSize(double markerSize);
    void setDictionaryName(QString dictionaryName);
    void setIsPressSnap();
+   void setIsDraw(bool);
    void setFileSystem(FileSystem *fs);
    QPixmap toMatQpixmap(cv::Mat mat);
+   QPixmap toMatQpixmapGray(cv::Mat mat);
    cv::Mat getOutFrame();
    void undistort(cv::Mat input,cv::Mat output,cv::Mat cameraMatrix,cv::Mat distCoeffs);
    void stopedThread();
@@ -87,6 +91,7 @@ signals:
     void outDisplay(QPixmap pixmap);
     void outDisplayFirst(QPixmap pixmap);
     void outDisplaySecond(QPixmap pixmap);
+    void outDisplayFirstSecond(QPixmap,QPixmap,QMutex*);
     void setItem(QTableWidgetItem* item0,QTableWidgetItem* item1, QTableWidgetItem* item2);
     void andStream();
     void sendTerminal(QString);
@@ -99,6 +104,7 @@ private:
     bool isTransformImg_ = false;
     bool isEnd_;
     bool isPattern_ = true;
+    bool isDraw = false;
     int numCam_;
     int frameRate_;
     int countFrame_;
@@ -118,6 +124,8 @@ private:
     cv::VideoCapture web_camFirst_;
     cv::VideoCapture web_camSecond_;
     CalibrationProcessor calibProcessor_;
+
+    std::vector<FileSystem::InformationImageSaved> imageInfo;
 
     StateVideoStream state_video_stream;
     DeviceState state_device;

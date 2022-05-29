@@ -33,6 +33,8 @@ public:
     MenuWindowNewFile(QWidget* parent = 0);
     ~MenuWindowNewFile();
 
+    void setDirs(QString str);
+
 signals:
     void setPathDir(QString path);
     void setParamentCalib(QString pattern, int row, int col,

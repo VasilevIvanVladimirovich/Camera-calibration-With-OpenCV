@@ -115,6 +115,7 @@ QString FileSystem::openCalibSetting(int numCam)
     std::string date;
     int countImg;
     double Rmse;
+    double meanErr;
 
     QString fileResultPath = QString(filePath_ + "Camera%1/" + "Result" + QDir::separator() + "Result.YAML").arg(numCam);
     QFileInfo check_file(fileResultPath);
@@ -124,12 +125,14 @@ QString FileSystem::openCalibSetting(int numCam)
         fs["Date"] >> date;
         fs["CountImg"] >> countImg;
         fs["RMSE"] >> Rmse;
+        fs["MeanErr"] >> meanErr;
         fs["CameraMatrix"] >> cameraMatrix;
         fs["DistCoeffs"] >> distCoeffs;
 
         output.push_back("Date: " + QString::fromStdString(date) + "\n");
         output.push_back("CountImg: " + QString::number(countImg) + "\n");
         output.push_back("RMSE: " + QString::number(Rmse) + "\n");
+        output.push_back("MeanErr: " + QString::number(meanErr) + "\n");
         output.push_back("CameraMatrix: \n");
         output.push_back("[");
         for(int i=0; i<3; i++){
@@ -148,6 +151,168 @@ QString FileSystem::openCalibSetting(int numCam)
         fs.release();
     }
     return output;
+}
+
+QString FileSystem::openStereoSetting()
+{
+    QString output;
+    std::string pattern,size_pattern,date;
+    int pairImg;
+    double rmse;
+    double meanErr;
+
+    cv::Mat cameraMatrix1,cameraMatrix2,distCoeffs1,distCoeffs2;
+    cv::Mat R,T,E,F,R1,R2,P1,P2,Q;
+    QString fileResultPath = QString(filePath_ + "Stereo/Result/Result.YAML");
+    QFileInfo check_file(fileResultPath);
+    if(check_file.exists())
+    {
+        cv::FileStorage fs(fileResultPath.toStdString(), cv::FileStorage::READ);
+        fs["Date"] >> date;
+        fs["Pattern"] >> pattern;
+        fs["SizePattern"] >> size_pattern;
+        fs["CountPair"] >> pairImg;
+        fs["RMSE"] >> rmse;
+        fs["AverageReprojectionErr"] >> meanErr;
+        fs["cameraMatrixFirst"] >> cameraMatrix1;
+        fs["cameraMatrixSecond"] >> cameraMatrix2;
+        fs["DistCoeffsFirst"] >> distCoeffs1;
+        fs["DistCoeffsSecond"] >> distCoeffs2;
+        fs["R"] >> R;
+        fs["T"] >> T;
+        fs["E"] >> E;
+        fs["F"] >> F;
+        fs["R1"] >> R1;
+        fs["R2"] >> R2;
+        fs["P1"] >> P1;
+        fs["P2"] >> P2;
+        fs["Q"] >> Q;
+        fs.release();
+
+        output.push_back("Date: " + QString::fromStdString(date) + "\n");
+        output.push_back("CountPair: " + QString::number(pairImg) + "\n");
+        output.push_back("RMSE: " + QString::number(rmse) + "\n");
+        output.push_back("MeanErr: " + QString::number(meanErr) + "\n");
+        output.push_back("CameraMatrix1: \n");
+        output.push_back("[");
+        for(int i=0; i<3; i++){
+            for(int j=0; j<3; j++){
+                output.push_back(QString::number(cameraMatrix1.at<double>(i,j)) + ", \t");
+            }
+            output.push_back("\n");
+        }
+        output.push_back("]");
+        output.push_back("\n CameraMatrix2: \n");
+        output.push_back("[");
+        for(int i=0; i<3; i++){
+            for(int j=0; j<3; j++){
+                output.push_back(QString::number(cameraMatrix2.at<double>(i,j)) + ", \t");
+            }
+            output.push_back("\n");
+        }
+        output.push_back("]");
+        output.push_back("\n DistCoeffs1: \n");
+        output.push_back("[");
+        for(int i=0; i<3; i++){
+            for(int j=0; j<3; j++){
+                output.push_back(QString::number(distCoeffs1.at<double>(i,j)) + ", \t");
+            }
+            output.push_back("\n");
+        }
+        output.push_back("]");
+        output.push_back("\n DistCoeffs2: \n");
+        output.push_back("[");
+        for(int i=0; i<3; i++){
+            for(int j=0; j<3; j++){
+                output.push_back(QString::number(distCoeffs2.at<double>(i,j)) + ", \t");
+            }
+            output.push_back("\n");
+        }
+        output.push_back("]");
+        output.push_back("\n R: \n");
+        output.push_back("[");
+        for(int i=0; i<R.rows; i++){
+            for(int j=0; j<R.cols; j++){
+                output.push_back(QString::number(R.at<double>(i,j)) + ", \t");
+            }
+            output.push_back("\n");
+        }
+        output.push_back("]");
+        output.push_back("\n T: \n");
+        output.push_back("[");
+        for(int i=0; i<T.rows; i++){
+            for(int j=0; j<T.cols; j++){
+                output.push_back(QString::number(T.at<double>(i,j)) + ", \t");
+            }
+            output.push_back("\n");
+        }
+        output.push_back("]");
+        output.push_back("\n E: \n");
+        output.push_back("[");
+        for(int i=0; i<E.rows; i++){
+            for(int j=0; j<E.cols; j++){
+                output.push_back(QString::number(E.at<double>(i,j)) + ", \t");
+            }
+            output.push_back("\n");
+        }
+        output.push_back("]");
+        output.push_back("\n F: \n");
+        output.push_back("[");
+        for(int i=0; i<F.rows; i++){
+            for(int j=0; j<F.cols; j++){
+                output.push_back(QString::number(F.at<double>(i,j)) + ", \t");
+            }
+            output.push_back("\n");
+        }
+        output.push_back("]");
+        output.push_back("\n R1: \n");
+        output.push_back("[");
+        for(int i=0; i<R1.rows; i++){
+            for(int j=0; j<R1.cols; j++){
+                output.push_back(QString::number(R1.at<double>(i,j)) + ", \t");
+            }
+            output.push_back("\n");
+        }
+        output.push_back("]");
+        output.push_back("\n R2: \n");
+        output.push_back("[");
+        for(int i=0; i<R2.rows; i++){
+            for(int j=0; j<R2.cols; j++){
+                output.push_back(QString::number(R2.at<double>(i,j)) + ", \t");
+            }
+            output.push_back("\n");
+        }
+        output.push_back("]");
+        output.push_back("\n P1: \n");
+        output.push_back("[");
+        for(int i=0; i<P1.rows; i++){
+            for(int j=0; j<P1.cols; j++){
+                output.push_back(QString::number(P1.at<double>(i,j)) + ", \t");
+            }
+            output.push_back("\n");
+        }
+        output.push_back("]");
+        output.push_back("\n P2: \n");
+        output.push_back("[");
+        for(int i=0; i<P2.rows; i++){
+            for(int j=0; j<P2.cols; j++){
+                output.push_back(QString::number(P2.at<double>(i,j)) + ", \t");
+            }
+            output.push_back("\n");
+        }
+        output.push_back("]");
+        output.push_back("\n Q: \n");
+        output.push_back("[");
+        for(int i=0; i<Q.rows; i++){
+            for(int j=0; j<Q.cols; j++){
+                output.push_back(QString::number(Q.at<double>(i,j)) + ", \t");
+            }
+            output.push_back("\n");
+        }
+        output.push_back("]");
+    }
+    return output;
+
 }
 
 void FileSystem::openFileInView(int numImg, bool isChecked)
@@ -257,40 +422,40 @@ void FileSystem::openUndistImgInView(int numImg)
 
 void FileSystem::readYamldistCoefFirst(cv::Mat* distCoeffs)
 {
-    QString name = filePath_ + "Camera1/Result/Result.YAML";
+    QString name = filePath_ + "Stereo/Result/Result.YAML";
     cv::FileStorage fs(name.toStdString(),cv::FileStorage::READ);
-    fs["DistCoeffs"] >> *distCoeffs;
+    fs["DistCoeffsFirst"] >> *distCoeffs;
     fs.release();
 }
 
 void FileSystem::readYamldistCoefSecond(cv::Mat* distCoeffs)
 {
-    QString name = filePath_ + "Camera2/Result/Result.YAML";
+    QString name = filePath_ + "Stereo/Result/Result.YAML";
     cv::FileStorage fs(name.toStdString(),cv::FileStorage::READ);
-    fs["DistCoeffs"] >> *distCoeffs;
+    fs["DistCoeffsSecond"] >> *distCoeffs;
     fs.release();
 }
 
 void FileSystem::readYamlMatrixFirst(cv::Mat* cameraMatrix)
 {
-    QString name = filePath_ + "Camera1/Result/Result.YAML";
+    QString name = filePath_ + "Stereo/Result/Result.YAML";
     cv::FileStorage fs(name.toStdString(),cv::FileStorage::READ);
-    fs["CameraMatrix"] >> *cameraMatrix;
+    fs["cameraMatrixFirst"] >> *cameraMatrix;
     fs.release();
 }
 
 void FileSystem::readYamlMatrixSecond(cv::Mat* cameraMatrix)
 {
-    QString name = filePath_ + "Camera2/Result/Result.YAML";
+    QString name = filePath_ + "Stereo/Result/Result.YAML";
     cv::FileStorage fs(name.toStdString(),cv::FileStorage::READ);
-    fs["CameraMatrix"] >> *cameraMatrix;
+    fs["cameraMatrixSecond"] >> *cameraMatrix;
     fs.release();
 }
 
 
 void FileSystem::saveFileInYaml(std::vector<std::vector<cv::Point3f>> objpoints, std::vector<std::vector<cv::Point2f>> imgpoints,
                                 cv::Mat cameraMatrix,cv::Mat distCoeffs, std::vector<cv::Mat> R, std::vector<cv::Mat> T,
-                                int countImg, QString date, double rmse, QString pattern, std::string sizePatern, int numCam,
+                                int countImg, QString date, double rmse,double meanErr, QString pattern, std::string sizePatern, int numCam,
                                 cv::Size size)
 {
     QString name;
@@ -303,6 +468,7 @@ void FileSystem::saveFileInYaml(std::vector<std::vector<cv::Point3f>> objpoints,
     fs << "Date" << date.toStdString()
        << "CountImg" << countImg
        << "RMSE" << rmse
+       << "MeanErr" << meanErr
        << "CameraMatrix" << cameraMatrix
        << "DistCoeffs"   << distCoeffs
        << "R"   << R
@@ -316,8 +482,7 @@ void FileSystem::saveFileInYaml(std::vector<std::vector<cv::Point3f>> objpoints,
 void FileSystem::saveFileInYamlStereo(cv::Mat cameraMatrix0,cv::Mat cameraMatrix1,cv::Mat distCoeffs0, cv::Mat distCoeffs1,
                                       cv::Mat R, cv::Mat T, cv::Mat E, cv::Mat F,
                                       cv::Mat R1, cv::Mat R2, cv::Mat P1,cv::Mat P2, cv::Mat Q,
-                                      cv::Size imageSize, cv::Rect validRoi0,cv::Rect validRoi1,
-                                      cv::Mat rmap00,cv::Mat rmap01,cv::Mat rmap10,cv::Mat rmap11, double rms,double ReprojErr,
+                                      cv::Size imageSize,double rms,double ReprojErr,
                                       QString date, QString pattern,std::string sizePatern, int countPair)
 {
     QString name;
@@ -345,14 +510,10 @@ void FileSystem::saveFileInYamlStereo(cv::Mat cameraMatrix0,cv::Mat cameraMatrix
        << "P1"   << P1
        << "P2"   << P2
        << "Q"   << Q
-       << "ImgSize" << imageSize
-       << "validRoiFirst" << validRoi0
-       << "validRoiSecond" << validRoi1
-       << "rmap00" << rmap00
-       << "rmap01" << rmap01
-       << "rmap10" << rmap10
-       << "rmap11" << rmap11;
+       << "ImgSize" << imageSize;
     fs.release();
+
+    emit updateCantrolUi();
 }
 
 void FileSystem::saveInImg(QPixmap qpixmap, QString name)
@@ -423,6 +584,36 @@ bool FileSystem::isValidOpenDir()
     return true;
 }
 
+bool FileSystem::isValidOpenDir(QString path)
+{
+    if(!QDir(path + "Camera1").exists())
+        return false;
+    if(!QDir(path + "Camera1/Accumulated").exists())
+        return false;
+    if(!QDir(path + "Camera1/Drawnable").exists())
+        return false;
+    if(!QDir(path + "Camera1/Result").exists())
+        return false;
+    if(!QDir(path + "Camera1/Undistorted").exists())
+        return false;
+
+    if(!QDir(path + "Camera2").exists())
+        return false;
+    if(!QDir(path + "Camera2/Accumulated").exists())
+        return false;
+    if(!QDir(path + "Camera2/Drawnable").exists())
+        return false;
+    if(!QDir(path + "Camera2/Result").exists())
+        return false;
+    if(!QDir(path + "Camera2/Undistorted").exists())
+        return false;
+
+    if(!QDir(path + "Setting").exists())
+        return false;
+
+    return true;
+}
+
 void FileSystem::writeSettingCalibInYaml(int numCamFirst, QString nameCumFirst, int numCamSecond,QString nameCumSecond,
                                          QString pattern, int row, int col,
                                          double checkerSize, double markerSize, QString dictionaryName,
@@ -461,7 +652,9 @@ void FileSystem::writeSettingCalibInYaml(int numCamFirst, QString nameCumFirst, 
     fs.release();
 }
 
-void FileSystem::cameraSettingSave(QString nameCumFirst, int numCamFirst, QString nameCumSecond, int numCamSecond, bool isWebCamera, bool isBaslerCamera)
+void FileSystem::cameraSettingSave(QString nameCumFirst, int numCamFirst, QString nameCumSecond,
+                                   int numCamSecond, bool isWebCamera, bool isBaslerCamera,
+                                   double expose, double gain)
 {
 
 
@@ -493,6 +686,8 @@ void FileSystem::cameraSettingSave(QString nameCumFirst, int numCamFirst, QStrin
        <<"FirstCameraIndex" << numCamFirst
        <<"SecondCameraName" << nameCumSecond.toStdString()
        <<"SecondCameraIndex" << numCamSecond
+       <<"Exposure" << expose
+       <<"Gain" << gain
        <<"Pattern" << pattern
        <<"Row" << row
        <<"Col" << col
@@ -519,6 +714,7 @@ void FileSystem::patternSettingSave(QString pattern, int row, int col, double ch
     std::string nameCumFirst, nameCumSecond;
     bool isWebCamera, isBaslerCamera;
     int numCamFirst, numCamSecond;
+    double expose,gain;
     name = filePath_ + "Setting/" + "Log" + ".YAML";
     std::string fileResultPath = name.toStdString();
     cv::FileStorage fs(fileResultPath,cv::FileStorage::READ);
@@ -526,6 +722,8 @@ void FileSystem::patternSettingSave(QString pattern, int row, int col, double ch
     fs["FirstCameraIndex"] >> numCamFirst;
     fs["SecondCameraName"] >> nameCumSecond;
     fs["SecondCameraIndex"] >> numCamSecond;
+    fs["Exposure"] >> expose;
+    fs["Gain"] >> gain;
     fs["isWebCamera"] >> isWebCamera;
     fs["isBaslerCamera"] >> isBaslerCamera;
     fs["SettingCalibration"] >> setting;
@@ -546,6 +744,8 @@ void FileSystem::patternSettingSave(QString pattern, int row, int col, double ch
        <<"CheckerSize" << checker
        <<"MarkerSize" << marker
        <<"DictionaryName" << dict.toStdString()
+       <<"Exposure" << expose
+       << "Gain" << gain
        <<"isWebCamera" << isWebCamera
        <<"isBaslerCamera" << isBaslerCamera
        <<"SettingCalibration" <<setting
@@ -766,7 +966,7 @@ void FileSystem::writeSettingCalibInYaml(int subIter, int flagsIntFirst, QString
     int SecondCameraIndex;
     std::string pattern;
     int row, col;
-    double checkerSize, markerSize;
+    double checkerSize, markerSize,expose,gain;
     std::string dictionaryName;
     name = filePath_ + "Setting/" + "Log" + ".YAML";
     std::string fileResultPath = name.toStdString();
@@ -776,6 +976,8 @@ void FileSystem::writeSettingCalibInYaml(int subIter, int flagsIntFirst, QString
     fs["FirstCameraIndex"] >> FirstCameraIndex;
     fs["SecondCameraName"] >> SecondCameraName;
     fs["SecondCameraIndex"] >>SecondCameraIndex;
+    fs["Exposure"] >> expose;
+    fs["Gain"] >> gain;
     fs["Pattern"] >> pattern;
     fs["Row"] >> row;
     fs["Col"] >> col;
@@ -794,6 +996,8 @@ void FileSystem::writeSettingCalibInYaml(int subIter, int flagsIntFirst, QString
        <<"FirstCameraIndex" << FirstCameraIndex
        <<"SecondCameraName" << SecondCameraName
        <<"SecondCameraIndex" << SecondCameraIndex
+       <<"Exposure" << expose
+       <<"Gain" << gain
        <<"Pattern" << pattern
        <<"Row" << row
        <<"Col" << col
@@ -832,6 +1036,9 @@ void FileSystem::createSettingDefault()
        <<"CheckerSize" << -1
        <<"MarkerSize" << -1
        <<"DictionaryName" << -1
+       <<"DictionaryName" << -1
+       <<"Exposure" << 0
+       <<"Gain" << 0
        <<"isWebCamera" << 0
        <<"isBaslerCamera" << 0
        <<"SettingCalibration" << setting
@@ -915,6 +1122,20 @@ std::vector<std::vector<cv::Point2f>> FileSystem::getImgPoints(int numCam)
     fs["imgesPoints"] >> vector;
     fs.release();
     return vector;
+}
+
+bool FileSystem::isCalibResult(int numCam)
+{
+    bool isOpen = false;
+    QString fileResultPath;
+    if(numCam == 1)
+        fileResultPath = filePath_ + "Camera1/" + "Result/" + "Result.YAML";
+    else if(numCam == 2)
+        fileResultPath = filePath_ + "Camera2/" + "Result/" + "Result.YAML";
+    cv::FileStorage fs(fileResultPath.toStdString(), cv::FileStorage::READ);
+    isOpen = fs.isOpened();
+    fs.release();
+    return isOpen;
 }
 
 cv::Mat FileSystem::getCameraMatrix(int numCam)
@@ -1034,7 +1255,7 @@ void FileSystem::getTableItems()
         {
             item0 = new QTableWidgetItem();
             item0->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-            (infoCamera1[i].isActive)?item0->setCheckState(Qt::Checked):item0->setCheckState(Qt::Unchecked);
+            (infoCamera1[i].isActive && infoCamera2[i].isActive)?item0->setCheckState(Qt::Checked):item0->setCheckState(Qt::Unchecked);
             item1 = new QTableWidgetItem("Camera1/Camera2");
             item2 = new QTableWidgetItem(QString::fromStdString(infoCamera1[i].state + "/" + infoCamera2[i].state));
             emit outTableItems(item0, item1, item2);
@@ -1043,16 +1264,16 @@ void FileSystem::getTableItems()
             item0 = new QTableWidgetItem();
             item0->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
             (infoCamera1[i].isActive)?item0->setCheckState(Qt::Checked):item0->setCheckState(Qt::Unchecked);
-            item1 = new QTableWidgetItem("Camera1/...");
-            item2 = new QTableWidgetItem(QString::fromStdString(infoCamera1[i].state + "/..."));
+            item1 = new QTableWidgetItem("Camera1");
+            item2 = new QTableWidgetItem(QString::fromStdString(infoCamera1[i].state));
             emit outTableItems(item0, item1, item2);
         }else if(infoCamera2.size() > i )
         {
             item0 = new QTableWidgetItem();
             item0->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
             (infoCamera2[i].isActive)?item0->setCheckState(Qt::Checked):item0->setCheckState(Qt::Unchecked);
-            item1 = new QTableWidgetItem(".../Camera2");
-            item2 = new QTableWidgetItem(QString::fromStdString(".../" + infoCamera2[i].state));
+            item1 = new QTableWidgetItem("Camera2");
+            item2 = new QTableWidgetItem(QString::fromStdString(infoCamera2[i].state));
             emit outTableItems(item0, item1, item2);
         }
     }
@@ -1071,7 +1292,7 @@ QString FileSystem::openProjectSetting()
     int SecondCameraIndex;
     std::string pattern;
     int row, col;
-    double checkerSize, markerSize;
+    double checkerSize, markerSize, expose,gain;
     bool isWebCamera, isBaslerCamera;
     std::string dictionaryName;
     name = filePath_ + "Setting/" + "Log" + ".YAML";
@@ -1086,6 +1307,8 @@ QString FileSystem::openProjectSetting()
     fs["Col"] >> col;
     fs["CheckerSize"] >> checkerSize;
     fs["MarkerSize"] >> markerSize;
+    fs["Exposure"] >> expose;
+    fs["Gain"] >> gain;
     fs["isWebCamera"] >> isWebCamera;
     fs["isBaslerCamera"]>> isBaslerCamera;
     fs["DictionaryName"] >> dictionaryName;
@@ -1098,6 +1321,9 @@ QString FileSystem::openProjectSetting()
     output.append("FirstCameraIndex: " + QString::number(FirstCameraIndex) + '\n');
     output.append("SecondCameraName: " + QString::fromStdString(SecondCameraName) + '\n');
     output.append("SecondCameraIndex: " + QString::number(SecondCameraIndex) + '\n');
+    output.append("Exposure: " + QString::number(expose) + '\n');
+    output.append("Gain: " + QString::number(gain) + '\n');
+
     output.append("Pattern: " + QString::fromStdString(pattern) + '\n');
     output.append("Row: " + QString::number(row) + '\n');
     output.append("Col: " + QString::number(col) + '\n');
@@ -1171,48 +1397,48 @@ QString FileSystem::openProjectSetting()
     return output;
 }
 
-void FileSystem::getOneTableItemsinTableCompare()
+void FileSystem::getOneTableItemsinTableCompare(QString localPath)
 {
-    std::string date;
+    QString name;
     std::string pattern;
-    std::string sizePattern;
-    int countImg;
-    double Rmse;
-    std::string dictionaryName;
-    std::string flags;
-    QString fileResultPath = filePath_ + "Result" + "/" + "Result.YAML";
-    QString nameFile = filePath_;
+    int row, col;
+    name = localPath + "Setting/" + "Log" + ".YAML";
+
+    std::string fileResultPath = name.toStdString();
+    cv::FileStorage fs(fileResultPath,cv::FileStorage::READ);
+    fs["Pattern"] >> pattern;
+    fs["Row"] >> row;
+    fs["Col"] >> col;
+    fs.release();
+    QString nameFile;
+    nameFile = localPath;
     nameFile.chop(1);
     QStringList list = nameFile.split("/");
     nameFile = list.back();
-    cv::FileStorage fs(fileResultPath.toStdString(), cv::FileStorage::READ);
-    fs["Date"] >> date;
-    fs["CountImg"] >> countImg;
-    fs["Pattern"] >> pattern;
-    fs["SizePattern"] >> sizePattern;
-    fs["RMSE"] >> Rmse;
-    //fs["FlagsName"] >> flags;
-    fs.release();
+    QString tmpPath = getFilePath();
+    filePath_ = localPath;
 
-    std::string flagss;
-    fileResultPath = filePath_ + "Setting" + "/" + "Log.YAML";
-    nameFile = filePath_;
-    nameFile.chop(1);
-    list = nameFile.split("/");
-    nameFile = list.back();
-    cv::FileStorage fss(fileResultPath.toStdString(), cv::FileStorage::READ);
-    fss["FlagsName"] >> flagss;
-    fss.release();
+    double cam1Rmse = 0,cam2Rmse = 0,stereoRmse = 0;
+    cam1Rmse = getRmse(1);
+    cam2Rmse = getRmse(2);
+    stereoRmse = getStereoRmse();
 
-    QTableWidgetItem *itemFile = new QTableWidgetItem(nameFile);
-    QTableWidgetItem *itemDate = new QTableWidgetItem(QString::fromStdString(date));
-    QTableWidgetItem *itemCount = new QTableWidgetItem(QString::number(countImg));
-    QTableWidgetItem *itemPattern = new QTableWidgetItem(QString::fromStdString(pattern));
-    QTableWidgetItem *itemSizePattern = new QTableWidgetItem(QString::fromStdString(sizePattern));
-    QTableWidgetItem *itemRmse = new QTableWidgetItem(QString::number(Rmse));
-    QTableWidgetItem *itemFlags = new QTableWidgetItem(QString::fromStdString(flagss));
 
-    emit outTableItemsCompare(itemFile, itemDate, itemCount, itemPattern,itemSizePattern, itemRmse, itemFlags);
+    QString camSetting1 = QString((QString::fromStdString(pattern) + "/(%1X%2)*%3")).arg(row).arg(col).arg(getCountImg(1));
+    QString camSetting2 = QString((QString::fromStdString(pattern) + "/(%1X%2)*%3")).arg(row).arg(col).arg(getCountImg(2));
+
+
+    QTableWidgetItem *itemFile_Item = new QTableWidgetItem(nameFile);
+    QTableWidgetItem *camSetting1_Item = new QTableWidgetItem(camSetting1);
+    QTableWidgetItem *cam1Rmse_Item = new QTableWidgetItem(QString("%1").arg(cam1Rmse));
+    QTableWidgetItem *camSetting2_Item = new QTableWidgetItem(camSetting2);
+    QTableWidgetItem *cam2Rmse_Item = new QTableWidgetItem(QString("%1").arg(cam2Rmse));
+    QTableWidgetItem *stereoRmse_Item = new QTableWidgetItem(QString("%1").arg(stereoRmse));
+
+    filePath_ = tmpPath;
+
+    emit outTableItemsCompare(itemFile_Item, camSetting1_Item, cam1Rmse_Item,
+                              camSetting2_Item,cam2Rmse_Item, stereoRmse_Item);
 }
 
 void FileSystem::getTableItemsinTableCompare()
@@ -1224,9 +1450,8 @@ void FileSystem::getTableItemsinTableCompare()
     for(int i = 2;i<fileList.count();i++)
     {
         localPathDir = fileList[i].absoluteFilePath() + "/";
-        filePath_ = localPathDir;
-        if(isValidOpenDir())
-            getOneTableItemsinTableCompare();
+        if(isValidOpenDir(localPathDir))
+            getOneTableItemsinTableCompare(localPathDir);
     }
 }
 
@@ -1258,6 +1483,126 @@ std::vector<FileSystem::TempatesPattern> FileSystem::getTempatesPattern()
     fs["tempatesPattern"] >> tempatesPattern;
     fs.release();
     return tempatesPattern;
+}
+
+double FileSystem::getExpose()
+{
+    double expose;
+    QString fileResultPath = filePath_ + "Setting" + "/" + "Log.YAML";
+    cv::FileStorage fs(fileResultPath.toStdString(), cv::FileStorage::READ);
+    fs["Exposure"] >> expose;
+    fs.release();
+    return expose;
+}
+
+double FileSystem::getGain()
+{
+    double gain;
+    QString fileResultPath = filePath_ + "Setting" + "/" + "Log.YAML";
+    cv::FileStorage fs(fileResultPath.toStdString(), cv::FileStorage::READ);
+    fs["Gain"] >> gain;
+    fs.release();
+    return gain;
+}
+
+double FileSystem::getRmse(int numCam)
+{
+    double rmse;
+    QString fileResultPath = filePath_ + QString("Camera%1/Result/Result.YAML").arg(numCam);
+    cv::FileStorage fs(fileResultPath.toStdString(), cv::FileStorage::READ);
+    fs["RMSE"] >> rmse;
+    fs.release();
+    return rmse;
+}
+
+double FileSystem::getStereoRmse()
+{
+    double rmse;
+    QString fileResultPath = filePath_ + QString("Stereo/Result/Result.YAML");
+    cv::FileStorage fs(fileResultPath.toStdString(), cv::FileStorage::READ);
+    fs["RMSE"] >> rmse;
+    fs.release();
+    return rmse;
+}
+
+std::vector<cv::Mat> FileSystem::getRvec(int numCam)
+{
+    std::vector<cv::Mat> R;
+    QString fileResultPath = filePath_ + QString("Camera%1/Result/Result.YAML").arg(numCam);
+    cv::FileStorage fs(fileResultPath.toStdString(), cv::FileStorage::READ);
+    fs["R"] >> R;
+    fs.release();
+    return R;
+}
+
+std::vector<cv::Mat> FileSystem::getTvec(int numCam)
+{
+    std::vector<cv::Mat> T;
+    QString fileResultPath = filePath_ + QString("Camera%1/Result/Result.YAML").arg(numCam);
+    cv::FileStorage fs(fileResultPath.toStdString(), cv::FileStorage::READ);
+    fs["T"] >> T;
+    fs.release();
+    return T;
+}
+
+cv::Mat FileSystem::getR1()
+{
+    cv::Mat out;
+    QString name = filePath_ + "Stereo/Result/Result.YAML";
+    cv::FileStorage fs(name.toStdString(),cv::FileStorage::READ);
+    fs["R1"] >> out;
+    fs.release();
+    return out;
+}
+
+cv::Mat FileSystem::getR2()
+{
+    cv::Mat out;
+    QString name = filePath_ + "Stereo/Result/Result.YAML";
+    cv::FileStorage fs(name.toStdString(),cv::FileStorage::READ);
+    fs["R2"] >> out;
+    fs.release();
+    return out;
+}
+
+cv::Mat FileSystem::getP1()
+{
+    cv::Mat out;
+    QString name = filePath_ + "Stereo/Result/Result.YAML";
+    cv::FileStorage fs(name.toStdString(),cv::FileStorage::READ);
+    fs["P1"] >> out;
+    fs.release();
+    return out;
+}
+
+cv::Mat FileSystem::getP2()
+{
+    cv::Mat out;
+    QString name = filePath_ + "Stereo/Result/Result.YAML";
+    cv::FileStorage fs(name.toStdString(),cv::FileStorage::READ);
+    fs["P2"] >> out;
+    fs.release();
+    return out;
+}
+
+double FileSystem::getMeanErr(int numCam)
+{
+    double meanErr;
+    QString fileResultPath = filePath_ + QString("Camera%1/Result/Result.YAML").arg(numCam);
+    cv::FileStorage fs(fileResultPath.toStdString(), cv::FileStorage::READ);
+    fs["MeanErr"] >> meanErr;
+    fs.release();
+    return meanErr;
+}
+
+double FileSystem::getCountImg(int numCam)
+{
+    int count = 0;
+    QString fileResultPath = filePath_ + QString("Camera%1/Result/Result.YAML").arg(numCam);
+    cv::FileStorage fs(fileResultPath.toStdString(), cv::FileStorage::READ);
+    fs["CountImg"] >> count;
+    fs.release();
+    return count;
 }
 
 bool FileSystem::isWebCamera()
@@ -1293,7 +1638,7 @@ void FileSystem::saveInfoCamera1(std::vector<InformationImageSaved> imageInfo1)
     int SecondCameraIndex;
     std::string pattern;
     int row, col;
-    double checkerSize, markerSize;
+    double checkerSize, markerSize,expose,gain;
     bool isWebCamera, isBaslerCamera;
     std::string dictionaryName;
     name = filePath_ + "Setting/" + "Log" + ".YAML";
@@ -1303,6 +1648,8 @@ void FileSystem::saveInfoCamera1(std::vector<InformationImageSaved> imageInfo1)
     fs["FirstCameraIndex"] >> FirstCameraIndex;
     fs["SecondCameraName"] >> SecondCameraName;
     fs["SecondCameraIndex"] >> SecondCameraIndex;
+    fs["Exposure"] >> expose;
+    fs["Gain"] >> gain;
     fs["Pattern"] >> pattern;
     fs["Row"] >> row;
     fs["Col"] >> col;
@@ -1321,6 +1668,8 @@ void FileSystem::saveInfoCamera1(std::vector<InformationImageSaved> imageInfo1)
        <<"FirstCameraIndex" << FirstCameraIndex
        <<"SecondCameraName" << SecondCameraName
        <<"SecondCameraIndex" << SecondCameraIndex
+       <<"Exposure" << expose
+       <<"Gain" << gain
        <<"Pattern" << pattern
        <<"Row" << row
        <<"Col" << col
@@ -1347,7 +1696,7 @@ void FileSystem::saveInfoCamera2(std::vector<InformationImageSaved> imageInfo2)
     int SecondCameraIndex;
     std::string pattern;
     int row, col;
-    double checkerSize, markerSize;
+    double checkerSize, markerSize, expose,gain;
     bool isWebCamera, isBaslerCamera;
     std::string dictionaryName;
     name = filePath_ + "Setting/" + "Log" + ".YAML";
@@ -1357,6 +1706,8 @@ void FileSystem::saveInfoCamera2(std::vector<InformationImageSaved> imageInfo2)
     fs["FirstCameraIndex"] >> FirstCameraIndex;
     fs["SecondCameraName"] >> SecondCameraName;
     fs["SecondCameraIndex"] >>SecondCameraIndex;
+    fs["Exposure"] >> expose;
+    fs["Gain"] >> gain;
     fs["Pattern"] >> pattern;
     fs["Row"] >> row;
     fs["Col"] >> col;
@@ -1375,6 +1726,140 @@ void FileSystem::saveInfoCamera2(std::vector<InformationImageSaved> imageInfo2)
        <<"FirstCameraIndex" << FirstCameraIndex
        <<"SecondCameraName" << SecondCameraName
        <<"SecondCameraIndex" << SecondCameraIndex
+       <<"Exposure" << expose
+       <<"Gain" << gain
+       <<"Pattern" << pattern
+       <<"Row" << row
+       <<"Col" << col
+       <<"CheckerSize" << checkerSize
+       <<"MarkerSize" << markerSize
+       <<"DictionaryName" << dictionaryName
+       <<"isWebCamera" << isWebCamera
+       <<"isBaslerCamera" << isBaslerCamera
+       <<"SettingCalibration" << setting
+       <<"ImageInfoCamera1"<<imageInfo1
+       <<"ImageInfoCamera2"<<imageInfo2;
+    fss.release();
+}
+
+void FileSystem::zeroingCalibInfoCamera1()
+{
+    std::string flagsNameFirst;
+    std::string flagsNameSecond;
+    QString name;
+    std::vector<InformationImageSaved> imageInfo1;
+    std::vector<InformationImageSaved> imageInfo2;
+    SettingCalibration setting;
+    std::string FirstCameraName;
+    int FirstCameraIndex;
+    std::string SecondCameraName;
+    int SecondCameraIndex;
+    std::string pattern;
+    int row, col;
+    double checkerSize, markerSize,expose,gain;
+    bool isWebCamera, isBaslerCamera;
+    std::string dictionaryName;
+    name = filePath_ + "Setting/" + "Log" + ".YAML";
+    std::string fileResultPath = name.toStdString();
+    cv::FileStorage fs(fileResultPath,cv::FileStorage::READ);
+    fs["FirstCameraName"] >>FirstCameraName;
+    fs["FirstCameraIndex"] >> FirstCameraIndex;
+    fs["SecondCameraName"] >> SecondCameraName;
+    fs["SecondCameraIndex"] >>SecondCameraIndex;
+    fs["Exposure"] >> expose;
+    fs["Gain"] >> gain;
+    fs["Pattern"] >> pattern;
+    fs["Row"] >> row;
+    fs["Col"] >> col;
+    fs["CheckerSize"] >> checkerSize;
+    fs["MarkerSize"] >> markerSize;
+    fs["DictionaryName"] >> dictionaryName;
+    fs["ImageInfoCamera1"]>>imageInfo1;
+    fs["ImageInfoCamera2"]>>imageInfo2;
+    fs["isWebCamera"] >> isWebCamera;
+    fs["isBaslerCamera"]>> isBaslerCamera;
+    fs["SettingCalibration"]>> setting;
+    fs.release();
+
+    for(int i = 0;i<imageInfo1.size();i++)
+    {
+        imageInfo1[i].isCalib = 0;
+    }
+
+    cv::FileStorage fss(fileResultPath,cv::FileStorage::WRITE);
+    fss
+       <<"FirstCameraName" << FirstCameraName
+       <<"FirstCameraIndex" << FirstCameraIndex
+       <<"SecondCameraName" << SecondCameraName
+       <<"SecondCameraIndex" << SecondCameraIndex
+       <<"Exposure" << expose
+       <<"Gain" << gain
+       <<"Pattern" << pattern
+       <<"Row" << row
+       <<"Col" << col
+       <<"CheckerSize" << checkerSize
+       <<"MarkerSize" << markerSize
+       <<"DictionaryName" << dictionaryName
+       <<"isWebCamera" << isWebCamera
+       <<"isBaslerCamera" << isBaslerCamera
+       <<"SettingCalibration" << setting
+       <<"ImageInfoCamera1"<<imageInfo1
+       <<"ImageInfoCamera2"<<imageInfo2;
+    fss.release();
+}
+
+void FileSystem::zeroingCalibInfoCamera2()
+{
+    std::string flagsNameFirst;
+    std::string flagsNameSecond;
+    QString name;
+    std::vector<InformationImageSaved> imageInfo1;
+    std::vector<InformationImageSaved> imageInfo2;
+    SettingCalibration setting;
+    std::string FirstCameraName;
+    int FirstCameraIndex;
+    std::string SecondCameraName;
+    int SecondCameraIndex;
+    std::string pattern;
+    int row, col;
+    double checkerSize, markerSize,expose,gain;
+    bool isWebCamera, isBaslerCamera;
+    std::string dictionaryName;
+    name = filePath_ + "Setting/" + "Log" + ".YAML";
+    std::string fileResultPath = name.toStdString();
+    cv::FileStorage fs(fileResultPath,cv::FileStorage::READ);
+    fs["FirstCameraName"] >>FirstCameraName;
+    fs["FirstCameraIndex"] >> FirstCameraIndex;
+    fs["SecondCameraName"] >> SecondCameraName;
+    fs["SecondCameraIndex"] >>SecondCameraIndex;
+    fs["Exposure"] >> expose;
+    fs["Gain"] >> gain;
+    fs["Pattern"] >> pattern;
+    fs["Row"] >> row;
+    fs["Col"] >> col;
+    fs["CheckerSize"] >> checkerSize;
+    fs["MarkerSize"] >> markerSize;
+    fs["DictionaryName"] >> dictionaryName;
+    fs["ImageInfoCamera1"]>>imageInfo1;
+    fs["ImageInfoCamera2"]>>imageInfo2;
+    fs["isWebCamera"] >> isWebCamera;
+    fs["isBaslerCamera"]>> isBaslerCamera;
+    fs["SettingCalibration"]>> setting;
+    fs.release();
+
+    for(int i = 0;i<imageInfo2.size();i++)
+    {
+        imageInfo2[i].isCalib = 0;
+    }
+
+    cv::FileStorage fss(fileResultPath,cv::FileStorage::WRITE);
+    fss
+       <<"FirstCameraName" << FirstCameraName
+       <<"FirstCameraIndex" << FirstCameraIndex
+       <<"SecondCameraName" << SecondCameraName
+       <<"SecondCameraIndex" << SecondCameraIndex
+       <<"Exposure" << expose
+       <<"Gain" << gain
        <<"Pattern" << pattern
        <<"Row" << row
        <<"Col" << col
@@ -1408,7 +1893,7 @@ void FileSystem::saveCalibrationSetting(SettingCalibration setting)
     int SecondCameraIndex;
     std::string pattern;
     int row, col;
-    double checkerSize, markerSize;
+    double checkerSize, markerSize,expose,gain;
     bool isWebCamera, isBaslerCamera;
     std::string dictionaryName;
     name = filePath_ + "Setting/" + "Log" + ".YAML";
@@ -1418,6 +1903,8 @@ void FileSystem::saveCalibrationSetting(SettingCalibration setting)
     fs["FirstCameraIndex"] >> FirstCameraIndex;
     fs["SecondCameraName"] >> SecondCameraName;
     fs["SecondCameraIndex"] >>SecondCameraIndex;
+    fs["Exposure"] >> expose;
+    fs["Gain"] >> gain;
     fs["Pattern"] >> pattern;
     fs["Row"] >> row;
     fs["Col"] >> col;
@@ -1436,6 +1923,8 @@ void FileSystem::saveCalibrationSetting(SettingCalibration setting)
        <<"FirstCameraIndex" << FirstCameraIndex
        <<"SecondCameraName" << SecondCameraName
        <<"SecondCameraIndex" << SecondCameraIndex
+       <<"Exposure" << expose
+       <<"Gain" << gain
        <<"Pattern" << pattern
        <<"Row" << row
        <<"Col" << col
@@ -1452,14 +1941,14 @@ void FileSystem::saveCalibrationSetting(SettingCalibration setting)
 
 FileSystem::SettingCalibration FileSystem::getCalibrationSetting()
 {
-    SettingCalibration setting;
+    FileSystem::SettingCalibration s;
     QString name;
-    name = filePath_ + "Setting/" + "Log" + ".YAML";
+    name = filePath_ + "Setting/" + "Log.YAML";
     std::string fileResultPath = name.toStdString();
     cv::FileStorage fs(fileResultPath,cv::FileStorage::READ);
-    fs["SettingCalibration"]>> setting;
+    fs["SettingCalibration"]>> s;
     fs.release();
-    return setting;
+    return s;
 }
 
 void FileSystem::removeTemplates(int i)
@@ -1467,4 +1956,134 @@ void FileSystem::removeTemplates(int i)
     std::vector<TempatesPattern> tempatesPattern = getTempatesPattern();
     tempatesPattern.erase(tempatesPattern.begin() + i);
     saveTempatesPattern(tempatesPattern);
+}
+
+void FileSystem::parseResultCalibr(int numCam)
+{
+    std::string flagsNameFirst;
+    std::string flagsNameSecond;
+    QString name;
+    std::vector<InformationImageSaved> imageInfo1;
+    std::vector<InformationImageSaved> imageInfo2;
+    SettingCalibration setting;
+    std::string FirstCameraName;
+    int FirstCameraIndex;
+    std::string SecondCameraName;
+    int SecondCameraIndex;
+    std::string pattern;
+    int row, col;
+    double checkerSize, markerSize,expose,gain;
+    bool isWebCamera, isBaslerCamera;
+    std::string dictionaryName;
+    name = filePath_ + "Setting/" + "Log" + ".YAML";
+    std::string fileResultPath = name.toStdString();
+    cv::FileStorage fs(fileResultPath,cv::FileStorage::READ);
+    fs["FirstCameraName"] >>FirstCameraName;
+    fs["FirstCameraIndex"] >> FirstCameraIndex;
+    fs["SecondCameraName"] >> SecondCameraName;
+    fs["SecondCameraIndex"] >> SecondCameraIndex;
+    fs["Exposure"] >> expose;
+    fs["Gain"] >> gain;
+    fs["Pattern"] >> pattern;
+    fs["Row"] >> row;
+    fs["Col"] >> col;
+    fs["CheckerSize"] >> checkerSize;
+    fs["MarkerSize"] >> markerSize;
+    fs["DictionaryName"] >> dictionaryName;
+    fs["isWebCamera"] >> isWebCamera;
+    fs["isBaslerCamera"]>> isBaslerCamera;
+    fs["SettingCalibration"]>> setting;
+    fs["ImageInfoCamera1"]>>imageInfo1;
+    fs["ImageInfoCamera2"]>>imageInfo2;
+    fs.release();
+    cv::Mat cameraMatrix;
+    cv::Mat disCoeffs;
+
+    if(isCalibResult(numCam))
+    {
+        cameraMatrix = getCameraMatrix(numCam);
+        disCoeffs = getDistMatrix(numCam);
+
+        setting.fx = cameraMatrix.at<double>(0);
+        setting.cx = cameraMatrix.at<double>(2);
+        setting.fy = cameraMatrix.at<double>(4);
+        setting.cy = cameraMatrix.at<double>(5);
+        setting.k1 = disCoeffs.at<double>(0);
+        setting.k2 = disCoeffs.at<double>(1);
+        setting.k3 = disCoeffs.at<double>(4);
+    }else
+    {
+        setting.fx = 0;
+        setting.cx = 0;
+        setting.fy = 0;
+        setting.cy = 0;
+        setting.k1 = 0;
+        setting.k2 = 0;
+        setting.k3 = 0;
+    }
+
+    if(isCalibResult(1))
+    {
+        cv::Mat cameraMatrix1 = getCameraMatrix(1);
+        cv::Mat disCoeffs1 = getDistMatrix(1);
+        setting.fx1 = cameraMatrix1.at<double>(0);
+        setting.cx1 = cameraMatrix1.at<double>(2);
+        setting.fy1 = cameraMatrix1.at<double>(4);
+        setting.cy1 = cameraMatrix1.at<double>(5);
+
+        setting.k1S1 = disCoeffs1.at<double>(0);
+        setting.k2S1 = disCoeffs1.at<double>(1);
+        setting.k3S1 = disCoeffs1.at<double>(4);
+    }else{
+        setting.fx1 = 0;
+        setting.cx1 = 0;
+        setting.fy1 = 0;
+        setting.cy1 = 0;
+
+        setting.k1S1 = 0;
+        setting.k2S1 = 0;
+        setting.k3S1 = 0;
+    }
+    if(isCalibResult(2))
+    {
+        cv::Mat cameraMatrix2 = getCameraMatrix(2);
+        cv::Mat disCoeffs2 = getDistMatrix(2);
+        setting.fx2 = cameraMatrix2.at<double>(0);
+        setting.cx2 = cameraMatrix2.at<double>(2);
+        setting.fy2 = cameraMatrix2.at<double>(4);
+        setting.cy2 = cameraMatrix2.at<double>(5);
+
+        setting.k1S2 = disCoeffs2.at<double>(0);
+        setting.k2S2 = disCoeffs2.at<double>(1);
+        setting.k3S2 = disCoeffs2.at<double>(4);
+    }else{
+        setting.fx2 = 0;
+        setting.cx2 = 0;
+        setting.fy2 = 0;
+        setting.cy2 = 0;
+
+        setting.k1S2 = 0;
+        setting.k2S2 = 0;
+        setting.k3S2 = 0;
+    }
+    cv::FileStorage fss(fileResultPath,cv::FileStorage::WRITE);
+    fss
+       <<"FirstCameraName" << FirstCameraName
+       <<"FirstCameraIndex" << FirstCameraIndex
+       <<"SecondCameraName" << SecondCameraName
+       <<"SecondCameraIndex" << SecondCameraIndex
+       <<"Exposure" << expose
+       <<"Gain" << gain
+       <<"Pattern" << pattern
+       <<"Row" << row
+       <<"Col" << col
+       <<"CheckerSize" << checkerSize
+       <<"MarkerSize" << markerSize
+       <<"DictionaryName" << dictionaryName
+       <<"isWebCamera" << isWebCamera
+       <<"isBaslerCamera" << isBaslerCamera
+       <<"SettingCalibration" << setting
+       <<"ImageInfoCamera1" << imageInfo1
+       <<"ImageInfoCamera2" << imageInfo2;
+    fss.release();
 }

@@ -14,7 +14,9 @@ SettingCameraWindow::~SettingCameraWindow()
 void SettingCameraWindow::initUi()
 {
 
+    QVBoxLayout* layout_main = new QVBoxLayout;
     QFormLayout *layout_importCameras = new QFormLayout;
+    layout_main->addLayout(layout_importCameras);
 
     box_cameraInput = new QComboBox();
     box_cameraInput->addItem("WebCamera");
@@ -22,28 +24,43 @@ void SettingCameraWindow::initUi()
 
     connect(box_cameraInput,SIGNAL(currentIndexChanged(int)),this,SLOT(on_box_cameraInput_IndexChanged(int)));
 
-    layout_importCameras->addRow("Select input camera", box_cameraInput);
+    layout_importCameras->addRow("Device", box_cameraInput);
 
     box_cameraFirst = new QComboBox();
-    layout_importCameras->addRow("Camera Number first:", box_cameraFirst);
+    layout_importCameras->addRow("Cam1:", box_cameraFirst);
 
     box_cameraSecond = new QComboBox();
-    layout_importCameras->addRow("Camera Number Second:", box_cameraSecond);
+    layout_importCameras->addRow("Cam2:", box_cameraSecond);
+
+    expose = new QDoubleSpinBox();
+    layout_importCameras->addRow("Exposure:", expose);
+    expose->setMinimum(10);
+    expose->setMaximum(1000000);
+    expose->setEnabled(false);
+
+
+    gain = new QDoubleSpinBox();
+    layout_importCameras->addRow("Gain:", gain);
+    gain->setMinimum(0);
+    gain->setMaximum(18);
+    gain->setEnabled(false);
 
     connect(box_cameraFirst,SIGNAL(currentIndexChanged(int)),this,SLOT(on_box_cameraFirst_IndexChanged(int)));
 
     box_cameraFirst->addItem("NULL");
     box_cameraSecond->addItem("NULL");
     QList<QCameraDevice> cameras = QMediaDevices::videoInputs();
+    int i = 1;
     for (const QCameraDevice &cameraDevice : cameras)
     {
-        box_cameraFirst->addItem(cameraDevice.description());
-        box_cameraSecond->addItem(cameraDevice.description());
+        box_cameraFirst->insertItem(i,cameraDevice.description());
+        box_cameraSecond->insertItem(i,cameraDevice.description());
+        i++;
     }
 
-    btnSetOk = new QPushButton("Ok");
+    btnSetOk = new QPushButton("Apply");
     btnSetCancel = new QPushButton("Cancel");
-    layout_importCameras->addRow(btnSetOk, btnSetCancel);
+    layout_main->addWidget(btnSetOk,0, Qt::AlignRight);
 
     connect(btnSetOk, SIGNAL(clicked()), this, SLOT(on_btnSetOk_clicked()));
     connect(btnSetCancel, SIGNAL(clicked()), this, SLOT(on_btnSetCancel_clicked()));
@@ -51,7 +68,7 @@ void SettingCameraWindow::initUi()
     QGroupBox *groupBox= new QGroupBox(tr("Camera Setting"));
     groupBox->setAlignment(Qt::AlignCenter);
 
-    groupBox->setLayout(layout_importCameras);
+    groupBox->setLayout(layout_main);
 
     QHBoxLayout* layout_out = new QHBoxLayout;
     layout_out->addWidget(groupBox);
@@ -63,6 +80,9 @@ void SettingCameraWindow::on_box_cameraInput_IndexChanged(int index)
     //вывод списка баслер камер
     if(index == 1)
     {
+        expose->setEnabled(true);
+        gain->setEnabled(true);
+
         box_cameraFirst->clear();
         box_cameraSecond->clear();
 
@@ -94,7 +114,7 @@ void SettingCameraWindow::on_box_cameraInput_IndexChanged(int index)
         int n = pTl->EnumerateDevices(lstDevices);
         if(n == 0)
         {
-            qDebug() << "Cannot find any camera!";
+            emit sendTerminalStr("Cannot find any camera!");
             return;
         }
         Pylon::DeviceInfoList_t::const_iterator it;
@@ -103,23 +123,26 @@ void SettingCameraWindow::on_box_cameraInput_IndexChanged(int index)
         {
 
             name = it->GetFriendlyName();
-            qDebug()<<name.toStdString().c_str();
-            box_cameraFirst->addItem(name);
-            box_cameraSecond->addItem(name);
+            box_cameraFirst->insertItem(1,name);
+            box_cameraSecond->insertItem(1,name);
         }
 
         Pylon::PylonTerminate();
     }else if(index == 0) // вывод списка вебкамер
     {
+        expose->setEnabled(false);
+        gain->setEnabled(false);
         box_cameraFirst->clear();
         box_cameraSecond->clear();
 
         box_cameraFirst->addItem("NULL");
         box_cameraSecond->addItem("NULL");
         QList<QCameraDevice> cameras = QMediaDevices::videoInputs();
+        int i = 1;
         for (const QCameraDevice &cameraDevice : cameras) {
-            box_cameraFirst->addItem(cameraDevice.description());
-            box_cameraSecond->addItem(cameraDevice.description());
+            box_cameraFirst->insertItem(i,cameraDevice.description());
+            box_cameraSecond->insertItem(i,cameraDevice.description());
+            i++;
         }
     }
 }
@@ -153,10 +176,10 @@ void SettingCameraWindow::on_btnSetOk_clicked()
 
     fileSystem_->cameraSettingSave(nameCumFirst,numCamFirst,
                                    nameCumSecond, numCamSecond,
-                                   isWebCamera, isBaslerCamera);
+                                   isWebCamera, isBaslerCamera,
+                                   expose->value(),gain->value());
+    emit sendTerminalStr(QString("Camera added: \n Camera1: %1 \n Camera2: %2").arg(nameCumFirst).arg(nameCumSecond));
     emit sendUpdate();
-
-    close();
 }
 
 void SettingCameraWindow::on_btnSetCancel_clicked()

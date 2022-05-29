@@ -17,7 +17,6 @@ void SettingPatternWindow::on_tree_inputPatern_clicked(QTreeWidgetItem *item, in
     spinBox_colCount->setEnabled(false);
 
     spinBox_markerSize->setEnabled(false);
-    spinBox_checkerSize->setEnabled(false);
     tree_inputDictionaryName->setEnabled(false);
 
     for(unsigned short int i = 0; tree_inputPatern->topLevelItemCount() > i;i++)
@@ -32,7 +31,6 @@ void SettingPatternWindow::on_tree_inputPatern_clicked(QTreeWidgetItem *item, in
     if(pattern == "Chessboard" || pattern == "Circles" || pattern == "Assymetric Circles")
     {
         spinBox_markerSize->setValue(0);
-        spinBox_checkerSize->setValue(0);
         for(unsigned short int i = 0; tree_inputDictionaryName->topLevelItemCount() > i;i++)
         {
             QTreeWidgetItem *itemm = tree_inputDictionaryName->topLevelItem( i );
@@ -48,7 +46,6 @@ void SettingPatternWindow::on_tree_inputPatern_clicked(QTreeWidgetItem *item, in
         spinBox_colCount->setEnabled(true);
 
         spinBox_markerSize->setEnabled(true);
-        spinBox_checkerSize->setEnabled(true);
         tree_inputDictionaryName->setEnabled(true);
     }
 }
@@ -103,7 +100,6 @@ void SettingPatternWindow::on_btnSetOk_clicked()
                                     dictionaryName);
 
     emit sendUpdate();
-    close();
 }
 
 void SettingPatternWindow::on_btnSetCancel_clicked()
@@ -142,7 +138,7 @@ void SettingPatternWindow::on_btnSetNewTemp_clicked()
 
 void SettingPatternWindow::on_btnSetDelTemp_clicked()
 {
-    fileSystem_->removeTemplates(templatesPattern->currentIndex());
+    fileSystem_->removeTemplates(templatesPattern->count()-templatesPattern->currentIndex());
     updateTemplates();
 }
 
@@ -152,9 +148,7 @@ void SettingPatternWindow::on_box_templatesPattern_IndexChanged(int)
 
     for(unsigned short int i = 0; tree_inputPatern->topLevelItemCount() > i;i++)
     {
-        qDebug()<<"for"<<i;
         QTreeWidgetItem *item = tree_inputPatern->topLevelItem( i );
-        qDebug()<<item->text(0)<<"="<<currentText.section("/",0,0);
         if(item->text(0) == currentText.section("/",0,0))
         {
             on_tree_inputPatern_clicked(item, 0);
@@ -172,7 +166,7 @@ void SettingPatternWindow::on_box_templatesPattern_IndexChanged(int)
     }
     spinBox_rowCount->setValue(currentText.section("/",1,1).toInt());
     spinBox_colCount->setValue(currentText.section("/",2,2).toInt());
-    spinBox_checkerSize->setValue(0);
+    spinBox_checkerSize->setValue(currentText.section("/",3,3).toInt());
     spinBox_markerSize->setValue(0);
     if(currentText.section("/",0,0) == "ChArUco")
     {
@@ -181,9 +175,7 @@ void SettingPatternWindow::on_box_templatesPattern_IndexChanged(int)
 
         for(unsigned short int i = 0; tree_inputDictionaryName->topLevelItemCount() > i;i++)
         {
-            qDebug()<<"for"<<i;
             QTreeWidgetItem *item = tree_inputDictionaryName->topLevelItem( i );
-            qDebug()<<item->text(0)<<"="<<currentText.section("/",3,3);
             if(item->text(0) == currentText.section("/",3,3))
             {
                 on_tree_tree_inputDictionaryName_clicked(item,0);
@@ -234,7 +226,6 @@ void SettingPatternWindow::initUi()
     QVBoxLayout* layout_rowPatternSetting = new QVBoxLayout;
     QVBoxLayout* layout_checkerSizeSetting = new QVBoxLayout;
     QVBoxLayout* layout_markerSizeSetting = new QVBoxLayout;
-    QVBoxLayout* layout_dictionarySetting = new QVBoxLayout;
 
     label_row = new QLabel;
     label_row->setText("Row");
@@ -290,36 +281,33 @@ void SettingPatternWindow::initUi()
     items_DictionaryName.append(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(QString("DICT_APRILTAG_25h9"))));
     items_DictionaryName.append(new QTreeWidgetItem(static_cast<QTreeWidget *>(nullptr), QStringList(QString("DICT_APRILTAG_36h10"))));
     tree_inputDictionaryName->insertTopLevelItems(0, items_DictionaryName);
-    layout_dictionarySetting->addWidget(tree_inputDictionaryName);
 
     layout_rowColPatternSetting->addLayout(layout_rowPatternSetting);
     layout_rowColPatternSetting->addLayout(layout_colPatternSetting);
     layout_rowColPatternSetting->addLayout(layout_checkerSizeSetting);
     layout_rowColPatternSetting->addLayout(layout_markerSizeSetting);
-    layout_rowColPatternSetting->addLayout(layout_dictionarySetting);
+
+    layout_chekingPatternSetting->addRow(tree_inputPatern,tree_inputDictionaryName);
 
     spinBox_rowCount->setEnabled(false);
     spinBox_colCount->setEnabled(false);
 
     spinBox_markerSize->setEnabled(false);
-    spinBox_checkerSize->setEnabled(false);
     tree_inputDictionaryName->setEnabled(false);
 
 //
-    layout_chekingPatternSetting->addRow("Select pattern", tree_inputPatern);
+
 
     layout_main->addLayout(layout_chekingPatternSetting);
     layout_main->addLayout(layout_rowColPatternSetting);
 
-    btnSetOk = new QPushButton("Ok");
+    btnSetOk = new QPushButton("Apply");
     btnSetCancel = new QPushButton("Cancel");
 
     connect(btnSetOk, SIGNAL(clicked()), this, SLOT(on_btnSetOk_clicked()));
     connect(btnSetCancel, SIGNAL(clicked()), this, SLOT(on_btnSetCancel_clicked()));
 
-    QFormLayout *layout_buttons = new QFormLayout;
-    layout_buttons->addRow(btnSetOk, btnSetCancel);
-    layout_main->addLayout(layout_buttons);
+    layout_main->addWidget(btnSetOk,0,Qt::AlignRight);
 
     QGroupBox *groupBox= new QGroupBox(tr("Pattern Setting"));
     groupBox->setAlignment(Qt::AlignCenter);
@@ -333,17 +321,16 @@ void SettingPatternWindow::initUi()
 
 void SettingPatternWindow::updateTemplates()
 {
-    qDebug()<<"updateTemplates()";
     std::vector<FileSystem::TempatesPattern> tempatesPattern = fileSystem_->getTempatesPattern();
-    qDebug()<<"getTempatesPattern()";
     templatesPattern->clear();
-    for(unsigned short int i = 0; tempatesPattern.size() > i; i++)
+    for(unsigned short int i = tempatesPattern.size()-1; i != 0; i--)
     {
         if(tempatesPattern[i].pattern!="ChArUco")
 
             templatesPattern->addItem(QString(QString::fromStdString(tempatesPattern[i].pattern) + "/" +
                                             QString::number(tempatesPattern[i].row) + "/" +
-                                            QString::number(tempatesPattern[i].col) + "/"));
+                                            QString::number(tempatesPattern[i].col) + "/" +
+                                            QString::number(tempatesPattern[i].checker)));
         else
             templatesPattern->addItem(QString(QString::fromStdString(tempatesPattern[i].pattern) + "/" +
                                             QString::number(tempatesPattern[i].row) + "/" +
@@ -351,6 +338,5 @@ void SettingPatternWindow::updateTemplates()
                                             QString::fromStdString(tempatesPattern[i].dictionaryName) + "/" +
                                             QString::number(tempatesPattern[i].checker) + "/" +
                                             QString::number(tempatesPattern[i].marker)));
-
     }
 }

@@ -2,40 +2,39 @@
 
 TableCompare::TableCompare(QWidget* parent): QWidget(parent)
 {
-    resize(800,600);
-    btnOpenDir_= new QPushButton("Open Dir");
-    btnAddFile_ = new QPushButton("Add file");
-    btnClearTable_ = new QPushButton("Clear");
+    btnAddFile_ = new QPushButton("Add new");
+    btnAddFile_->setEnabled(false);
     table_ = new QTableWidget();
 
     connect(btnAddFile_, SIGNAL(clicked()), this, SLOT(on_btnAddFile_clicked()));
-    connect(btnOpenDir_, SIGNAL(clicked()), this, SLOT(on_btnOpenDir_clicked()));
-    connect(btnClearTable_, SIGNAL(clicked()), this, SLOT(on_btnClearTable_clicked()));
     connect(&fs_,
-            SIGNAL(outTableItemsCompare(QTableWidgetItem*, QTableWidgetItem*,
+            SIGNAL(outTableItemsCompare(QTableWidgetItem*,
                                         QTableWidgetItem*, QTableWidgetItem*,
                                         QTableWidgetItem*, QTableWidgetItem*,
                                         QTableWidgetItem*)),
             this,
-            SLOT(addItem(QTableWidgetItem*, QTableWidgetItem*,
+            SLOT(addItem(QTableWidgetItem*,
                          QTableWidgetItem*, QTableWidgetItem*,
                          QTableWidgetItem*, QTableWidgetItem*,
                          QTableWidgetItem*)));
 
 
+
+    table_->setFocusPolicy(Qt::NoFocus);
     table_->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    table_->setColumnCount(7);
-    table_->setHorizontalHeaderLabels(QStringList()<<"File"<<"Date"<<"Count img"<<"Pattern"<<"SizePattern"<<"Rmse"<<"Flag");
+    table_->setColumnCount(6);
+    table_->setHorizontalHeaderLabels(QStringList()<<"File"<<"SettingCam1"<<"Cam1Rmse"<<"SettingCam2"<<"Cam2Rmse"<<"Stereo");
     table_->setShowGrid(false);
     table_->setSelectionMode(QAbstractItemView::SingleSelection);       // Разрешаем выделение только одного элемента
     table_->setSelectionBehavior(QAbstractItemView::SelectRows);        // Разрешаем выделение построчно
     table_->setSortingEnabled(false);
 
+    connect(table_,SIGNAL(cellClicked(int, int)), this, SLOT(on_table_cellClicked(int,int)));
+
     QHBoxLayout* layout_forBtn = new QHBoxLayout;
-    layout_forBtn->addWidget(btnOpenDir_, 1);
     layout_forBtn->addWidget(btnAddFile_, 2);
     layout_forBtn->addStretch(100);
-    layout_forBtn->addWidget(btnClearTable_, 2);
+
 
     QVBoxLayout* layout_main = new QVBoxLayout;
     layout_main->addLayout(layout_forBtn);
@@ -49,46 +48,42 @@ TableCompare::~TableCompare()
 
 }
 
+void TableCompare::setDir(QString dir)
+{
+    fs_.setPath(dir);
+    btnAddFile_->setEnabled(true);
+}
+
 void TableCompare::on_btnAddFile_clicked()
 {
-    QString pathName;
-    pathName = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-                                                 "/home",
-                                                 QFileDialog::ShowDirsOnly
-                                                 | QFileDialog::DontResolveSymlinks);
-    fs_.setPath(pathName + "/");
-    fs_.getOneTableItemsinTableCompare();
+    emit addNewFile(fs_.getFilePath());
 }
 
-void TableCompare::on_btnOpenDir_clicked()
+void TableCompare::on_table_cellClicked(int row, int)
 {
-    QString pathName;
-    pathName = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-                                                 "/home",
-                                                 QFileDialog::ShowDirsOnly
-                                                 | QFileDialog::DontResolveSymlinks);
-    fs_.setPath(pathName + "/");
-    fs_.getTableItemsinTableCompare();
+    QTableWidgetItem* nameItem;
+    nameItem = table_->item(row,0);
+    emit openFile(fs_.getFilePath() + "/" + nameItem->text()+"/");
 }
 
-void TableCompare::on_btnClearTable_clicked()
-{
-    table_->clearContents();
-    table_->setRowCount(0);
-}
-
-void TableCompare::addItem(QTableWidgetItem* itemFile,QTableWidgetItem* itemDate,
-                           QTableWidgetItem* itemCount,QTableWidgetItem* itemPattern,
-                           QTableWidgetItem* itemSizePattern, QTableWidgetItem* itemRmse,
-                           QTableWidgetItem* itemFlags)
+void TableCompare::addItem(QTableWidgetItem* itemFile,
+                           QTableWidgetItem* SettingCam1,QTableWidgetItem* itemCamera1Rmse,
+                           QTableWidgetItem* SettingCam2, QTableWidgetItem* itemCamera2Rmse,
+                           QTableWidgetItem* itemStereoRmse)
 {
     table_->setRowCount(table_->rowCount()+1);
     table_->setItem(table_->rowCount()-1,0,itemFile);
-    table_->setItem(table_->rowCount()-1,1,itemDate);
-    table_->setItem(table_->rowCount()-1,2,itemCount);
-    table_->setItem(table_->rowCount()-1,3,itemPattern);
-    table_->setItem(table_->rowCount()-1,4,itemSizePattern);
-    table_->setItem(table_->rowCount()-1,5,itemRmse);
-    table_->setItem(table_->rowCount()-1,6,itemFlags);
+    table_->setItem(table_->rowCount()-1,1,SettingCam1);
+    table_->setItem(table_->rowCount()-1,2,itemCamera1Rmse);
+    table_->setItem(table_->rowCount()-1,3,SettingCam2);
+    table_->setItem(table_->rowCount()-1,4,itemCamera2Rmse);
+    table_->setItem(table_->rowCount()-1,5,itemStereoRmse);
+}
+
+void TableCompare::updateTable()
+{
+    table_->clearContents();
+    table_->setRowCount(0);
+    fs_.getTableItemsinTableCompare();
 }
 

@@ -26,19 +26,22 @@ public:
     TableCompare(QWidget* parent = 0);
     ~TableCompare();
 
+    void setDir(QString dir);
+
 public slots:
-    void addItem(QTableWidgetItem* itemFile,QTableWidgetItem* itemDate,
-                 QTableWidgetItem* itemCount,QTableWidgetItem* itemPattern,
-                 QTableWidgetItem* itemSizePattern, QTableWidgetItem* itemRmse,
-                 QTableWidgetItem* itemFlags );
+    void addItem(QTableWidgetItem* itemFile,
+                 QTableWidgetItem* SettingCam1,QTableWidgetItem* itemCamera1Rmse,
+                 QTableWidgetItem* SettingCam2, QTableWidgetItem* itemCamera2Rmse,
+                 QTableWidgetItem* itemStereoRmse);
+    void updateTable();
 private slots:
     void on_btnAddFile_clicked();
-    void on_btnOpenDir_clicked();
-    void on_btnClearTable_clicked();
+    void on_table_cellClicked(int,int);
+signals:
+    void addNewFile(QString);
+    void openFile(QString);
 private:
     FileSystem fs_;
-    QPushButton* btnClearTable_;
-    QPushButton* btnOpenDir_;
     QPushButton* btnAddFile_;
     QTableWidget* table_;
 };

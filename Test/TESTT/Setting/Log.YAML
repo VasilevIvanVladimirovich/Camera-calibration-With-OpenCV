@@ -1,0 +1,1085 @@
+%YAML:1.0
+---
+FirstCameraName: None
+FirstCameraIndex: -1
+SecondCameraName: None
+SecondCameraIndex: -1
+Pattern: None
+Row: -1
+Col: -1
+CheckerSize: -1.
+MarkerSize: -1.
+DictionaryName: ""
+isWebCamera: 0
+isBaslerCamera: 0
+SettingCalibration:
+   isUseParametr: 0
+   isFixedFocal: 0
+   isFixedAspectRatio: 0
+   isFixedPrincipalPoint: 0
+   isfixedK1: 0
+   isfixedK2: 0
+   isfixedK3: 0
+   isfixedK4: 0
+   iszeroTangent: 0
+   isCaibration: 0
+   isStereoCaibration: 0
+   isUseSingleCalibratedInStereo: 0
+   numCamera: 0
+   cameraModel: 0
+   fx: 0.
+   fy: 0.
+   cx: 0.
+   cy: 0.
+   k1: 0.
+   k2: 0.
+   k3: 0.
+   k4: 0.
+ImageInfoCamera1:
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\1.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\10.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\11.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\12.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\13.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\14.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\15.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\16.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\17.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\18.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\19.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\2.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\20.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\21.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\22.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\23.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\24.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\25.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\26.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\27.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\28.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\29.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\3.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\30.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\31.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\32.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\33.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\34.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\35.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\36.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\37.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\38.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\39.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\4.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\40.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\41.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\42.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\43.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\44.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\45.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\46.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\47.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\48.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\49.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\5.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\50.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\51.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\52.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\53.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\54.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\55.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\56.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\57.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\58.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\59.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\6.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\60.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\61.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\62.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\63.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\64.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\65.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\66.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\67.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\68.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\69.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\7.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\70.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\71.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\72.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\73.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\74.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\75.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\76.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\77.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\78.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\79.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\8.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\80.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\81.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\82.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\83.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\84.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\85.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\86.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\87.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\88.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\89.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\9.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\90.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\91.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\92.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\93.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\94.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+   -
+      isActive: 1
+      cameraPath: "D:/PRoG/Git-repos/Camera-calibration-With-OpenCV/Test/TESTT/Camera1/Accumulated\\95.png"
+      drawPath: NONE
+      undistortedPath: NONE
+      state: NONE
+      err: 0.
+      imgpoint:
+         - [ 0., 0. ]
+      reprojectPoint:
+         - [ 0., 0. ]
+ImageInfoCamera2:
+   []

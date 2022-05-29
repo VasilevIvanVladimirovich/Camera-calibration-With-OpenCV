@@ -1,0 +1,66 @@
+%YAML:1.0
+---
+FirstCameraName: Basler daA1280-54um (22503356)
+FirstCameraIndex: 1
+SecondCameraName: Basler daA1280-54um (22503357)
+SecondCameraIndex: 0
+Exposure: 4000.
+Gain: 1.
+Pattern: None
+Row: -1
+Col: -1
+CheckerSize: -1.
+MarkerSize: -1.
+DictionaryName: ""
+isWebCamera: 0
+isBaslerCamera: 1
+SettingCalibration:
+   isUseParametr: 0
+   isFixedFocal: 0
+   isFixedAspectRatio: 0
+   isFixedPrincipalPoint: 0
+   isfixedK1: 0
+   isfixedK2: 0
+   isfixedK3: 0
+   isfixedK4: 0
+   iszeroTangent: 0
+   isCaibration: 0
+   isStereoCaibration: 0
+   numCamera: 0
+   cameraModel: 0
+   fx: 0.
+   fy: 0.
+   cx: 0.
+   cy: 0.
+   k1: 0.
+   k2: 0.
+   k3: 0.
+   k4: 0.
+   isSameFocalLengStereo: 0
+   isfixAspectRatioStereo: 0
+   isfixFocalLengthStereo: 0
+   isfixPrincipalPointStereo: 0
+   isUseSingleCalibratedInStereo: 0
+   iszeroTangentS: 0
+   isfixedK1S: 0
+   isfixedK2S: 0
+   isfixedK3S: 0
+   fx1: 0.
+   fy1: 0.
+   fx2: 0.
+   fy2: 0.
+   cx1: 0.
+   cy1: 0.
+   cx1: 0.
+   cx2: 0.
+   cy2: 0.
+   k1S1: 0.
+   k2S1: 0.
+   k3S1: 0.
+   k1S2: 0.
+   k2S2: 0.
+   k3S2: 0.
+ImageInfoCamera1:
+   []
+ImageInfoCamera2:
+   []

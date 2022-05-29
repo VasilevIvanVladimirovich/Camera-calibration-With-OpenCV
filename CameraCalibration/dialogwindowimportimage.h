@@ -34,7 +34,7 @@ public:
     void setFileSystem(FileSystem* fs);
 
 signals:
-    void signalVideoStream(int countframe);
+    void signalVideoStream(int countframe,bool,bool,bool);
 
 private slots:
     void on_btnStartVideoStream_clicked();
@@ -52,6 +52,7 @@ private:
 
     QCheckBox* isCamera1;
     QCheckBox* isCamera2;
+    QCheckBox* isDrawing;
 
     QPushButton* btnStartVideoStream;
     QPushButton* btnSetFolderPath1;

@@ -10,6 +10,7 @@
 #include <QMediaDevices>
 #include <QGroupBox>
 #include <QPushButton>
+#include <QDoubleSpinBox>
 
 #include <pylon/PylonIncludes.h>
 #include <pylon/ImageEventHandler.h>
@@ -33,6 +34,7 @@ private:
 
 signals:
     void sendUpdate();
+    void sendTerminalStr(QString);
 private slots:
    void on_box_cameraInput_IndexChanged(int index);
    void on_box_cameraFirst_IndexChanged(int index);
@@ -46,6 +48,9 @@ private:
    QComboBox* box_cameraInput;
    QComboBox* box_cameraFirst;
    QComboBox* box_cameraSecond;
+
+   QDoubleSpinBox* expose;
+   QDoubleSpinBox* gain;
 
    FileSystem *fileSystem_;
 };

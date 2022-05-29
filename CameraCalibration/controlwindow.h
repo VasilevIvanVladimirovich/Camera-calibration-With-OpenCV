@@ -58,7 +58,7 @@ private:
     void initImageTable();
     void createAction();
 
-    void replot();
+    void replotHist();
 
     void getTableItems();
     void setStateTable();
@@ -68,9 +68,11 @@ public slots:
     void videoStream(QString);
     void addStringTerminalBrowser(QString);
     void updateUi();
+    void createProject(QString);
 private slots:
     void openProject();
     void createProject();
+
     void importImage();
     void detect();
     void calibration();
@@ -78,7 +80,8 @@ private slots:
     void saveImage();
     void stopVideo();
     void setPath(QString);
-    void videoStream(int countframe);
+    void videoStream(int countframe,bool,bool,bool);
+    void updateFrameFirstSecond(QPixmap,QPixmap,QMutex*);
     void updateFrameFirst(QPixmap);
     void updateFrameSecond(QPixmap);
     void updateFrameFirst(QPixmap, std::vector<cv::Point2f> imgpoint,bool isActive);
@@ -95,10 +98,12 @@ private slots:
     void openSettingPattern();
 
     void changeDefault();
-    void changeDraw();
     void changeUndistort();
 
     void hideSecondView();
+
+    void histClicked1(int);
+    void histClicked2(int);
 private:
     QAction *openProjectAction;
     QAction *createProjectAction;
@@ -114,12 +119,12 @@ private:
     QAction *streamAction;
 
     QAction *defaultImageAction;
-    QAction *drawImageAction;
     QAction *undistortImageAction;
     QAction *hideSecondViewAction;
 
     QMenu *fileMenu;
     QMenu *viewMenu;
+    QMenu *toolMenu;
     QMenu *imageMenu;
     QMenu *analysisMenu;
 
@@ -147,6 +152,7 @@ private:
     StreamSetting* streamSetting;
     SettingCameraWindow* settingCameraWindow;
     SettingPatternWindow* settingPatternWindow;
+    TableCompare tableCompare;
 
     ImageProcessor *imgprocessorFirst_;
     ImageProcessor *imgprocessorSecond_;
@@ -161,6 +167,7 @@ private:
 
     ViewState viewState;
 
+    QTabWidget* tabSetting;
     QTabWidget* tabMain;
     QTabWidget* tabHistogrammCharts;
     QTabWidget* tabCalibBrowser;
@@ -169,12 +176,18 @@ private:
     QTextBrowser* projectSettingBrowser;
     QTextBrowser* calibrationBrowser1;
     QTextBrowser* calibrationBrowser2;
+    QTextBrowser* stereoBrowser;
 
     QChart *chartHistogrammCameraFirst;
     QChart *chartHistogrammCameraSecond;
+    QChart *chartHistogrammStereo;
 
     QChartView *chartViewHistogrammCameraFirst;
     QChartView *chartViewHistogrammCameraSecond;
+    QChart *chartViewHistogrammStereo;
+
+    QChartView *chartViewScetterCameraFirst;
+    QChartView *chartViewScetterCameraSecond;
 
     QBarSet *setCameraFirst;
     QBarSet *setCameraSecond;
@@ -182,11 +195,17 @@ private:
     QBarSeries *seriesCameraFirst;
     QBarSeries *seriesCameraSecond;
 
+    QLineSeries* serieMeanCamFirst;
+    QLineSeries* serieMeanCamSecond;
+
     QSplitter* streamBrowserSplitter;
     QSplitter* mainSplitter;
+    QSplitter* tableSetting;
+    QSplitter* infoCompare;
 
-    bool isRunningFirstCamera;
-    bool isRunningSecondCamera;
+    bool isRunningFirstCamera = false;
+    bool isRunningSecondCamera = false;
+    bool isRunningStereoBasler = false;
 
     QString terminalBrowserString;
 };
