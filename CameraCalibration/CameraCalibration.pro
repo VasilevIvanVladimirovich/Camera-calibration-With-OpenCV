@@ -16,7 +16,6 @@ SOURCES += \
     filesystem.cpp \
     imageprocessor.cpp \
     main.cpp \
-    mainwindow.cpp \
     menuwindownewfile.cpp \
     settingcamerawindow.cpp \
     settingpatternwindow.cpp \
@@ -31,15 +30,11 @@ HEADERS += \
     dialogwindowimportimage.h \
     filesystem.h \
     imageprocessor.h \
-    mainwindow.h \
     menuwindownewfile.h \
     settingcamerawindow.h \
     settingpatternwindow.h \
     streamsetting.h \
     tablecompare.h
-
-FORMS += \
-    mainwindow.ui
 
 include(../CameraCalibration/opencv_library_path.pri)
 include(../CameraCalibration/balserCamera_library_path.pri)

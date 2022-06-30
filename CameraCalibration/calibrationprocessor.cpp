@@ -42,6 +42,8 @@ void CalibrationProcessor::run()
     }case CALIBRATION:
         emit sendTerminalMessage("Calibration started");
         FileSystem::SettingCalibration setting = fs_->getCalibrationSetting();
+        qDebug()<<"SettingCalibration"<<setting.isfixedK1;
+        qDebug()<<"SettingCalibration"<<setting.isfixedK2;
         if(setting.isCaibration)
         {
             if(setting.numCamera == 1)
@@ -66,7 +68,6 @@ void CalibrationProcessor::run()
 
 void CalibrationProcessor::cameraCalibration(std::vector<FileSystem::InformationImageSaved>& imageInfo, FileSystem::SettingCalibration& setting)
 {
-    qDebug()<<"cameraCalibration";
     std::vector<std::vector<cv::Point3f>> objpoints;
     std::vector<std::vector<int>> markerIds;
     std::vector<std::vector<cv::Point2f>> imgpoints;
@@ -74,9 +75,9 @@ void CalibrationProcessor::cameraCalibration(std::vector<FileSystem::Information
     std::vector<int> indexImages;
     if(targetType_ == "Chessboard")
     {
-        for(int i{0}; i<CHECKERBOARD_[1]; i++)
+        for(int i{0}; i<CHECKERBOARD_[0]; i++)
         {
-          for(int j{0}; j<CHECKERBOARD_[0]; j++)
+          for(int j{0}; j<CHECKERBOARD_[1]; j++)
             objp.push_back(cv::Point3f(j,i,0));
         }
     }
@@ -87,15 +88,15 @@ void CalibrationProcessor::cameraCalibration(std::vector<FileSystem::Information
         for(int i{0}; i<CHECKERBOARD_[0]; i++)
         {
           for(int j{0}; j<CHECKERBOARD_[1]; j++)
-            objp.push_back(cv::Point3f(j*checkerSize_,i*checkerSize_,0));
+            objp.push_back(cv::Point3f(j,i,0));
         }
     }
     if(targetType_ == "Assymetric Circles")
     {
         checkerSize_ = fs_->getCheckerSize();
-        for(int i{0}; i<CHECKERBOARD_[1]; i++)
+        for(int i{0}; i<CHECKERBOARD_[0]; i++)
         {
-          for(int j{0}; j<CHECKERBOARD_[0]; j++)
+          for(int j{0}; j<CHECKERBOARD_[1]; j++)
             objp.push_back(cv::Point3f(2*j + i%2,i,0));
         }
     }
@@ -122,23 +123,23 @@ void CalibrationProcessor::cameraCalibration(std::vector<FileSystem::Information
     {
         int calibrationFlags = 0;
         if(setting.isUseParametr)
-            calibrationFlags = calibrationFlags | translateFlagsOpencv("CV_CALIB_USE_INTRINSIC_GUESS");
+            calibrationFlags = calibrationFlags | cv::CALIB_USE_INTRINSIC_GUESS;
         if(setting.isFixedFocal)
-            calibrationFlags = calibrationFlags | translateFlagsOpencv("CV_CALIB_FIX_FOCAL_LENGTH");
-        if(setting.isFixedFocal)
-            calibrationFlags = calibrationFlags | translateFlagsOpencv("CV_CALIB_FIX_ASPECT_RATIO");
+            calibrationFlags = calibrationFlags | cv::CALIB_FIX_FOCAL_LENGTH;
+        if(setting.isFixedAspectRatio)
+            calibrationFlags = calibrationFlags | cv::CALIB_FIX_ASPECT_RATIO;
         if(setting.isFixedPrincipalPoint)
-            calibrationFlags = calibrationFlags | translateFlagsOpencv("CV_CALIB_FIX_PRINCIPAL_POINT");
+            calibrationFlags = calibrationFlags | cv::CALIB_FIX_PRINCIPAL_POINT;
         if(setting.iszeroTangent)
-            calibrationFlags = calibrationFlags | translateFlagsOpencv("CV_CALIB_FIX_FOCAL_LENGTH");
+            calibrationFlags = calibrationFlags | cv::CALIB_ZERO_TANGENT_DIST;
         if(setting.isfixedK1)
-            calibrationFlags = calibrationFlags | translateFlagsOpencv("CV_CALIB_FIX_K1");
+            calibrationFlags = calibrationFlags | cv::CALIB_FIX_K1;
         if(setting.isfixedK2)
-            calibrationFlags = calibrationFlags | translateFlagsOpencv("CV_CALIB_FIX_K2");
+            calibrationFlags = calibrationFlags | cv::CALIB_FIX_K2;
         if(setting.isfixedK3)
-            calibrationFlags = calibrationFlags | translateFlagsOpencv("CV_CALIB_FIX_K3");
+            calibrationFlags = calibrationFlags | cv::CALIB_FIX_K3;
         if(setting.isfixedK4)
-            calibrationFlags = calibrationFlags | translateFlagsOpencv("CV_CALIB_FIX_K4");
+            calibrationFlags = calibrationFlags | cv::CALIB_FIX_K4;
 
         cv::Mat cameraMatrix(3, 3, cv::DataType<double>::type);
         cameraMatrix.at<double>(0) = setting.fx;
@@ -166,11 +167,19 @@ void CalibrationProcessor::cameraCalibration(std::vector<FileSystem::Information
         double meanErr = 0;
         if(targetType_ == "Chessboard" || targetType_ == "Circles" || targetType_ == "Assymetric Circles")
         {
-            cv::calibrateCamera(objpoints, imgpoints, cv::Size(img.rows, img.cols),
-                                cameraMatrix, disCoeffs, R, T, calibrationFlags_);
-            rmse = Rmse(imageInfo,imgpoints, objpoints, cameraMatrix, disCoeffs,R,T,indexImages,meanErr);
-            sendTerminalMessage(QString("Calibration successful \n RMSE: %1").arg(rmse));
-            createImgUndistorted(imageInfo,cameraMatrix, disCoeffs, setting.numCamera);
+            try{
+                cv::calibrateCamera(objpoints, imgpoints, cv::Size(img.rows, img.cols),
+                                    cameraMatrix, disCoeffs, R, T, calibrationFlags_);
+                rmse = Rmse(imageInfo,imgpoints, objpoints, cameraMatrix, disCoeffs,R,T,indexImages,meanErr);
+                sendTerminalMessage(QString("Calibration successful \n RMSE: %1").arg(rmse));
+                createImgUndistorted(imageInfo,cameraMatrix, disCoeffs, setting.numCamera);
+            }catch(const std::exception& ex)
+            {
+                sendTerminalMessage("Calibration ERROR: " + QString::fromStdString(ex.what()));
+                emit updateCantrolUi();
+                return;
+            }
+
         }else if(targetType_ == "ChArUco")
         {
             checkerSize_ = fs_->getCheckerSize();
@@ -179,24 +188,31 @@ void CalibrationProcessor::cameraCalibration(std::vector<FileSystem::Information
             dictionary_ = cv::aruco::getPredefinedDictionary(getDictionary(dictionaryName_));
             charucoboard_ = cv::aruco::CharucoBoard::create(CHECKERBOARD_[1], CHECKERBOARD_[0], checkerSize_, markerSize_, dictionary_);
             params_ = cv::aruco::DetectorParameters::create();
-            cv::aruco::calibrateCameraCharuco(imgpoints, markerIds, charucoboard_,cv::Size(img.rows, img.cols),
-                                            cameraMatrix,disCoeffs,R, T, calibrationFlags_);
-
-            objpoints.resize(markerIds.size());
-            for(unsigned int i = 0; i < markerIds.size(); i++)
+            try
             {
-                 unsigned int nCorners = (unsigned int)markerIds[i].size();
-                 objpoints[i].reserve(nCorners);
+                cv::aruco::calibrateCameraCharuco(imgpoints, markerIds, charucoboard_,cv::Size(img.rows, img.cols),
+                                                cameraMatrix,disCoeffs,R, T, calibrationFlags_);
+                objpoints.resize(markerIds.size());
+                for(unsigned int i = 0; i < markerIds.size(); i++)
+                {
+                     unsigned int nCorners = (unsigned int)markerIds[i].size();
+                     objpoints[i].reserve(nCorners);
 
-                  for(unsigned int j = 0; j < nCorners; j++)
-                  {
-                      int pointId = markerIds[i][j];
-                      objpoints[i].push_back(charucoboard_->chessboardCorners[pointId]);
-                  }
+                      for(unsigned int j = 0; j < nCorners; j++)
+                      {
+                          int pointId = markerIds[i][j];
+                          objpoints[i].push_back(charucoboard_->chessboardCorners[pointId]);
+                      }
+                }
+                rmse = Rmse(imageInfo,imgpoints, objpoints, cameraMatrix, disCoeffs,R,T,indexImages,meanErr);
+                sendTerminalMessage(QString("Calibration successful \n RMSE: %1").arg(rmse));
+                createImgUndistorted(imageInfo,cameraMatrix, disCoeffs, setting.numCamera);
+            }catch(const std::exception& ex)
+            {
+                sendTerminalMessage("Calibration ERROR: " + QString::fromStdString(ex.what()));
+                emit updateCantrolUi();
+                return;
             }
-            rmse = Rmse(imageInfo,imgpoints, objpoints, cameraMatrix, disCoeffs,R,T,indexImages,meanErr);
-            sendTerminalMessage(QString("Calibration successful \n RMSE: %1").arg(rmse));
-            createImgUndistorted(imageInfo,cameraMatrix, disCoeffs, setting.numCamera);
         }
 
         QDateTime date;
@@ -256,9 +272,21 @@ void CalibrationProcessor::stereoCalibration(FileSystem::SettingCalibration sett
     std::vector<std::vector<cv::Point3f>> objectPoints;
     double squareSize = checkerSize_ = fs_->getCheckerSize();
 
-    for(int j = 0; j < CHECKERBOARD_[0]; j++ )
-        for(int k = 0; k < CHECKERBOARD_[1]; k++ )
-            objp.push_back(cv::Point3f(j*squareSize, k*squareSize, 0));
+    if(targetType_ == "Assymetric Circles")
+    {
+        checkerSize_ = fs_->getCheckerSize();
+        for(int i{0}; i<CHECKERBOARD_[0]; i++)
+        {
+          for(int j{0}; j<CHECKERBOARD_[1]; j++)
+            objp.push_back(cv::Point3f(2*j + i%2,i,0));
+        }
+    }else
+    {
+        for(int j = 0; j < CHECKERBOARD_[0]; j++ )
+            for(int k = 0; k < CHECKERBOARD_[1]; k++ )
+                objp.push_back(cv::Point3f(k*squareSize, j*squareSize, 0));
+    }
+
 
     for(int i = 0; i < countImg; i++)
     {
@@ -295,7 +323,7 @@ void CalibrationProcessor::stereoCalibration(FileSystem::SettingCalibration sett
     if(setting.isfixedK3S)
         flag |= cv::CALIB_FIX_K2;
 
-    qDebug()<<flag;
+
 
     cv::Mat cameraMatrix[2];
     cv::Mat disCoeffs[2];
@@ -344,15 +372,22 @@ void CalibrationProcessor::stereoCalibration(FileSystem::SettingCalibration sett
 
     dist2.copyTo(disCoeffs[1]);
 
-
-    qDebug()<<"double rms";
+    double rms;
 
     //добавить флаги
-    double rms = stereoCalibrate(objectPoints, imagePoints0, imagePoints1,
-                                cameraMatrix[0], disCoeffs[0],
-                                cameraMatrix[1], disCoeffs[1],
-                                imageSize, R, T, E, F,flag,
-            cv::TermCriteria(cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, 30, 1e-6));
+    try{
+        rms = stereoCalibrate(objectPoints, imagePoints0, imagePoints1,
+                                    cameraMatrix[0], disCoeffs[0],
+                                    cameraMatrix[1], disCoeffs[1],
+                                    imageSize, R, T, E, F,flag,
+                cv::TermCriteria(cv::TermCriteria::MAX_ITER + cv::TermCriteria::EPS, 30, 1e-6));
+    }catch(const std::exception& ex)
+    {
+        sendTerminalMessage("Stereo calibration ERROR: " + QString::fromStdString(ex.what()));
+        emit updateCantrolUi();
+        return;
+    }
+
 
     // CALIBRATION QUALITY CHECK
     // because the output fundamental matrix implicitly
@@ -391,12 +426,8 @@ void CalibrationProcessor::stereoCalibration(FileSystem::SettingCalibration sett
     averageReprojectionErr = err/npoints;
 
 
-    qDebug()<<"RMSE " <<rms;
-    qDebug()<<"averageReprojectionErr " <<averageReprojectionErr;
-
     cv::Mat R1, R2, P1, P2, Q;
     cv::Rect validRoi[2];
-    qDebug()<<"stereoRectify";
     cv::stereoRectify(cameraMatrix[0], disCoeffs[0],
                    cameraMatrix[1], disCoeffs[1],
                    imageSize, R, T, R1, R2, P1, P2, Q, 1);
@@ -487,7 +518,7 @@ void CalibrationProcessor::chessboardAccumulation(int i,cv::Mat gray,std::vector
                                                   std::vector<FileSystem::InformationImageSaved>& imageInfo)
 {
     bool isSuccess = false;
-    isSuccess = cv::findChessboardCorners(gray,cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]), corner_pts);
+    isSuccess = cv::findChessboardCorners(gray,cv::Size(CHECKERBOARD_[1], CHECKERBOARD_[0]), corner_pts);
     if(isSuccess)
     {
         cv::TermCriteria criteria(cv::TermCriteria::EPS | cv::TermCriteria::MAX_ITER, 30, 0.0001);
@@ -527,7 +558,7 @@ void CalibrationProcessor::aCircleAccumulation(int i,cv::Mat gray,std::vector<cv
                                                std::vector<FileSystem::InformationImageSaved>& imageInfo)
 {
     bool isSuccess = false;
-    isSuccess = cv::findCirclesGrid(gray, cv::Size(CHECKERBOARD_[0], CHECKERBOARD_[1]), corner_pts,
+    isSuccess = cv::findCirclesGrid(gray, cv::Size(CHECKERBOARD_[1], CHECKERBOARD_[0]), corner_pts,
                 cv::CALIB_CB_ASYMMETRIC_GRID, cv::SimpleBlobDetector::create());
     if(isSuccess)
     {
@@ -582,8 +613,8 @@ void CalibrationProcessor::setPattern(QString Pattern)
 
 void CalibrationProcessor::setRowCol(int row, int col)
 {
-    CHECKERBOARD_[0] = row;
-    CHECKERBOARD_[1] = col;
+    CHECKERBOARD_[0] = row; //y
+    CHECKERBOARD_[1] = col; //x
 }
 
 void CalibrationProcessor::setMarkerSize(double markerSize)
@@ -667,9 +698,9 @@ bool CalibrationProcessor::isFramePattern(cv::Mat* frame, QString pattern, int r
 
     if(pattern == "Chessboard")
     {
-        if(cv::findChessboardCorners(*frame, cv::Size(row, col), corner_pts, cv::CALIB_CB_FAST_CHECK))
+        if(cv::findChessboardCorners(*frame, cv::Size(col,row), corner_pts, cv::CALIB_CB_FAST_CHECK))
         {
-            cv::drawChessboardCorners(*frame, cv::Size(row, col), corner_pts, true);
+            cv::drawChessboardCorners(*frame, cv::Size(col, row), corner_pts, true);
             return true;
         }
     }
@@ -683,16 +714,16 @@ bool CalibrationProcessor::isFramePattern(cv::Mat* frame, QString pattern, int r
     }
     if(pattern == "Assymetric Circles")
     {
-        if(cv::findCirclesGrid(*frame, cv::Size(row, col), corner_pts, cv::CALIB_CB_ASYMMETRIC_GRID, cv::SimpleBlobDetector::create()))
+        if(cv::findCirclesGrid(*frame, cv::Size(col,row), corner_pts, cv::CALIB_CB_ASYMMETRIC_GRID, cv::SimpleBlobDetector::create()))
         {
-            cv::drawChessboardCorners(*frame, cv::Size(row, col), cv::Mat(corner_pts), true);
+            cv::drawChessboardCorners(*frame, cv::Size(col,row), cv::Mat(corner_pts), true);
             return true;
         }
     }
     if(pattern == "ChArUco")
     {
        cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(idictionary);
-       cv::Ptr<cv::aruco::CharucoBoard> board = cv::aruco::CharucoBoard::create(row,col, icheckerSize, imarkerSize, dictionary);
+       cv::Ptr<cv::aruco::CharucoBoard> board = cv::aruco::CharucoBoard::create(col,row, icheckerSize, imarkerSize, dictionary);
        std::vector<int> markerIds;
        std::vector<std::vector<cv::Point2f>> markerCorners;
        cv::Ptr<cv::aruco::DetectorParameters> params = cv::aruco::DetectorParameters::create();

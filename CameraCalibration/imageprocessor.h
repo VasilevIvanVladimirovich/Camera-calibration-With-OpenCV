@@ -60,6 +60,7 @@ public:
    ImageProcessor(int indexCam,int numCam);
    ImageProcessor(FileSystem *fs, StateVideoStream stVideo,DeviceState stDevice,QMutex *data_lock);
    ImageProcessor(cv::Mat img);
+   ~ImageProcessor();
 
    std::vector<FileSystem::InformationImageSaved> getInfoCamera();
 

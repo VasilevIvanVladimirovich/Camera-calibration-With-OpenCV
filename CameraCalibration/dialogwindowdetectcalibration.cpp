@@ -12,27 +12,27 @@ DialogWindowDetectCalibration::~DialogWindowDetectCalibration()
 void DialogWindowDetectCalibration::updateUi()
 {
     setting = fs_->getCalibrationSetting();
-    groupBoxSingleCalib->setChecked(setting.isCaibration);
-    groupBoxStereCalib->setChecked(setting.isStereoCaibration);
-    check_useParametr1->setChecked(setting.isUseParametr);
-    isfixedFocal1->setChecked(setting.isFixedFocal);
-    isfixedAspectRatio->setChecked(setting.isFixedAspectRatio);
-    isfixedPrincipalPoint1->setChecked(setting.isFixedPrincipalPoint);
-    isfixedK1->setChecked(setting.isfixedK1);
-    isfixedK2->setChecked(setting.isfixedK2);
-    isfixedK3->setChecked(setting.isfixedK3);
-    isfixedK4->setChecked(setting.isfixedK4);
-    iszeroTangent->setChecked(setting.iszeroTangent);
+//    groupBoxSingleCalib->setChecked(setting.isCaibration);
+//    groupBoxStereCalib->setChecked(setting.isStereoCaibration);
+//    check_useParametr1->setChecked(setting.isUseParametr);
+//    isfixedFocal1->setChecked(setting.isFixedFocal);
+//    isfixedAspectRatio->setChecked(setting.isFixedAspectRatio);
+//    isfixedPrincipalPoint1->setChecked(setting.isFixedPrincipalPoint);
+//    isfixedK1->setChecked(setting.isfixedK1);
+//    isfixedK2->setChecked(setting.isfixedK2);
+//    isfixedK3->setChecked(setting.isfixedK3);
+//    isfixedK4->setChecked(setting.isfixedK4);
+//    iszeroTangent->setChecked(setting.iszeroTangent);
 
-    isUseSingleCalibratedInStereo->setChecked(setting.isUseSingleCalibratedInStereo);
-    isfixPrincipalPointStereo->setChecked(setting.isfixPrincipalPointStereo);
-    isfixFocalLengthStereo->setChecked(setting.isfixFocalLengthStereo);
-    isfixAspectRatioStereo->setChecked(setting.isfixAspectRatioStereo);
-    isSameFocalLengStereo->setChecked(setting.isSameFocalLengStereo);
-    iszeroTangentS->setChecked(setting.iszeroTangentS);
-    isfixedK1S->setChecked(setting.isfixedK1S);
-    isfixedK2S->setChecked(setting.isfixedK2S);
-    isfixedK3S->setChecked(setting.isfixedK3S);
+//    isUseSingleCalibratedInStereo->setChecked(setting.isUseSingleCalibratedInStereo);
+//    isfixPrincipalPointStereo->setChecked(setting.isfixPrincipalPointStereo);
+//    isfixFocalLengthStereo->setChecked(setting.isfixFocalLengthStereo);
+//    isfixAspectRatioStereo->setChecked(setting.isfixAspectRatioStereo);
+//    isSameFocalLengStereo->setChecked(setting.isSameFocalLengStereo);
+//    iszeroTangentS->setChecked(setting.iszeroTangentS);
+//    isfixedK1S->setChecked(setting.isfixedK1S);
+//    isfixedK2S->setChecked(setting.isfixedK2S);
+//    isfixedK3S->setChecked(setting.isfixedK3S);
 
     if(setting.cameraModel == FileSystem::SettingCalibration::OPENCV)
         box_cameraModel->setCurrentIndex(0);
@@ -90,7 +90,6 @@ void DialogWindowDetectCalibration::on_btnSetOk_clicked()
     setting.isfixedK2S = isfixedK2S->isChecked();
     setting.isfixedK3S = isfixedK3S->isChecked();
 
-
     setting.numCamera = box_numCamera->currentIndex()+1;
 
     if(box_cameraModel->currentIndex() == 0)
@@ -124,7 +123,6 @@ void DialogWindowDetectCalibration::on_btnSetOk_clicked()
     setting.k3S2 = spin_K3S2->value();
 
     fs_->saveCalibrationSetting(setting);
-
 
     emit goCalib();
     close();
@@ -166,11 +164,8 @@ int DialogWindowDetectCalibration::translateFlags(QString textFlag)
 void DialogWindowDetectCalibration::setFileSystem(FileSystem *fs)
 {
     fs_ = fs;
-    qDebug()<<"fs_";
     fs_->parseResultCalibr(1);
-    qDebug()<<"fs_->parseResultCalibr(1);";
     updateUi();
-    qDebug()<<"updateUi";
 }
 
 void DialogWindowDetectCalibration::initUi()
@@ -230,12 +225,16 @@ void DialogWindowDetectCalibration::initUi()
     QLabel* label_cx = new QLabel("Cx");
     QLabel* label_cy = new QLabel("Cy");
     spin_fx = new QDoubleSpinBox();
+    spin_fx->setMinimum(-10000);
     spin_fx->setMaximum(10000);
     spin_fy = new QDoubleSpinBox();
+    spin_fy->setMinimum(-10000);
     spin_fy->setMaximum(10000);
     spin_cx = new QDoubleSpinBox();
+    spin_cx->setMinimum(-10000);
     spin_cx->setMaximum(10000);
     spin_cy = new QDoubleSpinBox();
+    spin_cy->setMinimum(-10000);
     spin_cy->setMaximum(10000);
     isfixedFocal1 = new QCheckBox("Fixed focal length");
     isfixedAspectRatio = new QCheckBox("Fixed aspect ratio");
@@ -270,12 +269,16 @@ void DialogWindowDetectCalibration::initUi()
     QLabel* label_k4 = new QLabel("K4");
 
     spin_K1 = new QDoubleSpinBox();
+    spin_K1->setMinimum(-10000);
     spin_K1->setMaximum(10000);
     spin_K2 = new QDoubleSpinBox();
+    spin_K2->setMinimum(-10000);
     spin_K2->setMaximum(10000);
     spin_K3 = new QDoubleSpinBox();
+    spin_K3->setMinimum(-10000);
     spin_K3->setMaximum(10000);
     spin_K4 = new QDoubleSpinBox();
+    spin_K4->setMinimum(-10000);
     spin_K4->setMaximum(10000);
 
     isfixedK1 = new QCheckBox("Fixed K1");
@@ -336,20 +339,28 @@ void DialogWindowDetectCalibration::initUi()
     QLabel* label_C2 = new QLabel("C2");
 
     spin_Fx1 = new QDoubleSpinBox();
+    spin_Fx1->setMinimum(-10000);
     spin_Fx1->setMaximum(10000);
     spin_Cx1 = new QDoubleSpinBox();
+    spin_Cx1->setMinimum(-10000);
     spin_Cx1->setMaximum(10000);
     spin_Fx2 = new QDoubleSpinBox();
+    spin_Fx2->setMinimum(-10000);
     spin_Fx2->setMaximum(10000);
     spin_Cx2 = new QDoubleSpinBox();
+    spin_Cx2->setMinimum(-10000);
     spin_Cx2->setMaximum(10000);
     spin_Fy1 = new QDoubleSpinBox();
+    spin_Fy1->setMinimum(-10000);
     spin_Fy1->setMaximum(10000);
     spin_Cy1 = new QDoubleSpinBox();
+    spin_Cy1->setMinimum(-10000);
     spin_Cy1->setMaximum(10000);
     spin_Fy2 = new QDoubleSpinBox();
+    spin_Fy2->setMinimum(-10000);
     spin_Fy2->setMaximum(10000);
     spin_Cy2 = new QDoubleSpinBox();
+    spin_Cy2->setMinimum(-10000);
     spin_Cy2->setMaximum(10000);
     isfixPrincipalPointStereo = new QCheckBox("Fixed principal point");
     isfixFocalLengthStereo = new QCheckBox("Fixed focal length");
@@ -397,16 +408,22 @@ void DialogWindowDetectCalibration::initUi()
     QGridLayout* layout_forExtrRadialStereo = new QGridLayout;
 
     spin_K1S1 = new QDoubleSpinBox();
+    spin_K1S1->setMinimum(-10000);
     spin_K1S1->setMaximum(10000);
     spin_K2S1 = new QDoubleSpinBox();
+    spin_K2S1->setMinimum(-10000);
     spin_K2S1->setMaximum(10000);
     spin_K3S1 = new QDoubleSpinBox();
+    spin_K3S1->setMinimum(-10000);
     spin_K3S1->setMaximum(10000);
     spin_K1S2 = new QDoubleSpinBox();
+    spin_K1S2->setMinimum(-10000);
     spin_K1S2->setMaximum(10000);
     spin_K2S2 = new QDoubleSpinBox();
+    spin_K2S2->setMinimum(-10000);
     spin_K2S2->setMaximum(10000);
     spin_K3S2 = new QDoubleSpinBox();
+    spin_K3S2->setMinimum(-10000);
     spin_K3S2->setMaximum(10000);
     isfixedK1S = new QCheckBox("Fixed K1");
     isfixedK2S = new QCheckBox("Fixed K2");

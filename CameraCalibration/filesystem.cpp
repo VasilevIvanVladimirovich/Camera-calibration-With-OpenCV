@@ -1884,6 +1884,7 @@ void FileSystem::saveTempatesPattern(std::vector<TempatesPattern> tempatesPatter
 
 void FileSystem::saveCalibrationSetting(SettingCalibration setting)
 {
+    qDebug()<<"FileSystem"<<setting.isfixedK1;
     QString name;
     std::vector<InformationImageSaved> imageInfo1;
     std::vector<InformationImageSaved> imageInfo2;

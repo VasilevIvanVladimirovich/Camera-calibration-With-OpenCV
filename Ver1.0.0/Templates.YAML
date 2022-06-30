@@ -1,0 +1,45 @@
+%YAML:1.0
+---
+tempatesPattern:
+   -
+      pattern: Assymetric Circles
+      dictionaryName: DICT_5X5_100
+      row: 6
+      col: 9
+      checker: 0.
+      marker: 0.
+   -
+      pattern: ChArUco
+      dictionaryName: DICT_5X5_100
+      row: 6
+      col: 9
+      checker: 21.
+      marker: 16.
+   -
+      pattern: Chessboard
+      dictionaryName: NULL
+      row: 5
+      col: 8
+      checker: 20.
+      marker: 0.
+   -
+      pattern: Chessboard
+      dictionaryName: NULL
+      row: 9
+      col: 14
+      checker: 30.
+      marker: 0.
+   -
+      pattern: Circles
+      dictionaryName: NULL
+      row: 6
+      col: 9
+      checker: 21.
+      marker: 0.
+   -
+      pattern: Assymetric Circles
+      dictionaryName: NULL
+      row: 6
+      col: 9
+      checker: 10.
+      marker: 0.

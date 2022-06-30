@@ -141,7 +141,7 @@ public:
             isFixedFocal = (int)node["isFixedFocal"];
             isFixedAspectRatio = (int)node["isFixedAspectRatio"];
             isFixedPrincipalPoint = (int)node["isFixedPrincipalPoint"];
-            isfixedK1 = (int)node["isActive"];
+            isfixedK1 = (int)node["isfixedK1"];
             isfixedK2 = (int)node["isfixedK2"];
             isfixedK3 = (int)node["isfixedK3"];
             isfixedK4 = (int)node["isfixedK4"];
@@ -178,6 +178,7 @@ public:
 
             isUseSingleCalibratedInStereo = (int)node["isUseSingleCalibratedInStereo"];
             isSameFocalLengStereo = (int)node["isSameFocalLengStereo"];
+            isfixFocalLengthStereo = (int)node["isfixFocalLengthStereo"];
             isfixAspectRatioStereo = (int)node["isfixAspectRatioStereo"];
             isfixPrincipalPointStereo = (int)node["isfixPrincipalPointStereo"];
             iszeroTangentS = (int)node["iszeroTangentS"];

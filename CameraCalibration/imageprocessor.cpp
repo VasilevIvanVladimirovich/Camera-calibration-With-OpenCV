@@ -21,6 +21,11 @@ ImageProcessor::ImageProcessor(cv::Mat img)
     setOutFrame(img);
 }
 
+ImageProcessor::~ImageProcessor()
+{
+    Pylon::PylonTerminate();
+}
+
 std::vector<FileSystem::InformationImageSaved> ImageProcessor::getInfoCamera()
 {
     return imageInfo;
@@ -372,7 +377,6 @@ void ImageProcessor::run()
         {
 
             int numCam;
-            //std::vector<FileSystem::InformationImageSaved> imageInfo;
             std::string nameBasler;
             if(state_video_stream == FIND_FIRST_STREAM ||
                state_video_stream == FIRST_STREAM ||
@@ -389,6 +393,7 @@ void ImageProcessor::run()
                 imageInfo = filesystem->getInfoCamera2();
                 nameBasler = filesystem->getNameCameraSecond();
             }
+            qDebug()<<QString::fromStdString(nameBasler);
             bool isCamExist = false;
             Pylon::CBaslerUsbInstantCamera Baslercamera;
             for(int j = 0; j<lstDevices.size();++j)
@@ -416,11 +421,11 @@ void ImageProcessor::run()
 
             Pylon::CGrabResultPtr ptrGrabResult;
 
-
-            int countImg;
             if(state_video_stream == FIND_FIRST_STREAM ||
                state_video_stream == FIND_SECOND_STREAM)
             {
+                path_ = filesystem->getFilePath();
+                int countImg;
                 pattern_ = filesystem->getPattern();
                 CHECKERBOARD_[0] = filesystem->getRow();
                 CHECKERBOARD_[1] = filesystem->getCol();
@@ -456,14 +461,29 @@ void ImageProcessor::run()
 
                                 QPixmap imgInDisplay = toMatQpixmap(drawFrame);
 
-                                emit outDisplayFirst(imgInDisplay);
+                                emit outDisplay(imgInDisplay);
 
                                 QPixmap imgInSave = toMatQpixmapGray(img);
                                 namepath = QString(path_ + "Camera%1/" + "Accumulated/" + QString::number(imageInfo.size() + 1) + ".png").arg(numCam);
                                 filesystem->saveInImg(imgInSave,namepath);
+
+                                QTableWidgetItem *item0 = new QTableWidgetItem();
+                                item0->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+                                item0->setCheckState(Qt::Checked);
+                                QTableWidgetItem *item1;
+                                if(numCam==1)
+                                    item1 = new QTableWidgetItem("Camera1");
+                                else
+                                    item1 = new QTableWidgetItem("Camera2");
+                                QTableWidgetItem *item2 = new QTableWidgetItem("save");
+                                emit setItem(item0, item1, item2);
                                 FileSystem::InformationImageSaved tmpInfo;
                                 tmpInfo.cameraPath = namepath.toStdString();
                                 imageInfo.push_back(tmpInfo);
+                                if(numCam==1)
+                                    filesystem->saveInfoCamera1(imageInfo);
+                                else
+                                    filesystem->saveInfoCamera2(imageInfo);
                                 countImg++;
                                 isPressSnap_ = false;
                             }else{
@@ -472,12 +492,12 @@ void ImageProcessor::run()
 
                                 QPixmap imgInDisplay = toMatQpixmap(drawFrame);
 
-                                emit outDisplayFirst(imgInDisplay);
+                                emit outDisplay(imgInDisplay);
                             }
                         }
                     }
                 }
-
+                emit andStream();
             }else if(state_video_stream == FIRST_STREAM ||
                      state_video_stream == SECOND_STREAM)
             {
@@ -684,9 +704,7 @@ void ImageProcessor::run()
                         }
                     }
                 }
-
-
-
+                emit andStream();
             }
 
             if(state_video_stream == STEREO_DEPTH_STREAM)

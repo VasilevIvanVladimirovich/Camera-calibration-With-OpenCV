@@ -26,7 +26,7 @@ void ControlWindow::initUi()
    fileToolBar = addToolBar("File");
    viewToolBar = addToolBar("View");
    imageToolBar = addToolBar("Image");
-   analysisToolBar= addToolBar("Analysis");
+//   analysisToolBar= addToolBar("Analysis");
    videoToolBar = addToolBar("Video");
 
    // setup status bar
@@ -143,11 +143,11 @@ void ControlWindow::initUi()
 
    chartHistogrammCameraFirst = new QChart();
    chartHistogrammCameraFirst->setTitle("Cam1");
-   chartHistogrammCameraFirst->setAnimationOptions(QChart::SeriesAnimations);
+   //chartHistogrammCameraFirst->setAnimationOptions(QChart::SeriesAnimations);
 
    chartHistogrammCameraSecond = new QChart();
    chartHistogrammCameraSecond->setTitle("Cam2");
-   chartHistogrammCameraSecond->setAnimationOptions(QChart::SeriesAnimations);
+   //chartHistogrammCameraSecond->setAnimationOptions(QChart::SeriesAnimations);
 
    chartViewHistogrammCameraFirst = new QChartView(chartHistogrammCameraFirst);
 
@@ -258,10 +258,10 @@ void ControlWindow::createAction()
 //    //analysisMenu->addAction(openCompareWindowAction);
 //    analysisToolBar->addAction(openCompareWindowAction);
 
-    streamAction = new QAction("&Stream Action", this);
-    connect(streamAction, SIGNAL(triggered(bool)), this, SLOT(openSettingStream()));
-    //analysisMenu->addAction(streamAction);
-    analysisToolBar->addAction(streamAction);
+//    streamAction = new QAction("&Stream Action", this);
+//    connect(streamAction, SIGNAL(triggered(bool)), this, SLOT(openSettingStream()));
+//    //analysisMenu->addAction(streamAction);
+//    analysisToolBar->addAction(streamAction);
 
     saveImageAction = new QAction("&Save Image", this);
     connect(saveImageAction, SIGNAL(triggered(bool)), this, SLOT(saveImage()));
@@ -576,6 +576,8 @@ void ControlWindow::stopVideo()
     {
         imgprocessorSecond_->stopedThread();
     }
+    andStream();
+
 }
 
 void ControlWindow::setPath(QString path)
@@ -681,6 +683,7 @@ void ControlWindow::videoStream(int countframe,bool isDraw,bool isCam1,bool isCa
     {
         if(camFirst!=-1 && isCam1 && !isCam2)
         {
+            qDebug()<<"FIND_FIRST_STREAM";
             isRunningFirstCamera = true;
             saveImageAction->setEnabled(true);
             stopVideoAction->setEnabled(true);
@@ -718,6 +721,7 @@ void ControlWindow::videoStream(int countframe,bool isDraw,bool isCam1,bool isCa
         }
         if(camSecond!=-1 && !isCam1 && isCam2)
         {
+            qDebug()<<"FIND_SECOND_STREAM";
             isRunningSecondCamera = true;
             saveImageAction->setEnabled(true);
             stopVideoAction->setEnabled(true);
@@ -738,18 +742,19 @@ void ControlWindow::videoStream(int countframe,bool isDraw,bool isCam1,bool isCa
                     this,
                     SLOT(addItem(QTableWidgetItem*,QTableWidgetItem*, QTableWidgetItem*)));
 
-            connect(imgprocessorFirst_,
+            connect(imgprocessorSecond_,
                     SIGNAL(andStream()),
                     this,
                     SLOT(andStream()));
 
-            imgprocessorFirst_->setIsDraw(isDraw);
-            imgprocessorFirst_->setCountFrame(countframe);
-            imgprocessorFirst_->start();
+            imgprocessorSecond_->setIsDraw(isDraw);
+            imgprocessorSecond_->setCountFrame(countframe);
+            imgprocessorSecond_->start();
         }
 
         if(camSecond!=-1 && camFirst!=-1 && isCam1 && isCam2)
         {
+            qDebug()<<"FIND_STEREO_STREAM";
             isRunningStereoBasler = true;
             saveImageAction->setEnabled(true);
             stopVideoAction->setEnabled(true);
@@ -784,11 +789,10 @@ void ControlWindow::videoStream(int countframe,bool isDraw,bool isCam1,bool isCa
 }
 
 
-
 void ControlWindow::videoStream(QString state)
 {
     imgprocessor_ = new ImageProcessor(&fileSystem_,ImageProcessor::StateVideoStream::STEREO_DEPTH_STREAM,
-                                       ImageProcessor::DeviceState::WEB_CAMERA,data_lock);
+                                       ImageProcessor::DeviceState::BASLER_CAMERA,data_lock);
 
     isRunningStereoBasler = true;
     stopVideoAction->setEnabled(true);
